@@ -25,6 +25,7 @@ from PySimpleGUI27 import SetOptions
 try:
     folder   = '/Users/zcole/Box/file_drawer/'
 except IOError:
+    print('\n* ***** *\nNOT CONNECTED TO BOX\n* ***** *\n')
     folder   = '/Users/zcole/Documents/dev/file_drawer/'
 else:
     folder   = '/Users/zcole/Box/file_drawer/'
@@ -57,8 +58,6 @@ ws['H1'].value = 'Notes'
 
 wb.save(filename)
 
-mrow = str(int(ws.max_row) + 1)
-
 # window
 SetOptions(background_color = 'black', element_background_color = 'black',
            text_color = 'white', text_element_background_color = 'black',
@@ -67,9 +66,13 @@ SetOptions(background_color = 'black', element_background_color = 'black',
 
 # runit
 exe_loop = None
+ploop = None
 while exe_loop == None:
 
-    # projects
+    wb #opening up new wb at beginning to account for newtask loop
+    ws
+
+    #list projects
     project_list = []
 
     for row in ws.iter_rows():
@@ -78,13 +81,12 @@ while exe_loop == None:
                 if ws['C' + str(cell.row)].value not in project_list:
                     project_list.append(ws['C' + str(cell.row)].value)
 
-    ploop = None
-    while ploop == None:
-        # project
+    if ploop == None:
         print('\nProjects:')
         for project in project_list:
             print('(%s) %s' %(project_list.index(project), project))
 
+        # determing project
         proj_loop = None
         while proj_loop == None:
             try:
@@ -102,6 +104,13 @@ while exe_loop == None:
                             proj = raw_input('Project Name: ')
                             project_list.append(proj)
                             pjn_loop = 1
+
+                            #if a 'completed' project is being re-activated
+                            for row in ws.iter_rows():
+                                for cell in row:
+                                    if ws['C' + str(cell.row)].value == proj:
+                                        ws['D' + str(cell.row)].value = 'oo'
+
                         elif projyn == 'n':
                             continue
                         else:
@@ -118,200 +127,205 @@ while exe_loop == None:
                 else:
                     pl_loop = None
 
+    else:
+        ploop = None
 
 
-        tloop = None
-        while tloop == None:
-            # tasks
-            task_list = []
-            for row in ws.iter_rows():
-                for cell in row:
-                    if ws['C' + str(cell.row)].value == proj:
-                        if ws['F' + str(cell.row)].value == 'oo':
-                            if ws['E' + str(cell.row)].value not in task_list:
-                                task_list.append(ws['E' + str(cell.row)].value)
+    # list tasks
+    task_list = []
+    for row in ws.iter_rows():
+        for cell in row:
+            if ws['C' + str(cell.row)].value == proj:
+                if ws['F' + str(cell.row)].value == 'oo':
+                    if ws['E' + str(cell.row)].value not in task_list:
+                        task_list.append(ws['E' + str(cell.row)].value)
 
-            print('Tasks:')
-            for tasks in task_list:
-                print('(%s) %s' %(task_list.index(tasks), tasks))
+    print('Tasks:')
+    for tasks in task_list:
+        print('(%s) %s' %(task_list.index(tasks), tasks))
 
-            # task
-            task_loop = 'n'
-            while task_loop == 'n':
-                try:
-                    task = int(raw_input('\nWhat task? (Number): '))
-                except ValueError:
-                    continue
-                else:
-                    if 0 <= task <= (len(task_list) - 1):
-                        task = task_list[task]
-                    else:
-                        tyn_loop = None
-                        while tyn_loop == None:  
-                            taskyn = raw_input('New task? (y/n): ')
-                            if taskyn == '':
-                                task = raw_input('Task Name: ')
-                                task_list.append(task)
-                                tyn_loop = 1
-                            elif taskyn == 'n':
-                                continue
-                            else:
-                                tyn_loop = None
-                
-                tl_loop = None
-                while tl_loop == None:
-                    task_l = raw_input('%s? (y/n): ' %task)
-                    if task_l == '':
-                        task_loop = 1
-                        tl_loop = 1
-                    elif task_l == 'n':
-                        tl_loop = 1
+    # task
+    task_loop = 'n'
+    while task_loop == 'n':
+        try:
+            task = int(raw_input('\nTask: #'))
+        except ValueError:
+            continue
+        else:
+            if 0 <= task <= (len(task_list) - 1):
+                task = task_list[task]
+            else:
+                tyn_loop = None
+                while tyn_loop == None:  
+                    taskyn = raw_input('New task? (y/n): ')
+                    if taskyn == '':
+                        task = raw_input('Task Name: ')
+                        task_list.append(task)
+                        tyn_loop = 1
+                    elif taskyn == 'n':
                         continue
                     else:
-                        tl_loop = None
-
-            # project notes
-            pnote_list = []
-            for row in ws.iter_rows():
-                for cell in row:
-                    if ws['C' + str(cell.row)].value == proj:
-                        if ws['H' + str(cell.row)].value not in pnote_list:
-                            pnote_list.append(ws['H' + str(cell.row)].value)
-
-            if len(pnote_list) > 0:
-                print('\nProject Notes:\n')
-                for pnote in pnote_list:
-                    print(pnote)
-                print('\n-------------------------\n-------------------------\n    END PROJECT NOTES\n-------------------------\n-------------------------')
-                    
-            # task notes
-            note_list = []
-            for row in ws.iter_rows():
-                for cell in row:
-                    if ws['C' + str(cell.row)].value == proj:
-                        if ws['E' + str(cell.row)].value == task:
-                            if ws['H' + str(cell.row)].value not in note_list:
-                                note_list.append(ws['H' + str(cell.row)].value)
-
-            if len(note_list) > 0:
-                print('\nTask Notes:\n')
-                for note in note_list:
-                    print(note)
-
-            # timing calculations
-            proj_s = 0
-            proj_time = 0
-            proj_hours = 0
-            proj_mins = 0
-            task_s = 0
-            task_time = 0
-            task_mins = 0
-            task_hours = 0
-            for row in ws.iter_rows():
-                for cell in row:
-                    if ws['C' + str(cell.row)].value == proj:
-                        if cell.row > 1:
-                            ps = ws['G' + str(cell.row)].value
-                            if ps != None:
-                                proj_s += int(ps)/9
-                            else:
-                                proj_s += 0
-
-                    # if ws['C' + str(cell.row)].value == proj:
-                        if ws['E' + str(cell.row)].value == task:
-                            if cell.row > 1:
-                                ts = ws['G' + str(cell.row)].value
-                                if ts != None:
-                                    task_s += int(ts)/9
-                                else:
-                                    task_s += 0
-            
-            if proj_s > 0:
-                proj_hours = proj_s/3600
-                proj_mins = (proj_s%3600)/60
-
-                proj_time = '{h}h {m}m'.format(h = proj_hours, m = proj_mins)
-
-            if task_s > 0:
-                task_hours = task_s/3600
-                task_mins = (task_s%3600)/60
-                task_time = '{h}h {m}m'.format(h = task_hours, m = task_mins)
-
-            # task timer
-            task_start = datetime.now()
-            
-            os.system(close_thymer)
-            os.system(open_thymer)
-            os.system(start_thymer)
-
-            # window
-            p_window = sg.Window(str('%s: %s' %(date, time)))
-            p_layout = [[sg.Frame(layout = [[sg.Text('%s' %proj), sg.Text('%s' %proj_time)], [sg.Radio('In Progress', "projp", key = 'projip', default = True), sg.Radio('Completed', "projp")]], title = 'Project', relief = sg.RELIEF_SUNKEN)], [sg.Frame(layout = [[sg.Text('%s' %task), sg.Text('%s' %task_time)], [sg.Radio('In Progress', "taskp", key = 'taskip', default = True), sg.Radio('Completed', "taskp")]], title = 'Task', relief = sg.RELIEF_SUNKEN)], [sg.Multiline(size = (50,5), key = 'notes', autoscroll = True, default_text = '----------\n')], [sg.CloseButton('Switch Project'), sg.CloseButton('Switch Task'), sg.CloseButton('Dunzo')]]
-
-            p_event, p_values = p_window.Layout(p_layout).Read()
-
-            # task timer
-            task_end = datetime.now()
-            timex    = relativedelta(task_end, task_start)
-
-            # time calculations
-            timeh = '{h}'.format(h = timex.hours)
-            timem = '{m}'.format(m = timex.minutes)
-            times = '{s}'.format(s = timex.seconds)
-
-            timeh = int(timeh)*3600
-            timem = int(timem)*60
-
-            times = int(times)+timeh+timem
-
-            os.system(stop_thymer)
-            os.system(close_thymer)
-
-            # input values
-            if p_values['projip'] == True:
-                proj_status = 'oo'
-            else:
-                proj_status = 'xx'
-                for row in ws.iter_rows():
-                    for cell in row:
-                        if ws['C' + str(cell.row)].value == proj:
-                            ws['D' + str(cell.row)].value = proj_status
-                            ws['F' + str(cell.row)].value = proj_status
-            
-            if p_values['taskip'] == True:
-                task_status = 'oo'
-            else:
-                task_status = 'xx'
-                for row in ws.iter_rows():
-                    for cell in row:
-                        if ws['E' + str(cell.row)].value == task:
-                            ws['F' + str(cell.row)].value = task_status
-
-            notes = p_values['notes']
-            
-            # log everything
-            ws['A' + str(mrow)].value = date
-            ws['B' + str(mrow)].value = time
-            ws['C' + str(mrow)].value = proj
-            ws['D' + str(mrow)].value = proj_status
-            ws['E' + str(mrow)].value = task
-            ws['F' + str(mrow)].value = task_status
-            ws['G' + str(mrow)].value = times
-            ws['H' + str(mrow)].value = notes
-
-            wb.save(filename)
-
-            # loop action
-            if p_event == 'Switch Task':
+                        tyn_loop = None
+        
+        tl_loop = None
+        while tl_loop == None:
+            task_l = raw_input('%s? (y/n): ' %task)
+            if task_l == '':
+                task_loop = 1
+                tl_loop = 1
+            elif task_l == 'n':
+                tl_loop = 1
                 continue
-            if p_event == 'Switch Project':
-                tloop = 1
-            if p_event == 'Dunzo':
-                exe_loop = 1
-                ploop = 1
-                tloop = 1
+            else:
+                tl_loop = None
+
+    # project notes
+    proj_dict = {}
+    for row in ws.iter_rows():
+        for cell in row:
+            if ws['C' + str(cell.row)].value == proj:
+                projnote_cell = ws['H' + str(cell.row)].value
+                proj_task_cell = ws['E' + str(cell.row)].value
+                proj_datetime_cell = str('%s %s' %(ws['A' + str(cell.row)].value, ws['B' + str(cell.row)].value))
+                if projnote_cell not in proj_dict[proj]:
+                    proj_dict[proj] = [proj_datetime_cell, proj_task_cell, projnote_cell]
+
+    if len(proj_dict) > 0:
+        print('\n-------------------------\n-------------------------\n    START %s NOTES\n-------------------------\n-------------------------' %proj.upper())
+        for projnote in proj_dict[proj]:
+            print('\n->%s %s\n%s' %(proj_task_cell, proj_datetime_cell, projnote_cell))
+        print('\n-------------------------\n-------------------------\n    END PROJECT NOTES\n-------------------------\n-------------------------')
+            
+    # task notes
+    tasknote_dict = {}
+    for row in ws.iter_rows():
+        for cell in row:
+            if ws['C' + str(cell.row)].value == proj:
+                if ws['E' + str(cell.row)].value == task:
+                    tasknote_cell = ws['H' + str(cell.row)].value
+                    task_datetime_cell = str('%s %s' %(ws['A' + str(cell.row)].value, ws['B' + str(cell.row)].value))
+                    if tasknote_cell not in tasknote_dict:
+                        tasknote_dict[task] = [task_datetime_cell, tasknote_cell]
+
+    if len(tasknote_dict) > 0:
+        print('\n->%s\n' %task.upper())
+        for tasknote in tasknote_dict[task]:
+            print('\n%s\n%s\n\n' %(tasknote_dict[task][0], tasknote_dict[task][1]))
+
+    # timing calculations
+    proj_s = 0
+    proj_time = 0
+    proj_hours = 0
+    proj_mins = 0
+    task_s = 0
+    task_time = 0
+    task_mins = 0
+    task_hours = 0
+    for row in ws.iter_rows():
+        for cell in row:
+            if ws['C' + str(cell.row)].value == proj:
+                if cell.row > 1:
+                    ps = ws['G' + str(cell.row)].value
+                    if ps != None:
+                        proj_s += int(ps)/9
+                    else:
+                        proj_s += 0
+
+            # if ws['C' + str(cell.row)].value == proj:
+                if ws['E' + str(cell.row)].value == task:
+                    if cell.row > 1:
+                        ts = ws['G' + str(cell.row)].value
+                        if ts != None:
+                            task_s += int(ts)/9
+                        else:
+                            task_s += 0
+    
+    if proj_s > 0:
+        proj_hours = proj_s/3600
+        proj_mins = (proj_s%3600)/60
+
+        proj_time = '{h}h {m}m'.format(h = proj_hours, m = proj_mins)
+
+    if task_s > 0:
+        task_hours = task_s/3600
+        task_mins = (task_s%3600)/60
+        task_time = '{h}h {m}m'.format(h = task_hours, m = task_mins)
+
+    # task timer
+    task_start = datetime.now()
+    
+    os.system(close_thymer)
+    os.system(open_thymer)
+    os.system(start_thymer)
+
+    # window
+    p_window = sg.Window(str('%s: %s' %(date, time)))
+    p_layout = [[sg.Frame(layout = [[sg.Text('%s' %proj), sg.Text('%s' %proj_time)], [sg.Radio('In Progress', "projp", key = 'projip', default = True), sg.Radio('Completed', "projp")]], title = 'Project', relief = sg.RELIEF_SUNKEN)], [sg.Frame(layout = [[sg.Text('%s' %task), sg.Text('%s' %task_time)], [sg.Radio('In Progress', "taskp", key = 'taskip', default = True), sg.Radio('Completed', "taskp")]], title = 'Task', relief = sg.RELIEF_SUNKEN)], [sg.Multiline(size = (50,5), key = 'notes', autoscroll = True, default_text = '----------\n')], [sg.CloseButton('Switch Project'), sg.CloseButton('Switch Task'), sg.CloseButton('Dunzo')]]
+
+    p_event, p_values = p_window.Layout(p_layout).Read()
+
+    # task timer
+    task_end = datetime.now()
+    timex    = relativedelta(task_end, task_start)
+
+    # time calculations
+    timeh = '{h}'.format(h = timex.hours)
+    timem = '{m}'.format(m = timex.minutes)
+    times = '{s}'.format(s = timex.seconds)
+
+    timeh = int(timeh)*3600
+    timem = int(timem)*60
+
+    times = int(times)+timeh+timem
+
+    os.system(stop_thymer)
+    os.system(close_thymer)
+
+    # input values
+    if p_values['projip'] == True:
+        proj_status = 'oo'
+    else:
+        proj_status = 'xx'
+        for row in ws.iter_rows():
+            for cell in row:
+                if ws['C' + str(cell.row)].value == proj:
+                    ws['D' + str(cell.row)].value = proj_status
+                    ws['F' + str(cell.row)].value = proj_status
+    
+    if p_values['taskip'] == True:
+        task_status = 'oo'
+    else:
+        task_status = 'xx'
+        for row in ws.iter_rows():
+            for cell in row:
+                if ws['E' + str(cell.row)].value == task:
+                    ws['F' + str(cell.row)].value = task_status
+
+    notes = p_values['notes']
+    
+    mrow = str(int(ws.max_row) + 1) 
+
+    # log everything
+    ws['A' + str(mrow)].value = date
+    ws['B' + str(mrow)].value = time
+    ws['C' + str(mrow)].value = proj
+    ws['D' + str(mrow)].value = proj_status
+    ws['E' + str(mrow)].value = task
+    ws['F' + str(mrow)].value = task_status
+    ws['G' + str(mrow)].value = times
+    ws['H' + str(mrow)].value = notes
+
+    wb.save(filename)
+    wb.close()
+
+    # loop action
+    if p_event != 'Switch Project':
+        ploop = 1
+    else:
+        ploop = None
+
+    if (p_event != 'Switch Task') or (p_event == 'Dunzo'):
+        exe_loop = 1
 
 # logout
-wb.save(filename)
-
 exit()

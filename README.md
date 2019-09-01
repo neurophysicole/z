@@ -1,1 +1,2 @@
 # zpz
+Reads Excel file for projects, tasks, notes, dates, task time; prints associated project and task notes; brings up window to input task notes, track task time; writes notes and associated meta info to single Excel sheet.

@@ -26,7 +26,7 @@ try:
     folder   = '/Users/zcole/Box/file_drawer/'
 except IOError:
     print('\n* ***** *\nNOT CONNECTED TO BOX\n* ***** *\n')
-    folder   = '/Users/zcole/Documents/dev/file_drawer/'
+    folder   = '/Users/zcole/Documents/file_drawer/dev/'
 else:
     folder   = '/Users/zcole/Box/file_drawer/'
     

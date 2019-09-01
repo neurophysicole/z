@@ -180,38 +180,65 @@ while exe_loop == None:
                 tl_loop = None
 
     # project notes
-    proj_dict = {}
+    proj_task_list = []
+    proj_datetime_list = []
+    projnote_list = []
     for row in ws.iter_rows():
         for cell in row:
             if ws['C' + str(cell.row)].value == proj:
                 projnote_cell = ws['H' + str(cell.row)].value
                 proj_task_cell = ws['E' + str(cell.row)].value
                 proj_datetime_cell = str('%s %s' %(ws['A' + str(cell.row)].value, ws['B' + str(cell.row)].value))
-                if projnote_cell not in proj_dict[proj]:
-                    proj_dict[proj] = [proj_datetime_cell, proj_task_cell, projnote_cell]
+                if projnote_cell not in projnote_list:
+                    proj_task_list.append(proj_task_cell)
+                    proj_datetime_list.append(proj_datetime_cell)
+                    projnote_list.append(projnote_cell)
 
-    if len(proj_dict) > 0:
+    project_notes = []
+    if len(proj_task_list) > 0:
         print('\n-------------------------\n-------------------------\n    START %s NOTES\n-------------------------\n-------------------------' %proj.upper())
-        for projnote in proj_dict[proj]:
-            print('\n->%s %s\n%s' %(proj_task_cell, proj_datetime_cell, projnote_cell))
-        print('\n-------------------------\n-------------------------\n    END PROJECT NOTES\n-------------------------\n-------------------------')
+        proji = 0
+        # get all the notes written out
+        for projnote in projnote_list:  
+            project_note = str('\n->%s /-/ %s\n%s' %(proj_task_list[proji], proj_datetime_list[proji], projnote_list[proji]))
+            project_notes.append(project_note)
+            proji =+ 1
+        # need to get unique values from list (so repeats aren't listed)
+        project_notes_set = list(set(project_notes))
+        pnotei = 0
+        for unique_proj_note in project_notes_set:
+            print(project_notes_set[pnotei])
+            pnotei =+ 1
+        print('\n-------------------------\n-------------------------\n    END %s NOTES\n-------------------------\n-------------------------' %proj.upper())
             
     # task notes
-    tasknote_dict = {}
+    tasknote_list = []
+    task_datetime_list = []
     for row in ws.iter_rows():
         for cell in row:
             if ws['C' + str(cell.row)].value == proj:
                 if ws['E' + str(cell.row)].value == task:
                     tasknote_cell = ws['H' + str(cell.row)].value
                     task_datetime_cell = str('%s %s' %(ws['A' + str(cell.row)].value, ws['B' + str(cell.row)].value))
-                    if tasknote_cell not in tasknote_dict:
-                        tasknote_dict[task] = [task_datetime_cell, tasknote_cell]
+                    if tasknote_cell not in tasknote_list:
+                        tasknote_list.append(tasknote_cell)
+                        task_datetime_list.append(task_datetime_cell)
 
-    if len(tasknote_dict) > 0:
+    task_notes = []
+    if len(tasknote_list) > 0:
         print('\n->%s\n' %task.upper())
-        for tasknote in tasknote_dict[task]:
-            print('\n%s\n%s\n\n' %(tasknote_dict[task][0], tasknote_dict[task][1]))
-
+        taski = 0
+        # get all the notes written out
+        for tasknote in tasknote_list:
+            task_note = str('\n%s\n%s\n\n' %(task_datetime_list[taski], tasknote_list[taski]))
+            task_notes.append(task_note)
+            taski =+ 1
+        task_notes_set = list(set(task_notes))
+        tnotei = 0
+        # need to get unique values from list (so repeats aren't listed)
+        for unique_task_note in task_notes_set:
+            print(task_notes_set[tnotei])
+            tnotei =+ 1
     # timing calculations
     proj_s = 0
     proj_time = 0

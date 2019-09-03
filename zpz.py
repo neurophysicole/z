@@ -233,20 +233,14 @@ while exe_loop == None:
     task_hours = 0
     for zrow in zmrow:
         if ws['C%s' %zrow].value == proj:
-            if zrow > 1:
-                ps = ws['G%s' %zrow].value
-                if ps != None:
-                    proj_s += int(ps)/9
-                else:
-                    proj_s += 0
+            ps = ws['G%s' %zrow].value
+            if ps != None:
+                proj_s += int(ps)
 
-                if ws['E%s' %zrow].value == task:
-                    if zrow > 1:
-                        ts = ws['G%s' %zrow].value
-                        if ts != None:
-                            task_s += int(ts)/9
-                        else:
-                            task_s += 0
+            if ws['E%s' %zrow].value == task:
+                ts = ws['G%s' %zrow].value
+                if ts != None:
+                    task_s += int(ts)
     
     if proj_s > 0:
         proj_hours = proj_s/3600

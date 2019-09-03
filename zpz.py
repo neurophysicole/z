@@ -309,6 +309,8 @@ while exe_loop == None:
 
     notes = p_values['notes']
 
+    mrow = mrow
+
     # log everything
     ws['A%s' %mrow].value = date
     ws['B%s' %mrow].value = time

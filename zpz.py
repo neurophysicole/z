@@ -72,14 +72,15 @@ while exe_loop == None:
     wb #opening up new wb at beginning to account for newtask loop
     ws
 
+    mrow = str(int(ws.max_row) + 1) 
+    zmrow = range(2, int(mrow) - 1)
+
     #list projects
     project_list = []
-
-    for row in ws.iter_rows():
-        for cell in row:
-            if ws['D' + str(cell.row)].value == 'oo':
-                if ws['C' + str(cell.row)].value not in project_list:
-                    project_list.append(ws['C' + str(cell.row)].value)
+    for zrow in zmrow:
+        if ws['D%s' %zrow].value == 'oo':
+            if ws['C%s' %zrow].value not in project_list:
+                project_list.append(ws['C%s' %zrow].value)  
 
     if ploop == None:
         print('\nProjects:')
@@ -106,10 +107,9 @@ while exe_loop == None:
                             pjn_loop = 1
 
                             #if a 'completed' project is being re-activated
-                            for row in ws.iter_rows():
-                                for cell in row:
-                                    if ws['C' + str(cell.row)].value == proj:
-                                        ws['D' + str(cell.row)].value = 'oo'
+                            for zrow in zmrow:
+                                if ws['C%s' %zrow].value == proj:
+                                    ws['D%s' %zrow].value = 'oo'
 
                         elif projyn == 'n':
                             continue
@@ -134,42 +134,33 @@ while exe_loop == None:
     proj_task_list = []
     proj_datetime_list = []
     projnote_list = []
-    for row in ws.iter_rows():
-        for cell in row:
-            if ws['C' + str(cell.row)].value == proj:
-                projnote_cell = ws['H' + str(cell.row)].value
-                proj_task_cell = ws['E' + str(cell.row)].value
-                proj_datetime_cell = str('%s %s' %(ws['A' + str(cell.row)].value, ws['B' + str(cell.row)].value))
-                if projnote_cell not in projnote_list:
-                    proj_task_list.append(proj_task_cell)
-                    proj_datetime_list.append(proj_datetime_cell)
-                    projnote_list.append(projnote_cell)
+    for zrow in zmrow:
+        if ws['C%s' %zrow].value == proj:
+            projnote_cell = ws['H%s' %zrow].value
+            proj_task_cell = ws['E%s' %zrow].value
+            proj_datetime_cell = str('%s %s' %(ws['A%s' %zrow].value, ws['B%s' %zrow].value))
+            proj_task_list.append(proj_task_cell)
+            proj_datetime_list.append(proj_datetime_cell)
+            projnote_list.append(projnote_cell)
 
     project_notes = []
     if len(proj_task_list) > 0:
         print('\n-------------------------\n-------------------------\n    START %s NOTES\n-------------------------\n-------------------------' %proj.upper())
-        proji = 0
         # get all the notes written out
-        for projnote in projnote_list:  
-            project_note = str('\n->%s /-/ %s\n%s' %(proj_task_list[proji], proj_datetime_list[proji], projnote_list[proji]))
-            project_notes.append(project_note)
-            proji =+ 1
-        # need to get unique values from list (so repeats aren't listed)
-        project_notes_set = list(set(project_notes))
-        pnotei = 0
-        for unique_proj_note in project_notes_set:
-            print(project_notes_set[pnotei])
-            pnotei =+ 1
+        for projn in range(0, len(proj_datetime_list)):
+            project_note = str('\n->%s /-/ %s\n%s' %(proj_task_list[projn], proj_datetime_list[projn], projnote_list[projn]))
+            if project_note not in project_notes:
+                project_notes.append(project_note)
+                print(project_note)
         print('\n-------------------------\n-------------------------\n    END %s NOTES\n-------------------------\n-------------------------\n' %proj.upper())
 
     # list tasks
     task_list = []
-    for row in ws.iter_rows():
-        for cell in row:
-            if ws['C' + str(cell.row)].value == proj:
-                if ws['F' + str(cell.row)].value == 'oo':
-                    if ws['E' + str(cell.row)].value not in task_list:
-                        task_list.append(ws['E' + str(cell.row)].value)
+    for zrow in zmrow:
+        if ws['C%s' %zrow].value == proj:
+            if ws['F%s' %zrow].value == 'oo':
+                if ws['E%s' %zrow].value not in task_list:
+                    task_list.append(ws['E%s' %zrow].value)
 
     print('Tasks:')
     for tasks in task_list:
@@ -213,31 +204,24 @@ while exe_loop == None:
     # task notes
     tasknote_list = []
     task_datetime_list = []
-    for row in ws.iter_rows():
-        for cell in row:
-            if ws['C' + str(cell.row)].value == proj:
-                if ws['E' + str(cell.row)].value == task:
-                    tasknote_cell = ws['H' + str(cell.row)].value
-                    task_datetime_cell = str('%s %s' %(ws['A' + str(cell.row)].value, ws['B' + str(cell.row)].value))
-                    if tasknote_cell not in tasknote_list:
-                        tasknote_list.append(tasknote_cell)
-                        task_datetime_list.append(task_datetime_cell)
+    for zrow in zmrow:
+        if ws['C%s' %zrow].value == proj:
+            if ws['E%s' %zrow].value == task:
+                tasknote_cell = ws['H%s' %zrow].value
+                task_datetime_cell = str('%s %s' %(ws['A%s' %zrow].value, ws['B%s' %zrow].value))
+                tasknote_list.append(tasknote_cell)
+                task_datetime_list.append(task_datetime_cell)
 
     task_notes = []
     if len(tasknote_list) > 0:
         print('\n->%s\n' %task.upper())
-        taski = 0
         # get all the notes written out
-        for tasknote in tasknote_list:
-            task_note = str('\n%s\n%s\n\n' %(task_datetime_list[taski], tasknote_list[taski]))
-            task_notes.append(task_note)
-            taski =+ 1
-        task_notes_set = list(set(task_notes))
-        tnotei = 0
-        # need to get unique values from list (so repeats aren't listed)
-        for unique_task_note in task_notes_set:
-            print(task_notes_set[tnotei])
-            tnotei =+ 1
+        for taskn in range(0, len(task_datetime_list)):
+            task_note = str('\n%s\n%s\n\n' %(task_datetime_list[taskn], tasknote_list[taskn]))
+            if task_note not in task_notes:
+                task_notes.append(task_note)
+                print(task_note)
+
     # timing calculations
     proj_s = 0
     proj_time = 0
@@ -247,20 +231,18 @@ while exe_loop == None:
     task_time = 0
     task_mins = 0
     task_hours = 0
-    for row in ws.iter_rows():
-        for cell in row:
-            if ws['C' + str(cell.row)].value == proj:
-                if cell.row > 1:
-                    ps = ws['G' + str(cell.row)].value
-                    if ps != None:
-                        proj_s += int(ps)/9
-                    else:
-                        proj_s += 0
+    for zrow in zmrow:
+        if ws['C%s' %zrow].value == proj:
+            if zrow > 1:
+                ps = ws['G%s' %zrow].value
+                if ps != None:
+                    proj_s += int(ps)/9
+                else:
+                    proj_s += 0
 
-            # if ws['C' + str(cell.row)].value == proj:
-                if ws['E' + str(cell.row)].value == task:
-                    if cell.row > 1:
-                        ts = ws['G' + str(cell.row)].value
+                if ws['E%s' %zrow].value == task:
+                    if zrow > 1:
+                        ts = ws['G%s' %zrow].value
                         if ts != None:
                             task_s += int(ts)/9
                         else:
@@ -312,34 +294,30 @@ while exe_loop == None:
         proj_status = 'oo'
     else:
         proj_status = 'xx'
-        for row in ws.iter_rows():
-            for cell in row:
-                if ws['C' + str(cell.row)].value == proj:
-                    ws['D' + str(cell.row)].value = proj_status
-                    ws['F' + str(cell.row)].value = proj_status
+        for zrow in zmrow:
+            if ws['C%s' %zrow].value == proj:
+                ws['D%s' %zrow].value = proj_status
+                ws['F%s' %zrow].value = proj_status
     
     if p_values['taskip'] == True:
         task_status = 'oo'
     else:
         task_status = 'xx'
-        for row in ws.iter_rows():
-            for cell in row:
-                if ws['E' + str(cell.row)].value == task:
-                    ws['F' + str(cell.row)].value = task_status
+        for zrow in zmrow:
+            if ws['E%s' %zrow].value == task:
+                ws['F%s' %zrow].value = task_status
 
     notes = p_values['notes']
-    
-    mrow = str(int(ws.max_row) + 1) 
 
     # log everything
-    ws['A' + str(mrow)].value = date
-    ws['B' + str(mrow)].value = time
-    ws['C' + str(mrow)].value = proj
-    ws['D' + str(mrow)].value = proj_status
-    ws['E' + str(mrow)].value = task
-    ws['F' + str(mrow)].value = task_status
-    ws['G' + str(mrow)].value = times
-    ws['H' + str(mrow)].value = notes
+    ws['A%s' %mrow].value = date
+    ws['B%s' %mrow].value = time
+    ws['C%s' %mrow].value = proj
+    ws['D%s' %mrow].value = proj_status
+    ws['E%s' %mrow].value = task
+    ws['F%s' %mrow].value = task_status
+    ws['G%s' %mrow].value = times
+    ws['H%s' %mrow].value = notes
 
     wb.save(filename)
     wb.close()

@@ -73,7 +73,7 @@ while exe_loop == None:
     ws
 
     mrow = str(int(ws.max_row) + 1) 
-    zmrow = range(2, int(mrow) - 1)
+    zmrow = range(2, int(mrow))
 
     #list projects
     project_list = []

@@ -27,8 +27,8 @@ try:
 except IOError:
     print('\n* ***** *\nNOT CONNECTED TO BOX\n* ***** *\n')
 else:
-    docfile = str('Users/zcole/Documents/file_drawer/dev/zptz.xlsx')
-    boxfile = str('Users/zcole/Box/file_drawer/zptz.xlsx')
+    docfile = str('/Users/zcole/Documents/file_drawer/temp/zptz.xlsx')
+    boxfile = str('/Users/zcole/Box/file_drawer/zptz.xlsx')
 
     # activate project wb
     wbd = load_workbook(docfile)
@@ -38,9 +38,9 @@ else:
 
     # rows and columns
     mdrow = str(int(wsd.max_row) + 1) 
-    zmdrow = range(2, int(mrow))
+    zmdrow = range(2, int(mdrow))
     mbrow = str(int(wsb.max_row) + 1)
-    zmbrow = range(2, int(mrow))
+    zmbrow = range(2, int(mbrow))
     columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 
     # copying zptz doc info to zptz Box

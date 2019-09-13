@@ -59,8 +59,10 @@ else:
 
     # refresh the zptz Docs file
     os.system('rm docfile')
-    os.system('touch docfile')
-
+    wbnew = load_workbook(docfile)
+    wbnew.save(docfile)
+    wbnew.close()
+    
     print('\nThe backup system is refreshed.\n-----')
 
 # logout

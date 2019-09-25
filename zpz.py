@@ -150,7 +150,8 @@ if backup:
         # activate for loop
         wb
         ws
-        mrow
+        
+        mrow = str(int(ws.max_row) + 1) 
 
         # log data
         ws['A%s' %mrow].value = ws_backup['A%s' %backup_row].value #date
@@ -177,20 +178,22 @@ if backup:
     print('\n-----\nThe system is up to date!\n')
 
 else:
+    print('\n-----\n Not connected to the cloud....\n')
+    
     wb = load_workbook(filename)
     ws = wb.active
 
-# add headers
-ws['A1'].value = 'Date'
-ws['B1'].value = 'Time'
-ws['C1'].value = 'Project'
-ws['D1'].value = 'Project Status'
-ws['E1'].value = 'Task'
-ws['F1'].value = 'Task Status'
-ws['G1'].value = 'Task Time (secs)'
-ws['H1'].value = 'Notes'
+    # add headers
+    ws['A1'].value = 'Date'
+    ws['B1'].value = 'Time'
+    ws['C1'].value = 'Project'
+    ws['D1'].value = 'Project Status'
+    ws['E1'].value = 'Task'
+    ws['F1'].value = 'Task Status'
+    ws['G1'].value = 'Task Time (secs)'
+    ws['H1'].value = 'Notes'
 
-wb.save(filename)
+    wb.save(filename)
 
 # window
 SetOptions(background_color = 'black', element_background_color = 'black',
@@ -536,7 +539,8 @@ while exe_loop == None:
             # activate for loop
             wb
             ws
-            mrow
+
+            mrow = str(int(ws.max_row) + 1) 
 
             # log data
             ws['A%s' %mrow].value = ws_backup['A%s' %backup_row].value #date
@@ -559,7 +563,7 @@ while exe_loop == None:
 
     else:
         #re-establish max row
-        mrow
+        mrow = str(int(ws.max_row) + 1) 
 
         # log everything
         ws['A%s' %mrow].value = date

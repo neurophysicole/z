@@ -79,11 +79,106 @@ if backup:
     wb = load_workbook(backup_file)
     wb_backup = load_workbook(filename)
     ws_backup = wb_backup.active
+    ws = wb.active
+
+    #run initial backup
+    print('\n-----\nChecking the cloud to make sure we are up to date. . . ')
+
+    mrow = str(int(ws.max_row) + 1) 
+    zmrow = range(2, int(mrow))
+    backup_mrow = str(int(ws_backup.max_row) + 1)
+    backup_rows = range(2, int(backup_mrow))
+
+    # add headers
+    ws_backup['A1'].value = 'Date'
+    ws_backup['B1'].value = 'Time'
+    ws_backup['C1'].value = 'Project'
+    ws_backup['D1'].value = 'Project Status'
+    ws_backup['E1'].value = 'Task'
+    ws_backup['F1'].value = 'Task Status'
+    ws_backup['G1'].value = 'Task Time (secs)'
+    ws_backup['H1'].value = 'Notes'
+
+    # if date and time are missing from backup folder, initiate backup
+    # HEADS UP: It feels backwards bc have to list items in backup, and compare them to the working file, but it is correct.
+
+    #list all dates and times
+    d_list = []
+    t_list = []
+    n_list = []
+    for dtnrow in zmrow:
+        d_list.append(ws['A%s' %dtnrow].value)
+        t_list.append(ws['B%s' %dtnrow].value)
+        n_list.append(ws['H%s' %dtnrow].value)
+
+    # get the rows to that need to be backed up
+    backup_row_list = []
+    for brow in backup_rows:
+        backup_date = ws_backup['A%s' %brow].value
+        backup_time = ws_backup['B%s' %brow].value
+        backup_note = ws_backup['H%s' %brow].value
+        if backup_date not in d_list:
+            backup_row_list.append('%s' %brow)
+        else: #if the date is in both lists
+            dindex_list = [] #it is possible to have multiple postings on same date
+            for backup_date in d_list:
+                d_list_index = d_list.index(backup_date)
+                dindex_list.append(d_list_index)
+            if backup_time not in t_list:
+                backup_row_list.append('%s' %brow)
+            else:
+                tmatch_list = []
+                tindex_list = []
+                for indeces in dindex_list:
+                    tmatch = t_list[indeces]
+                    tmatch_list.append(tmatch)
+                    tindex = tmatch_list.index(indeces)
+                    tindex_list.append(tindex)
+                if backup_time not in tmatch_list:
+                    backup_row_list.append('%s' %brow)
+                else: #it is highly unlikely, but I suppose it may be possible that multiple postings could have the same date & time (quick note was made that took under a minute?). Either way, this can't hurt, right?
+                    nmatch_list = []
+                    for tindeces in t_list:
+                        nmatch = n_list[tindeces]
+                        nmatch_list.append(nmatch)
+                    if backup_note not in nmatch_list:
+                        backup_row_list.append('%s' %brow)
+
+    #log backup
+    for backup_row in backup_row_list:
+        
+        # activate for loop
+        wb
+        ws
+        mrow
+
+        # log data
+        ws['A%s' %mrow].value = ws_backup['A%s' %backup_row].value #date
+        ws['B%s' %mrow].value = ws_backup['B%s' %backup_row].value #time
+        ws['C%s' %mrow].value = ws_backup['C%s' %backup_row].value #proj
+        ws['D%s' %mrow].value = ws_backup['D%s' %backup_row].value #proj_status
+        ws['E%s' %mrow].value = ws_backup['E%s' %backup_row].value #task
+        ws['F%s' %mrow].value = ws_backup['F%s' %backup_row].value #task_status
+        ws['G%s' %mrow].value = ws_backup['G%s' %backup_row].value #times
+        ws['H%s' %mrow].value = ws_backup['H%s' %backup_row].value #notes
+            
+        # save logged data
+        wb.save(backup_file)
+        wb.close()
+
+    #reset
+    wb_backup.close()
+
+    wb
+    ws
+    wb_backup
+    ws_backup
+
+    print('\n-----\nThe system is up to date!\n')
+
 else:
     wb = load_workbook(filename)
-
-# activate ws
-ws = wb.active
+    ws = wb.active
 
 # add headers
 ws['A1'].value = 'Date'
@@ -111,7 +206,7 @@ while exe_loop == None:
     wb #opening up new wb at beginning to account for newtask loop
     ws
 
-    mrow = str(int(ws.max_row) + 1) 
+    mrow  = str(int(ws.max_row) + 1) 
     zmrow = range(2, int(mrow))
 
     #list projects
@@ -355,7 +450,7 @@ while exe_loop == None:
     # back it all up to the cloud by adding the missing input logs
     # this whole thing might seem a little weird, but if we are backing up, the backup file will actually be the working documents file
     if backup:
-        print('Evaporating to the cloud. . . ')
+        print('\n-----\nEvaporating to the cloud. . . ')
 
         # activate local file
         wb_backup

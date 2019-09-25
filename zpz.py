@@ -127,22 +127,24 @@ if backup:
             if backup_time not in t_list:
                 backup_row_list.append('%s' %brow)
             else:
-                tmatch_list = []
-                tindex_list = []
-                for indeces in dindex_list:
-                    tmatch = t_list[indeces]
-                    tmatch_list.append(tmatch)
-                    tindex = tmatch_list.index(indeces)
-                    tindex_list.append(tindex)
-                if backup_time not in tmatch_list:
-                    backup_row_list.append('%s' %brow)
-                else: #it is highly unlikely, but I suppose it may be possible that multiple postings could have the same date & time (quick note was made that took under a minute?). Either way, this can't hurt, right?
-                    nmatch_list = []
-                    for tindeces in t_list:
-                        nmatch = n_list[tindeces]
-                        nmatch_list.append(nmatch)
-                    if backup_note not in nmatch_list:
+                if len(dindex_list) > 0:
+                    tmatch_list = []
+                    tindex_list = []
+                    for indeces in dindex_list:
+                        tmatch = t_list[indeces]
+                        tmatch_list.append(tmatch)
+                        tindex = tmatch_list.index(indeces)
+                        tindex_list.append(tindex)
+                    if backup_time not in tmatch_list:
                         backup_row_list.append('%s' %brow)
+                    else: #it is highly unlikely, but I suppose it may be possible that multiple postings could have the same date & time (quick note was made that took under a minute?). Either way, this can't hurt, right?
+                        if len(tindex_list) > 0:
+                            nmatch_list = []
+                            for tindeces in t_list:
+                                nmatch = n_list[tindeces]
+                                nmatch_list.append(nmatch)
+                            if backup_note not in nmatch_list:
+                                backup_row_list.append('%s' %brow)                    
 
     #log backup
     for backup_row in backup_row_list:
@@ -516,22 +518,24 @@ while exe_loop == None:
                 if backup_time not in t_list:
                     backup_row_list.append('%s' %brow)
                 else:
-                    tmatch_list = []
-                    tindex_list = []
-                    for indeces in dindex_list:
-                        tmatch = t_list[indeces]
-                        tmatch_list.append(tmatch)
-                        tindex = tmatch_list.index(indeces)
-                        tindex_list.append(tindex)
-                    if backup_time not in tmatch_list:
-                        backup_row_list.append('%s' %brow)
-                    else: #it is highly unlikely, but I suppose it may be possible that multiple postings could have the same date & time (quick note was made that took under a minute?). Either way, this can't hurt, right?
-                        nmatch_list = []
-                        for tindeces in t_list:
-                            nmatch = n_list[tindeces]
-                            nmatch_list.append(nmatch)
-                        if backup_note not in nmatch_list:
+                    if len(dindex_list) > 0:
+                        tmatch_list = []
+                        tindex_list = []
+                        for indeces in dindex_list:
+                            tmatch = t_list[indeces]
+                            tmatch_list.append(tmatch)
+                            tindex = tmatch_list.index(indeces)
+                            tindex_list.append(tindex)
+                        if backup_time not in tmatch_list:
                             backup_row_list.append('%s' %brow)
+                        else: #it is highly unlikely, but I suppose it may be possible that multiple postings could have the same date & time (quick note was made that took under a minute?). Either way, this can't hurt, right?
+                            if len(tindex_list) > 0:
+                                nmatch_list = []
+                                for tindeces in t_list:
+                                    nmatch = n_list[tindeces]
+                                    nmatch_list.append(nmatch)
+                                if backup_note not in nmatch_list:
+                                    backup_row_list.append('%s' %brow)   
 
         #log backup
         for backup_row in backup_row_list:
@@ -560,6 +564,31 @@ while exe_loop == None:
         wb_backup.close()
 
         print('\n-----\nThe system is successfully backed up!\n')
+
+        # now, include anything that is in the Box file in the local file so if using multiple computers, everything will be updated
+
+        #initialize the files
+        wb
+        ws
+        wb_backup
+        ws_backup
+
+        # using cloud file range
+        mrow = str(int(ws.max_row) + 1) 
+        zmrow = range(2, int(mrow))
+
+        # make local file equivalent to cloud file
+        for reverse_backup_row in zmrow:
+            ws_backup['A%s' %reverse_backup_row].value = ws['A%s' %reverse_backup_row].value
+            ws_backup['B%s' %reverse_backup_row].value = ws['B%s' %reverse_backup_row].value
+            ws_backup['C%s' %reverse_backup_row].value = ws['C%s' %reverse_backup_row].value
+            ws_backup['D%s' %reverse_backup_row].value = ws['D%s' %reverse_backup_row].value
+            ws_backup['E%s' %reverse_backup_row].value = ws['E%s' %reverse_backup_row].value
+            ws_backup['F%s' %reverse_backup_row].value = ws['F%s' %reverse_backup_row].value
+            ws_backup['G%s' %reverse_backup_row].value = ws['G%s' %reverse_backup_row].value
+            ws_backup['H%s' %reverse_backup_row].value = ws['H%s' %reverse_backup_row].value
+        
+        print('\n----\nLocal file successfully updated to match the cloud!\n')
 
     else:
         #re-establish max row

@@ -21,16 +21,46 @@ import xlsxwriter
 import PySimpleGUI27 as sg
 from PySimpleGUI27 import SetOptions
 
+## Run this script in terminal `python 'name'.py`
+## Everything is setup for Python version 2.7
+## If using different version of python, may need to update packages/commands
+
+## This script will open up an excel file, write the headers, and read the file
+## First, will return the projects which are active
+## --Choose by entering the corresponding number
+## Will be followed by confirmation (pretty much everything is)
+## --To confirm, enter 'y', or just hit 'Return'
+## Once a project is selected (or input), all of the project notes will be listed in the terminal window
+## Next, will return the tasks which are active
+## -- task selection is same process as project selection
+## NOTE: If type in a project or task name that is not active, this will re-activate the project/task
+## Once a task is selected (or added), all of the task notes will be listed in the terminal window
+## Also, a window will popup where project and task status can be updated, and notes can be added
+## When the window pops up, a timer will also start in the top bar (if the application 'Thyme' is installed)
+## If want to switch project or task, just click those selections when done
+## If you intended to change the project or task status, be sure to do that first!!
+## If you are done with the session, click Dunzo
+
+## No matter the selection, after the popup window is closed, if Box is connected, the system will automatically compare the documents and backup any new items to the backup file.
+## NOTE: This does mean that if running on separate computers, the logfiles on each computer coudl end up being slightly different.. but the backup will always hold all of the information.
+
+## After backing everything up, the loop will continue as specified, or will terminate and close everything out.
+
+
 # file parameters
+folder = '/Users/zcole/Documents/file_drawer/dev/'
+filex  = 'zptz.xlsx'
+
 try:
-    folder   = '/Users/zcole/Box/file_drawer/'
+    backup_folder = '/Users/zcole/Box/file_drawer/'
 except IOError:
-    print('\n* ***** *\nNOT CONNECTED TO BOX\n* ***** *\n')
-    folder   = '/Users/zcole/Documents/file_drawer/dev/'
+    print('\n* ***** *\nNOT CONNECTED TO BOX\n\nThis will not be backed up....yet\n* ***** *\n')
+    backup  = False
 else:
-    folder   = '/Users/zcole/Box/file_drawer/'
+    backup_folder = '/Users/zcole/Box/file_drawer/'
+    backup  = True
     
-filename     =  str(folder + 'zptz.xlsx')
+filename     = '%s%s' %(folder, filex)
 
 # thymer scripts
 open_thymer  = 'open -a Thyme'
@@ -43,7 +73,16 @@ date = datetime.today().strftime('%m/%d/%Y')
 time = datetime.today().strftime('%-H:%M')
 
 # activate project wb
-wb = load_workbook(filename)
+# this may seem a little backwards, but an afterthought led me here, and this is where we are now....
+if backup:
+    backup_file  = '%s%s' %(backup_folder, filex)
+    wb = load_workbook(backup_file)
+    wb_backup = load_workbook(filename)
+    ws_backup = wb_backup.active
+else:
+    wb = load_workbook(filename)
+
+# activate ws
 ws = wb.active
 
 # add headers
@@ -101,7 +140,7 @@ while exe_loop == None:
                     pjn_loop = None
                     while pjn_loop == None:
                         projyn = raw_input('New project? (y/n): ')
-                        if projyn == '':
+                        if (projyn == '') or (projyn == 'y'):
                             proj = raw_input('Project Name: ')
                             project_list.append(proj)
                             pjn_loop = 1
@@ -110,6 +149,7 @@ while exe_loop == None:
                             for zrow in zmrow:
                                 if ws['C%s' %zrow].value == proj:
                                     ws['D%s' %zrow].value = 'oo'
+                                    wb.save(filename)
 
                         elif projyn == 'n':
                             continue
@@ -119,7 +159,7 @@ while exe_loop == None:
             pl_loop = None
             while pl_loop == None:
                 proj_l = raw_input('%s? (y/n): ' %proj)
-                if proj_l == '':
+                if (proj_l == '') or (proj_l == 'y'):
                     proj_loop = 1
                     pl_loop = 1
                 elif proj_l == 'n':
@@ -180,10 +220,19 @@ while exe_loop == None:
                 tyn_loop = None
                 while tyn_loop == None:  
                     taskyn = raw_input('New task? (y/n): ')
-                    if taskyn == '':
+                    if (taskyn == '') or (taskyn == 'y'):
                         task = raw_input('Task Name: ')
                         task_list.append(task)
                         tyn_loop = 1
+
+                        #if a 'completed' task is being re-activated
+                        for zrow in zmrow:
+                            if ws['E%s' %zrow].value == task:
+                                if ws['C%s' %zrow].value == proj:
+                                    if ws['D%s' %zrow].value == 'oo':
+                                        ws['F%s' %zrow].value = 'oo'
+                                        wb.save(filename)
+
                     elif taskyn == 'n':
                         continue
                     else:
@@ -192,7 +241,7 @@ while exe_loop == None:
         tl_loop = None
         while tl_loop == None:
             task_l = raw_input('%s? (y/n): ' %task)
-            if task_l == '':
+            if (task_l == '') or (task_l == 'y'):
                 task_loop = 1
                 tl_loop = 1
             elif task_l == 'n':
@@ -303,20 +352,135 @@ while exe_loop == None:
 
     notes = p_values['notes']
 
-    mrow = mrow
+    # back it all up to the cloud by adding the missing input logs
+    # this whole thing might seem a little weird, but if we are backing up, the backup file will actually be the working documents file
+    if backup:
+        print('Evaporating to the cloud. . . ')
 
-    # log everything
-    ws['A%s' %mrow].value = date
-    ws['B%s' %mrow].value = time
-    ws['C%s' %mrow].value = proj
-    ws['D%s' %mrow].value = proj_status
-    ws['E%s' %mrow].value = task
-    ws['F%s' %mrow].value = task_status
-    ws['G%s' %mrow].value = times
-    ws['H%s' %mrow].value = notes
+        # activate local file
+        wb_backup
+        ws_backup
 
-    wb.save(filename)
-    wb.close()
+        backup_mrow = str(int(ws_backup.max_row) + 1)
+        backup_rows = range(2, int(backup_mrow))
+
+        # add headers
+        ws_backup['A1'].value = 'Date'
+        ws_backup['B1'].value = 'Time'
+        ws_backup['C1'].value = 'Project'
+        ws_backup['D1'].value = 'Project Status'
+        ws_backup['E1'].value = 'Task'
+        ws_backup['F1'].value = 'Task Status'
+        ws_backup['G1'].value = 'Task Time (secs)'
+        ws_backup['H1'].value = 'Notes'
+
+        # log data
+        ws_backup['A%s' %backup_mrow].value = date
+        ws_backup['B%s' %backup_mrow].value = time
+        ws_backup['C%s' %backup_mrow].value = proj
+        ws_backup['D%s' %backup_mrow].value = proj_status
+        ws_backup['E%s' %backup_mrow].value = task
+        ws_backup['F%s' %backup_mrow].value = task_status
+        ws_backup['G%s' %backup_mrow].value = times
+        ws_backup['H%s' %backup_mrow].value = notes
+
+        # save what is logged
+        wb_backup.save(backup_file)
+        wb_backup.close()
+
+        # if date and time are missing from backup folder, initiate backup
+        # HEADS UP: It feels backwards bc have to list items in backup, and compare them to the working file, but it is correct.
+        wb_backup
+        ws_backup
+
+        #list all dates and times
+        d_list = []
+        t_list = []
+        n_list = []
+        for dtnrow in zmrow:
+            d_list.append(ws['A%s' %dtnrow].value)
+            t_list.append(ws['B%s' %dtnrow].value)
+            n_list.append(ws['H%s' %dtnrow].value)
+
+        # get the rows to that need to be backed up
+        backup_row_list = []
+        for brow in backup_rows:
+            backup_date = ws_backup['A%s' %brow].value
+            backup_time = ws_backup['B%s' %brow].value
+            backup_note = ws_backup['H%s' %brow].value
+            if backup_date not in d_list:
+                backup_row_list.append('%s' %brow)
+            else: #if the date is in both lists
+                dindex_list = [] #it is possible to have multiple postings on same date
+                for backup_date in d_list:
+                    d_list_index = d_list.index(backup_date)
+                    dindex_list.append(d_list_index)
+                if backup_time not in t_list:
+                    backup_row_list.append('%s' %brow)
+                else:
+                    tmatch_list = []
+                    tindex_list = []
+                    for indeces in dindex_list:
+                        tmatch = t_list[indeces]
+                        tmatch_list.append(tmatch)
+                        tindex = tmatch_list.index(indeces)
+                        tindex_list.append(tindex)
+                    if backup_time not in tmatch_list:
+                        backup_row_list.append('%s' %brow)
+                    else: #it is highly unlikely, but I suppose it may be possible that multiple postings could have the same date & time (quick note was made that took under a minute?). Either way, this can't hurt, right?
+                        nmatch_list = []
+                        for tindeces in t_list:
+                            nmatch = n_list[tindeces]
+                            nmatch_list.append(nmatch)
+                        if backup_note not in nmatch_list:
+                            backup_row_list.append('%s' %brow)
+
+        #log backup
+        for backup_row in backup_row_list:
+            
+            # activate for loop
+            wb
+            ws
+            mrow
+
+            # log data
+            ws['A%s' %mrow].value = ws_backup['A%s' %backup_row].value #date
+            ws['B%s' %mrow].value = ws_backup['B%s' %backup_row].value #time
+            ws['C%s' %mrow].value = ws_backup['C%s' %backup_row].value #proj
+            ws['D%s' %mrow].value = ws_backup['D%s' %backup_row].value #proj_status
+            ws['E%s' %mrow].value = ws_backup['E%s' %backup_row].value #task
+            ws['F%s' %mrow].value = ws_backup['F%s' %backup_row].value #task_status
+            ws['G%s' %mrow].value = ws_backup['G%s' %backup_row].value #times
+            ws['H%s' %mrow].value = ws_backup['H%s' %backup_row].value #notes
+                
+            # save logged data
+            wb.save(backup_file)
+            wb.close()
+
+        #close it down
+        wb_backup.close()
+
+        print('\n-----\nThe system is successfully backed up!\n')
+
+    else:
+        #re-establish max row
+        mrow
+
+        # log everything
+        ws['A%s' %mrow].value = date
+        ws['B%s' %mrow].value = time
+        ws['C%s' %mrow].value = proj
+        ws['D%s' %mrow].value = proj_status
+        ws['E%s' %mrow].value = task
+        ws['F%s' %mrow].value = task_status
+        ws['G%s' %mrow].value = times
+        ws['H%s' %mrow].value = notes
+
+        #save logged data, close it down
+        wb.save(filename)
+        wb.close()
+        
+        print('\n-----\nCould not backup to Box... will do next time (if connected).\n')
 
     # loop action
     if p_event != 'Switch Project':

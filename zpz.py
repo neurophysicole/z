@@ -48,19 +48,35 @@ from PySimpleGUI27 import SetOptions
 
 
 # file parameters
-folder = '/Users/zcole/Documents/file_drawer/dev/'
-filex  = 'zptz.xlsx'
+local_folder = '/Users/zcole/Documents/file_drawer/dev/'
+local_file   = 'zptz_local.xlsx'
 
 try:
-    backup_folder = '/Users/zcole/Box/file_drawer/'
+    cloud_folder = '/Users/zcole/Box/file_drawer/'
 except IOError:
     print('\n* ***** *\nNOT CONNECTED TO BOX\n\nThis will not be backed up....yet\n* ***** *\n')
     backup  = False
 else:
-    backup_folder = '/Users/zcole/Box/file_drawer/'
+    cloud_folder = '/Users/zcole/Box/file_drawer/'
     backup  = True
     
-filename     = '%s%s' %(folder, filex)
+local_file = '%s%s' %(local_folder, local_file)
+
+wb_local = load_workbook(local_file)
+ws_local = wb_local.active
+
+# add headers
+ws_local['A1'].value = 'Date'
+ws_local['B1'].value = 'Time'
+ws_local['C1'].value = 'Project'
+ws_local['D1'].value = 'Project Status'
+ws_local['E1'].value = 'Task'
+ws_local['F1'].value = 'Task Status'
+ws_local['G1'].value = 'Task Time (secs)'
+ws_local['H1'].value = 'Notes'
+
+wb_local.save(local_file)
+wb_local.close()
 
 # thymer scripts
 open_thymer  = 'open -a Thyme'
@@ -75,127 +91,143 @@ time = datetime.today().strftime('%-H:%M')
 # activate project wb
 # this may seem a little backwards, but an afterthought led me here, and this is where we are now....
 if backup:
-    backup_file  = '%s%s' %(backup_folder, filex)
-    wb = load_workbook(backup_file)
-    wb_backup = load_workbook(filename)
-    ws_backup = wb_backup.active
-    ws = wb.active
+    cloud_file   = 'zptz_cloud.xlsx'
+    cloud_file  = '%s%s' %(cloud_folder, cloud_file)
+    wb_cloud = load_workbook(cloud_file)
+    ws_cloud = wb_cloud.active
+
+    #input headers
+    ws_cloud['A1'].value = 'Date'
+    ws_cloud['B1'].value = 'Time'
+    ws_cloud['C1'].value = 'Project'
+    ws_cloud['D1'].value = 'Project Status'
+    ws_cloud['E1'].value = 'Task'
+    ws_cloud['F1'].value = 'Task Status'
+    ws_cloud['G1'].value = 'Task Time (secs)'
+    ws_cloud['H1'].value = 'Notes'
+
+    # saveit
+    wb_cloud.save(cloud_file)
+    wb_cloud.close()
+
+    # reactivate files
+    wb_local
+    ws_local
+    wb_cloud
+    ws_cloud
 
     #run initial backup
     print('\n-----\nChecking the cloud to make sure we are up to date. . . ')
 
-    mrow = str(int(ws.max_row) + 1) 
+    mrow = str(int(ws_local.max_row) + 1) 
     zmrow = range(2, int(mrow))
-    backup_mrow = str(int(ws_backup.max_row) + 1)
-    backup_rows = range(2, int(backup_mrow))
-
-    # add headers
-    ws_backup['A1'].value = 'Date'
-    ws_backup['B1'].value = 'Time'
-    ws_backup['C1'].value = 'Project'
-    ws_backup['D1'].value = 'Project Status'
-    ws_backup['E1'].value = 'Task'
-    ws_backup['F1'].value = 'Task Status'
-    ws_backup['G1'].value = 'Task Time (secs)'
-    ws_backup['H1'].value = 'Notes'
+    mrow_cloud = str(int(ws_cloud.max_row) + 1)
+    cloud_rows = range(2, int(mrow_cloud))
 
     # if date and time are missing from backup folder, initiate backup
     # HEADS UP: It feels backwards bc have to list items in backup, and compare them to the working file, but it is correct.
 
-    #list all dates and times
-    d_list = []
-    t_list = []
-    n_list = []
-    for dtnrow in zmrow:
-        d_list.append(ws['A%s' %dtnrow].value)
-        t_list.append(ws['B%s' %dtnrow].value)
-        n_list.append(ws['H%s' %dtnrow].value)
+    #list all dates/times/notes in local doc
+    al_list = []
+    bl_list = []
+    cl_list = []
+    dl_list = []
+    el_list = []
+    fl_list = []
+    gl_list = []
+    hl_list = []
+    
+    for lrow in zmrow:
+        al_list.append(ws_local['A%s' %lrow].value)
+        bl_list.append(ws_local['B%s' %lrow].value)
+        cl_list.append(ws_local['C%s' %lrow].value)
+        dl_list.append(ws_local['D%s' %lrow].value)
+        el_list.append(ws_local['E%s' %lrow].value)
+        fl_list.append(ws_local['F%s' %lrow].value)
+        gl_list.append(ws_local['G%s' %lrow].value)
+        hl_list.append(ws_local['H%s' %lrow].value)
 
-    # get the rows to that need to be backed up
-    backup_row_list = []
-    for brow in backup_rows:
-        backup_date = ws_backup['A%s' %brow].value
-        backup_time = ws_backup['B%s' %brow].value
-        backup_note = ws_backup['H%s' %brow].value
-        if backup_date not in d_list:
-            backup_row_list.append('%s' %brow)
-        else: #if the date is in both lists
-            dindex_list = [] #it is possible to have multiple postings on same date
-            for backup_date in d_list:
-                d_list_index = d_list.index(backup_date)
-                dindex_list.append(d_list_index)
-            if backup_time not in t_list:
-                backup_row_list.append('%s' %brow)
-            else:
-                if len(dindex_list) > 0:
-                    tmatch_list = []
-                    tindex_list = []
-                    for indeces in dindex_list:
-                        tmatch = t_list[indeces]
-                        tmatch_list.append(tmatch)
-                        tindex = tmatch_list.index(indeces)
-                        tindex_list.append(tindex)
-                    if backup_time not in tmatch_list:
-                        backup_row_list.append('%s' %brow)
-                    else: #it is highly unlikely, but I suppose it may be possible that multiple postings could have the same date & time (quick note was made that took under a minute?). Either way, this can't hurt, right?
-                        if len(tindex_list) > 0:
-                            nmatch_list = []
-                            for tindeces in t_list:
-                                nmatch = n_list[tindeces]
-                                nmatch_list.append(nmatch)
-                            if backup_note not in nmatch_list:
-                                backup_row_list.append('%s' %brow)                    
+    local_list = [al_list, bl_list, cl_list, dl_list, el_list, fl_list, gl_list, hl_list]
 
-    #log backup
-    for backup_row in backup_row_list:
-        
-        # activate for loop
-        wb
-        ws
-        
-        mrow = str(int(ws.max_row) + 1) 
+    local_file_stuff = []
+    for local_row in range(0, len(al_list)):
+        local_row_list = []
+        for local_columns in local_list:
+            local_row_list.append(local_columns[local_row])
+        local_thing = '%s%s%s%s%s%s%s%s' %(local_row_list[0], local_row_list[1], local_row_list[2], local_row_list[3], local_row_list[4], local_row_list[5], local_row_list[6], local_row_list[7])
+        local_file_stuff.append(local_thing)
 
-        # log data
-        ws['A%s' %mrow].value = ws_backup['A%s' %backup_row].value #date
-        ws['B%s' %mrow].value = ws_backup['B%s' %backup_row].value #time
-        ws['C%s' %mrow].value = ws_backup['C%s' %backup_row].value #proj
-        ws['D%s' %mrow].value = ws_backup['D%s' %backup_row].value #proj_status
-        ws['E%s' %mrow].value = ws_backup['E%s' %backup_row].value #task
-        ws['F%s' %mrow].value = ws_backup['F%s' %backup_row].value #task_status
-        ws['G%s' %mrow].value = ws_backup['G%s' %backup_row].value #times
-        ws['H%s' %mrow].value = ws_backup['H%s' %backup_row].value #notes
+    # list all dates/times/notes in cloud doc
+    ac_list = []
+    bc_list = []
+    cc_list = []
+    dc_list = []
+    ec_list = []
+    fc_list = []
+    gc_list = []
+    hc_list = []
+
+    for crow in cloud_rows:
+        ac_list.append(ws_cloud['A%s' %crow].value)
+        bc_list.append(ws_cloud['B%s' %crow].value)
+        cc_list.append(ws_cloud['C%s' %crow].value)
+        dc_list.append(ws_cloud['D%s' %crow].value)
+        ec_list.append(ws_cloud['E%s' %crow].value)
+        fc_list.append(ws_cloud['F%s' %crow].value)
+        gc_list.append(ws_cloud['G%s' %crow].value)
+        hc_list.append(ws_cloud['H%s' %crow].value)
+
+    cloud_list = [ac_list, bc_list, cc_list, dc_list, ec_list, fc_list, gc_list, hc_list]
+
+    cloud_file_stuff = []
+    for cloud_row in range(0, len(ac_list)):
+        cloud_row_list = []
+        for cloud_columns in cloud_list:
+            cloud_row_list.append(cloud_columns[cloud_row])
+        cloud_thing = '%s%s%s%s%s%s%s%s' %(cloud_row_list[0], cloud_row_list[1], cloud_row_list[2], cloud_row_list[3], cloud_row_list[4], cloud_row_list[5], cloud_row_list[6], cloud_row_list[7])
+        cloud_file_stuff.append(cloud_thing)
+
+    for cloud_stuff in range(1, len(cloud_file_stuff)):
+        if cloud_file_stuff[cloud_stuff] not in local_file_stuff:
+
+            cloud_stuff += 2
+            str(cloud_stuff)
+
+            # activate for loop
+            wb_local
+            ws_local
+            wb_cloud
+            ws_cloud
             
-        # save logged data
-        wb.save(backup_file)
-        wb.close()
+            mrow = str(int(ws_local.max_row) + 1) 
 
+            # log data
+            ws_local['A%s' %mrow].value = ws_cloud['A%s' %cloud_stuff].value #date
+            ws_local['B%s' %mrow].value = ws_cloud['B%s' %cloud_stuff].value #time
+            ws_local['C%s' %mrow].value = ws_cloud['C%s' %cloud_stuff].value #proj
+            ws_local['D%s' %mrow].value = ws_cloud['D%s' %cloud_stuff].value #proj_status
+            ws_local['E%s' %mrow].value = ws_cloud['E%s' %cloud_stuff].value #task
+            ws_local['F%s' %mrow].value = ws_cloud['F%s' %cloud_stuff].value #task_status
+            ws_local['G%s' %mrow].value = ws_cloud['G%s' %cloud_stuff].value #times
+            ws_local['H%s' %mrow].value = ws_cloud['H%s' %cloud_stuff].value #notes
+                
+            # save logged data
+            wb_local.save(local_file)
+            wb_local.close()
+            wb_cloud.close()
+
+        else:
+            #reset
+            wb_cloud.close()
+            wb_local.close()
     #reset
-    wb_backup.close()
-
-    wb
-    ws
-    wb_backup
-    ws_backup
+    wb_cloud.close()
 
     print('\n-----\nThe system is up to date!\n')
 
 else:
     print('\n-----\n Not connected to the cloud....\n')
     
-    wb = load_workbook(filename)
-    ws = wb.active
-
-    # add headers
-    ws['A1'].value = 'Date'
-    ws['B1'].value = 'Time'
-    ws['C1'].value = 'Project'
-    ws['D1'].value = 'Project Status'
-    ws['E1'].value = 'Task'
-    ws['F1'].value = 'Task Status'
-    ws['G1'].value = 'Task Time (secs)'
-    ws['H1'].value = 'Notes'
-
-    wb.save(filename)
 
 # window
 SetOptions(background_color = 'black', element_background_color = 'black',
@@ -208,18 +240,18 @@ exe_loop = None
 ploop = None
 while exe_loop == None:
 
-    wb #opening up new wb at beginning to account for newtask loop
-    ws
+    wb_local #opening up new wb at beginning to account for newtask loop
+    ws_local
 
-    mrow  = str(int(ws.max_row) + 1) 
+    mrow = str(int(ws_local.max_row) + 1) 
     zmrow = range(2, int(mrow))
 
     #list projects
     project_list = []
     for zrow in zmrow:
-        if ws['D%s' %zrow].value == 'oo':
-            if ws['C%s' %zrow].value not in project_list:
-                project_list.append(ws['C%s' %zrow].value)  
+        if ws_local['D%s' %zrow].value == 'oo':
+            if ws_local['C%s' %zrow].value not in project_list:
+                project_list.append(ws_local['C%s' %zrow].value)  
 
     if ploop == None:
         print('\nProjects:')
@@ -247,9 +279,9 @@ while exe_loop == None:
 
                             #if a 'completed' project is being re-activated
                             for zrow in zmrow:
-                                if ws['C%s' %zrow].value == proj:
-                                    ws['D%s' %zrow].value = 'oo'
-                                    wb.save(filename)
+                                if ws_local['C%s' %zrow].value == proj:
+                                    ws_local['D%s' %zrow].value = 'oo'
+                                    wb_local.save(local_file)
 
                         elif projyn == 'n':
                             continue
@@ -275,10 +307,10 @@ while exe_loop == None:
     proj_datetime_list = []
     projnote_list = []
     for zrow in zmrow:
-        if ws['C%s' %zrow].value == proj:
-            projnote_cell = ws['H%s' %zrow].value
-            proj_task_cell = ws['E%s' %zrow].value
-            proj_datetime_cell = str('%s %s' %(ws['A%s' %zrow].value, ws['B%s' %zrow].value))
+        if ws_local['C%s' %zrow].value == proj:
+            projnote_cell = ws_local['H%s' %zrow].value
+            proj_task_cell = ws_local['E%s' %zrow].value
+            proj_datetime_cell = str('%s %s' %(ws_local['A%s' %zrow].value, ws_local['B%s' %zrow].value))
             proj_task_list.append(proj_task_cell)
             proj_datetime_list.append(proj_datetime_cell)
             projnote_list.append(projnote_cell)
@@ -297,10 +329,10 @@ while exe_loop == None:
     # list tasks
     task_list = []
     for zrow in zmrow:
-        if ws['C%s' %zrow].value == proj:
-            if ws['F%s' %zrow].value == 'oo':
-                if ws['E%s' %zrow].value not in task_list:
-                    task_list.append(ws['E%s' %zrow].value)
+        if ws_local['C%s' %zrow].value == proj:
+            if ws_local['F%s' %zrow].value == 'oo':
+                if ws_local['E%s' %zrow].value not in task_list:
+                    task_list.append(ws_local['E%s' %zrow].value)
 
     print('Tasks:')
     for tasks in task_list:
@@ -327,11 +359,11 @@ while exe_loop == None:
 
                         #if a 'completed' task is being re-activated
                         for zrow in zmrow:
-                            if ws['E%s' %zrow].value == task:
-                                if ws['C%s' %zrow].value == proj:
-                                    if ws['D%s' %zrow].value == 'oo':
-                                        ws['F%s' %zrow].value = 'oo'
-                                        wb.save(filename)
+                            if ws_local['E%s' %zrow].value == task:
+                                if ws_local['C%s' %zrow].value == proj:
+                                    if ws_local['D%s' %zrow].value == 'oo':
+                                        ws_local['F%s' %zrow].value = 'oo'
+                                        wb_local.save(local_file)
 
                     elif taskyn == 'n':
                         continue
@@ -354,10 +386,10 @@ while exe_loop == None:
     tasknote_list = []
     task_datetime_list = []
     for zrow in zmrow:
-        if ws['C%s' %zrow].value == proj:
-            if ws['E%s' %zrow].value == task:
-                tasknote_cell = ws['H%s' %zrow].value
-                task_datetime_cell = str('%s %s' %(ws['A%s' %zrow].value, ws['B%s' %zrow].value))
+        if ws_local['C%s' %zrow].value == proj:
+            if ws_local['E%s' %zrow].value == task:
+                tasknote_cell = ws_local['H%s' %zrow].value
+                task_datetime_cell = str('%s %s' %(ws_local['A%s' %zrow].value, ws_local['B%s' %zrow].value))
                 tasknote_list.append(tasknote_cell)
                 task_datetime_list.append(task_datetime_cell)
 
@@ -381,13 +413,13 @@ while exe_loop == None:
     task_mins = 0
     task_hours = 0
     for zrow in zmrow:
-        if ws['C%s' %zrow].value == proj:
-            ps = ws['G%s' %zrow].value
+        if ws_local['C%s' %zrow].value == proj:
+            ps = ws_local['G%s' %zrow].value
             if ps != None:
                 proj_s += int(ps)
 
-            if ws['E%s' %zrow].value == task:
-                ts = ws['G%s' %zrow].value
+            if ws_local['E%s' %zrow].value == task:
+                ts = ws_local['G%s' %zrow].value
                 if ts != None:
                     task_s += int(ts)
     
@@ -438,175 +470,165 @@ while exe_loop == None:
     else:
         proj_status = 'xx'
         for zrow in zmrow:
-            if ws['C%s' %zrow].value == proj:
-                ws['D%s' %zrow].value = proj_status
-                ws['F%s' %zrow].value = proj_status
+            if ws_local['C%s' %zrow].value == proj:
+                ws_local['D%s' %zrow].value = proj_status
+                ws_local['F%s' %zrow].value = proj_status
     
     if p_values['taskip'] == True:
         task_status = 'oo'
     else:
         task_status = 'xx'
         for zrow in zmrow:
-            if ws['E%s' %zrow].value == task:
-                ws['F%s' %zrow].value = task_status
+            if ws_local['E%s' %zrow].value == task:
+                ws_local['F%s' %zrow].value = task_status
 
     notes = p_values['notes']
+
+    # log local
+    mrow = str(int(ws_local.max_row) + 1) 
+
+    ws_local['A%s' %mrow].value = date
+    ws_local['B%s' %mrow].value = time
+    ws_local['C%s' %mrow].value = proj
+    ws_local['D%s' %mrow].value = proj_status
+    ws_local['E%s' %mrow].value = task
+    ws_local['F%s' %mrow].value = task_status
+    ws_local['G%s' %mrow].value = times
+    ws_local['H%s' %mrow].value = notes
+
+    #close it out
+    wb_local.save(local_file)
+    wb_local.close()
 
     # back it all up to the cloud by adding the missing input logs
     # this whole thing might seem a little weird, but if we are backing up, the backup file will actually be the working documents file
     if backup:
         print('\n-----\nEvaporating to the cloud. . . ')
 
-        # activate local file
-        wb_backup
-        ws_backup
-
-        backup_mrow = str(int(ws_backup.max_row) + 1)
-        backup_rows = range(2, int(backup_mrow))
-
-        # add headers
-        ws_backup['A1'].value = 'Date'
-        ws_backup['B1'].value = 'Time'
-        ws_backup['C1'].value = 'Project'
-        ws_backup['D1'].value = 'Project Status'
-        ws_backup['E1'].value = 'Task'
-        ws_backup['F1'].value = 'Task Status'
-        ws_backup['G1'].value = 'Task Time (secs)'
-        ws_backup['H1'].value = 'Notes'
-
-        # log data
-        ws_backup['A%s' %backup_mrow].value = date
-        ws_backup['B%s' %backup_mrow].value = time
-        ws_backup['C%s' %backup_mrow].value = proj
-        ws_backup['D%s' %backup_mrow].value = proj_status
-        ws_backup['E%s' %backup_mrow].value = task
-        ws_backup['F%s' %backup_mrow].value = task_status
-        ws_backup['G%s' %backup_mrow].value = times
-        ws_backup['H%s' %backup_mrow].value = notes
-
-        # save what is logged
-        wb_backup.save(backup_file)
-        wb_backup.close()
-
         # if date and time are missing from backup folder, initiate backup
         # HEADS UP: It feels backwards bc have to list items in backup, and compare them to the working file, but it is correct.
-        wb_backup
-        ws_backup
+        wb_local
+        ws_local
+        wb_cloud
+        ws_cloud
 
-        #list all dates and times
-        d_list = []
-        t_list = []
-        n_list = []
-        for dtnrow in zmrow:
-            d_list.append(ws['A%s' %dtnrow].value)
-            t_list.append(ws['B%s' %dtnrow].value)
-            n_list.append(ws['H%s' %dtnrow].value)
+        mrow = str(int(ws_local.max_row) + 1)
+        zmrow = range(2, int(mrow))
+        cloud_rows = range(2, int(mrow_cloud))
 
-        # get the rows to that need to be backed up
-        backup_row_list = []
-        for brow in backup_rows:
-            backup_date = ws_backup['A%s' %brow].value
-            backup_time = ws_backup['B%s' %brow].value
-            backup_note = ws_backup['H%s' %brow].value
-            if backup_date not in d_list:
-                backup_row_list.append('%s' %brow)
-            else: #if the date is in both lists
-                dindex_list = [] #it is possible to have multiple postings on same date
-                for backup_date in d_list:
-                    d_list_index = d_list.index(backup_date)
-                    dindex_list.append(d_list_index)
-                if backup_time not in t_list:
-                    backup_row_list.append('%s' %brow)
-                else:
-                    if len(dindex_list) > 0:
-                        tmatch_list = []
-                        tindex_list = []
-                        for indeces in dindex_list:
-                            tmatch = t_list[indeces]
-                            tmatch_list.append(tmatch)
-                            tindex = tmatch_list.index(indeces)
-                            tindex_list.append(tindex)
-                        if backup_time not in tmatch_list:
-                            backup_row_list.append('%s' %brow)
-                        else: #it is highly unlikely, but I suppose it may be possible that multiple postings could have the same date & time (quick note was made that took under a minute?). Either way, this can't hurt, right?
-                            if len(tindex_list) > 0:
-                                nmatch_list = []
-                                for tindeces in t_list:
-                                    nmatch = n_list[tindeces]
-                                    nmatch_list.append(nmatch)
-                                if backup_note not in nmatch_list:
-                                    backup_row_list.append('%s' %brow)   
+        #list all dates/times/notes in local doc
+        al_list = []
+        bl_list = []
+        cl_list = []
+        dl_list = []
+        el_list = []
+        fl_list = []
+        gl_list = []
+        hl_list = []
+        
+        for lrow in zmrow:
+            al_list.append(ws_local['A%s' %lrow].value)
+            bl_list.append(ws_local['B%s' %lrow].value)
+            cl_list.append(ws_local['C%s' %lrow].value)
+            dl_list.append(ws_local['D%s' %lrow].value)
+            el_list.append(ws_local['E%s' %lrow].value)
+            fl_list.append(ws_local['F%s' %lrow].value)
+            gl_list.append(ws_local['G%s' %lrow].value)
+            hl_list.append(ws_local['H%s' %lrow].value)
 
-        #log backup
-        for backup_row in backup_row_list:
-            
-            # activate for loop
-            wb
-            ws
+        local_list = [al_list, bl_list, cl_list, dl_list, el_list, fl_list, gl_list, hl_list]
 
-            mrow = str(int(ws.max_row) + 1) 
+        local_file_stuff = []
+        for local_row in range(0, len(al_list)):
+            local_row_list = []
+            for local_columns in local_list:
+                local_row_list.append(local_columns[local_row])
+            local_thing = '%s%s%s%s%s%s%s%s' %(local_row_list[0], local_row_list[1], local_row_list[2], local_row_list[3], local_row_list[4], local_row_list[5], local_row_list[6], local_row_list[7])
+            local_file_stuff.append(local_thing)
 
-            # log data
-            ws['A%s' %mrow].value = ws_backup['A%s' %backup_row].value #date
-            ws['B%s' %mrow].value = ws_backup['B%s' %backup_row].value #time
-            ws['C%s' %mrow].value = ws_backup['C%s' %backup_row].value #proj
-            ws['D%s' %mrow].value = ws_backup['D%s' %backup_row].value #proj_status
-            ws['E%s' %mrow].value = ws_backup['E%s' %backup_row].value #task
-            ws['F%s' %mrow].value = ws_backup['F%s' %backup_row].value #task_status
-            ws['G%s' %mrow].value = ws_backup['G%s' %backup_row].value #times
-            ws['H%s' %mrow].value = ws_backup['H%s' %backup_row].value #notes
+        # list all dates/times/notes in cloud doc
+        ac_list = []
+        bc_list = []
+        cc_list = []
+        dc_list = []
+        ec_list = []
+        fc_list = []
+        gc_list = []
+        hc_list = []
+
+        for crow in cloud_rows:
+            ac_list.append(ws_cloud['A%s' %crow].value)
+            bc_list.append(ws_cloud['B%s' %crow].value)
+            cc_list.append(ws_cloud['C%s' %crow].value)
+            dc_list.append(ws_cloud['D%s' %crow].value)
+            ec_list.append(ws_cloud['E%s' %crow].value)
+            fc_list.append(ws_cloud['F%s' %crow].value)
+            gc_list.append(ws_cloud['G%s' %crow].value)
+            hc_list.append(ws_cloud['H%s' %crow].value)
+
+        cloud_list = [ac_list, bc_list, cc_list, dc_list, ec_list, fc_list, gc_list, hc_list]
+
+        cloud_file_stuff = []
+        for cloud_row in range(0, len(ac_list)):
+            cloud_row_list = []
+            for cloud_columns in cloud_list:
+                cloud_row_list.append(cloud_columns[cloud_row])
+            cloud_thing = '%s%s%s%s%s%s%s%s' %(cloud_row_list[0], cloud_row_list[1], cloud_row_list[2], cloud_row_list[3], cloud_row_list[4], cloud_row_list[5], cloud_row_list[6], cloud_row_list[7])
+            cloud_file_stuff.append(cloud_thing)
+
+        for local_stuff in range(0, len(local_file_stuff)):
+            if local_file_stuff[local_stuff] not in cloud_file_stuff:
                 
-            # save logged data
-            wb.save(backup_file)
-            wb.close()
+                local_stuff += 2
 
-        #close it down
-        wb_backup.close()
+                str(local_stuff)
+
+                # activate for loop
+                wb_local
+                ws_local
+                wb_cloud
+                ws_cloud
+                
+                mrow_cloud = str(int(ws_cloud.max_row) + 1)
+
+                # log data
+                ws_cloud['A%s' %mrow_cloud].value = ws_local['A%s' %local_stuff].value #date
+                ws_cloud['B%s' %mrow_cloud].value = ws_local['B%s' %local_stuff].value #time
+                ws_cloud['C%s' %mrow_cloud].value = ws_local['C%s' %local_stuff].value #proj
+                ws_cloud['D%s' %mrow_cloud].value = ws_local['D%s' %local_stuff].value #proj_status
+                ws_cloud['E%s' %mrow_cloud].value = ws_local['E%s' %local_stuff].value #task
+                ws_cloud['F%s' %mrow_cloud].value = ws_local['F%s' %local_stuff].value #task_status
+                ws_cloud['G%s' %mrow_cloud].value = ws_local['G%s' %local_stuff].value #times
+                ws_cloud['H%s' %mrow_cloud].value = ws_local['H%s' %local_stuff].value #notes
+                    
+                # save logged data
+                wb_cloud.save(cloud_file)
+                wb_cloud.close()
+                wb_local.close()
+            else:
+                #reset
+                wb_cloud.close()
+                wb_local.close()
 
         print('\n-----\nThe system is successfully backed up!\n')
 
-        # now, include anything that is in the Box file in the local file so if using multiple computers, everything will be updated
-
-        #initialize the files
-        wb
-        ws
-        wb_backup
-        ws_backup
-
-        # using cloud file range
-        mrow = str(int(ws.max_row) + 1) 
-        zmrow = range(2, int(mrow))
-
-        # make local file equivalent to cloud file
-        for reverse_backup_row in zmrow:
-            ws_backup['A%s' %reverse_backup_row].value = ws['A%s' %reverse_backup_row].value
-            ws_backup['B%s' %reverse_backup_row].value = ws['B%s' %reverse_backup_row].value
-            ws_backup['C%s' %reverse_backup_row].value = ws['C%s' %reverse_backup_row].value
-            ws_backup['D%s' %reverse_backup_row].value = ws['D%s' %reverse_backup_row].value
-            ws_backup['E%s' %reverse_backup_row].value = ws['E%s' %reverse_backup_row].value
-            ws_backup['F%s' %reverse_backup_row].value = ws['F%s' %reverse_backup_row].value
-            ws_backup['G%s' %reverse_backup_row].value = ws['G%s' %reverse_backup_row].value
-            ws_backup['H%s' %reverse_backup_row].value = ws['H%s' %reverse_backup_row].value
-        
-        print('\n----\nLocal file successfully updated to match the cloud!\n')
-
     else:
         #re-establish max row
-        mrow = str(int(ws.max_row) + 1) 
+        mrow = str(int(ws_local.max_row) + 1) 
 
         # log everything
-        ws['A%s' %mrow].value = date
-        ws['B%s' %mrow].value = time
-        ws['C%s' %mrow].value = proj
-        ws['D%s' %mrow].value = proj_status
-        ws['E%s' %mrow].value = task
-        ws['F%s' %mrow].value = task_status
-        ws['G%s' %mrow].value = times
-        ws['H%s' %mrow].value = notes
+        ws_local['A%s' %mrow].value = date
+        ws_local['B%s' %mrow].value = time
+        ws_local['C%s' %mrow].value = proj
+        ws_local['D%s' %mrow].value = proj_status
+        ws_local['E%s' %mrow].value = task
+        ws_local['F%s' %mrow].value = task_status
+        ws_local['G%s' %mrow].value = times
+        ws_local['H%s' %mrow].value = notes
 
         #save logged data, close it down
-        wb.save(filename)
-        wb.close()
+        wb_local.save(local_file)
+        wb_local.close()
         
         print('\n-----\nCould not backup to Box... will do next time (if connected).\n')
 

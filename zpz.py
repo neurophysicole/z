@@ -320,7 +320,7 @@ while exe_loop == None:
         print('\n-------------------------\n-------------------------\n    START %s NOTES\n-------------------------\n-------------------------' %proj.upper())
         # get all the notes written out
         for projn in range(0, len(proj_datetime_list)):
-            project_note = str('\n->%s /-/ %s\n%s' %(proj_task_list[projn], proj_datetime_list[projn], projnote_list[projn]))
+            project_note = '\n->%s /-/ %s\n%s' %(proj_task_list[projn], proj_datetime_list[projn], projnote_list[projn])
             if project_note not in project_notes:
                 project_notes.append(project_note)
                 print(project_note)
@@ -633,13 +633,13 @@ while exe_loop == None:
         print('\n-----\nCould not backup to Box... will do next time (if connected).\n')
 
     # loop action
-    if p_event != 'Switch Project':
-        ploop = 1
-    else:
-        ploop = None
-
-    if (p_event != 'Switch Task') or (p_event == 'Dunzo'):
+    if p_event == 'Dunzo':
         exe_loop = 1
+    elif p_event == 'Switch Project':
+        continue
+    elif p_event == 'Switch Task':
+        ploop = 1
+        continue
 
 # logout
 exit()

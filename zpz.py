@@ -13,6 +13,8 @@ from dateutil.relativedelta import relativedelta
 from datetime import datetime, date, timedelta
 import os
 import sys
+reload(sys) #to help with seemingly random'ascii' encoding error
+sys.setdefaultencoding('utf8') # ^^ <--Pythong interpreter doesn't like it, but it works
 from collections import OrderedDict
 import pandas as pd
 from pandas import read_excel
@@ -29,7 +31,6 @@ from PySimpleGUI27 import SetOptions
 ## First, will return the projects which are active
 ## --Choose by entering the corresponding number
 ## Will be followed by confirmation (pretty much everything is)
-## --If you want to add a new project (or task, when you get there), just enter a number that is larger than the number of options that are available to choose from.
 ## --To confirm, enter 'y', or just hit 'Return'
 ## Once a project is selected (or input), all of the project notes will be listed in the terminal window
 ## Next, will return the tasks which are active

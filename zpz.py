@@ -55,6 +55,8 @@ from PySimpleGUI27 import SetOptions
 
 local_folder    = '/Users/zcole/Documents/file_drawer/dev/'
 local_filename  = 'zptz_local.xlsx'
+computer_name   = 'Oogway' #update this for each computer you use it on
+other_computer  = 'Donbot' #update this for each computer you use it on -- should be the name of the inactive computer
 
 try: #check to see if can access the Box folder
     cloud_folder = '/Users/zcole/Box/file_drawer/'
@@ -69,22 +71,29 @@ else:
 local_file = '%s%s' %(local_folder, local_filename)
 
 # load the file
-wb_local = load_workbook(local_file)
-ws_local = wb_local.active
+wb_local        = load_workbook(local_file)
+ws_local        = wb_local["Sheet1"]
+ws_local_rows   = wb_local["Sheet2"]
 
-# add headers
-ws_local['A1'].value = 'Date'
-ws_local['B1'].value = 'Time'
-ws_local['C1'].value = 'Project'
-ws_local['D1'].value = 'Project Status'
-ws_local['E1'].value = 'Task'
-ws_local['F1'].value = 'Task Status'
-ws_local['G1'].value = 'Task Time (secs)'
-ws_local['H1'].value = 'Notes'
+if ws_local['A1'].value == '':
+    # input headers -- sheet 2
+    ws_local['A1'].value = 'Date'
+    ws_local['B1'].value = 'Time'
+    ws_local['C1'].value = 'Project'
+    ws_local['D1'].value = 'Project Status'
+    ws_local['E1'].value = 'Task'
+    ws_local['F1'].value = 'Task Status'
+    ws_local['G1'].value = 'Task Time (secs)'
+    ws_local['H1'].value = 'Notes'
 
-# save it
-wb_local.save(local_file)
-wb_local.close()
+    # input headers -- sheet 1
+    ws_local_rows['A1'].value = 'rows'
+    ws_local_rows['A2'].value = 1 #number of rows in the cloud
+    ws_local_rows['B2'].value = 'Cloud'
+
+    # save it
+    wb_local.save(local_file)
+    wb_local.close()
 
 # thymer scripts
 open_thymer  = 'open -a Thyme'
@@ -114,154 +123,152 @@ if backup:
     cloud_filename  = 'zptz_cloud.xlsx'
     cloud_file      = '%s%s' %(cloud_folder, cloud_filename)
     wb_cloud        = load_workbook(cloud_file)
-    ws_cloud        = wb_cloud.active
+    ws_cloud        = wb_cloud["Sheet1"] #Data
+    ws_cloud_rows   = wb_cloud["Sheet2"] #RowCount
 
-    # input headers
-    ws_cloud['A1'].value = 'Date'
-    ws_cloud['B1'].value = 'Time'
-    ws_cloud['C1'].value = 'Project'
-    ws_cloud['D1'].value = 'Project Status'
-    ws_cloud['E1'].value = 'Task'
-    ws_cloud['F1'].value = 'Task Status'
-    ws_cloud['G1'].value = 'Task Time (secs)'
-    ws_cloud['H1'].value = 'Notes'
+    if ws_cloud['A1'].value == '': #this should essentially mean that it is the first time using the script.
+        # input headers -- sheet 1
+        ws_cloud['A1'].value = 'Date'
+        ws_cloud['B1'].value = 'Time'
+        ws_cloud['C1'].value = 'Project'
+        ws_cloud['D1'].value = 'Project Status'
+        ws_cloud['E1'].value = 'Task'
+        ws_cloud['F1'].value = 'Task Status'
+        ws_cloud['G1'].value = 'Task Time (secs)'
+        ws_cloud['H1'].value = 'Notes'
 
-    # save it and close it
-    wb_cloud.save(cloud_file)
-    wb_cloud.close()
+        # input headers - sheet 2
+        ws_cloud_rows['A1'].value = 'rows'
+        ws_cloud_rows['A2'].value = 1 #number of rows on the active local computer
+        ws_cloud_rows['A3'].value = 1 #number of rows on the inactive local computer
+        ws_cloud_rows['B2'].value = computer_name #logging computer name to keep track of which row number being used
+        ws_cloud_rows['B3'].value = other_computer #^
+
+        # save it and close it
+        wb_cloud.save(cloud_file)
+        wb_cloud.close()
 
 
-    #================================
-    # Collect Local File Information
-    #================================
+    #================================================================
+    # Push New Local Info to the Cloud (if necessary) and Vice Versa
+    #================================================================
+    # go through the local file info and save it to the cloud..
+    # also will go through cloud and save that to local file..
 
-    # reactivate files
+    # activate for loop
     wb_local
     ws_local
+    ws_local_rows
+
     wb_cloud
     ws_cloud
-
+    ws_cloud_rows
+    
     # setup max row
-    mrow        = str(int(ws_local.max_row) + 1) #local file - max row plus one for recording
-    zmrow       = range(2, int(mrow)) #range to search in cloud file
-    mrow_cloud  = str(int(ws_cloud.max_row) + 1) #cloud file - max row plus one for recording
-    zmrow_cloud = range(2, int(mrow_cloud)) #range to search in cloud file
+    mrow        = int(ws_local.max_row) #local file - max row plus one for recording
+    mrow_cloud  = int(ws_cloud.max_row) #cloud file - max row plus one for recording
 
-    # initialize lists
-    al_list = [] #date list
-    bl_list = [] #time list
-    cl_list = [] #project list
-    dl_list = [] #project status list
-    el_list = [] #task list
-    fl_list = [] #task status list
-    gl_list = [] #task time list
-    hl_list = [] #notes list
-    
-    # for each row, add info to corresponding lists
-    for lrow in zmrow:
-        al_list.append(ws_local['A%s' %lrow].value) #add to date list
-        bl_list.append(ws_local['B%s' %lrow].value) #add to time list
-        cl_list.append(ws_local['C%s' %lrow].value) #add to project list
-        dl_list.append(ws_local['D%s' %lrow].value) #add to project status list
-        el_list.append(ws_local['E%s' %lrow].value) #add to task list
-        fl_list.append(ws_local['F%s' %lrow].value) #add to task status list
-        gl_list.append(ws_local['G%s' %lrow].value) #add to task time list
-        hl_list.append(ws_local['H%s' %lrow].value) #add to notes list
+    cloud_rows_local = ws_local_rows['A2'].value #number of cloud rows in the local file last time it was saved
 
-    # concatenate lists so can iterate through
-    local_list = [al_list, bl_list, cl_list, dl_list, el_list, fl_list, gl_list, hl_list]
+    if ws_cloud_rows['B2'].value == computer_name:
+        local_rows_cloud = ws_cloud_rows['A2'].value #number of local rows in the cloud file last time it was saved
+    else: #the other computer was backed up last time..
+        local_rows_cloud = ws_cloud_rows['A3'].value #^^^
 
-    # collect all of the information in the file into one organized list
-    local_file_stuff = [] #everything from the local file
-    for local_row in range(0, len(al_list)): #iterate through the number of rows
-        local_row_list = [] #everything in each row
-        for local_columns in local_list: #iterate through each column
-            local_row_list.append(local_columns[local_row]) #add information from concerned cell into the row list
-        local_thing = '%s%s%s%s%s%s%s%s' %(local_row_list[0], local_row_list[1], local_row_list[2], local_row_list[3], local_row_list[4], local_row_list[5], local_row_list[6], local_row_list[7]) #put the info from each cell (or each column) together - iterating through the rows
-        local_file_stuff.append(local_thing) #add the concatenated info together
+    # difference between previous number of rows, and current number of rows
+    local_row_diff = int(mrow) - local_rows_cloud #did something change locally, but not get added to the cloud?
+    cloud_row_diff = int(mrow_cloud) - cloud_rows_local #did something change in the cloud, but not locally?
 
+    if (local_row_diff != 0) and (cloud_row_diff != 0): #if both changed (this would mean both were updated independently)
+        # update  = 'both' #both of the worksheets need to be updated
 
-    #================================
-    # Collect Cloud File Information
-    #================================
+        print('\n\n\nPushing to the cloud. . .\n\n\n')
 
-    # list all dates/times/notes in cloud doc
-    ac_list = [] #date list
-    bc_list = [] #time list
-    cc_list = [] #project list
-    dc_list = [] #project status list
-    ec_list = [] #task list
-    fc_list = [] #task status list
-    gc_list = [] #task time list
-    hc_list = [] #notes list
+        for d_row in range(1, local_row_diff): #cloud needs to be updated with local information
+            diffrow     = str(int(mrow) - d_row)
+            mrow_cloud  = str(int(ws_cloud.max_row) + 1) #cloud file - max row plus one for recording
+            ws_cloud['A%s' %mrow_cloud].value = ws_local['A%s' %diffrow].value
+            ws_cloud['B%s' %mrow_cloud].value = ws_local['B%s' %diffrow].value
+            ws_cloud['C%s' %mrow_cloud].value = ws_local['C%s' %diffrow].value
+            ws_cloud['D%s' %mrow_cloud].value = ws_local['D%s' %diffrow].value
+            ws_cloud['E%s' %mrow_cloud].value = ws_local['E%s' %diffrow].value
+            ws_cloud['F%s' %mrow_cloud].value = ws_local['F%s' %diffrow].value
+            ws_cloud['G%s' %mrow_cloud].value = ws_local['G%s' %diffrow].value
+            ws_cloud['H%s' %mrow_cloud].value = ws_local['H%s' %diffrow].value
 
-    # add info to lists
-    for crow in zmrow_cloud:
-        ac_list.append(ws_cloud['A%s' %crow].value) #date
-        bc_list.append(ws_cloud['B%s' %crow].value) #time
-        cc_list.append(ws_cloud['C%s' %crow].value) #project
-        dc_list.append(ws_cloud['D%s' %crow].value) #project status
-        ec_list.append(ws_cloud['E%s' %crow].value) #task
-        fc_list.append(ws_cloud['F%s' %crow].value) #task status
-        gc_list.append(ws_cloud['G%s' %crow].value) #task time
-        hc_list.append(ws_cloud['H%s' %crow].value) #notes
-
-    # concatenate list
-    cloud_list = [ac_list, bc_list, cc_list, dc_list, ec_list, fc_list, gc_list, hc_list]
-
-    # collect all of the information in the file into one list
-    # this is all the same as the loop used for the local file
-    cloud_file_stuff = []
-    for cloud_row in range(0, len(ac_list)):
-        cloud_row_list = []
-        for cloud_columns in cloud_list:
-            cloud_row_list.append(cloud_columns[cloud_row])
-        cloud_thing = '%s%s%s%s%s%s%s%s' %(cloud_row_list[0], cloud_row_list[1], cloud_row_list[2], cloud_row_list[3], cloud_row_list[4], cloud_row_list[5], cloud_row_list[6], cloud_row_list[7])
-        cloud_file_stuff.append(cloud_thing)
-    
-    # save it
-    wb_local.close()
-    wb_cloud.close()
-
-    # push to the cloud
-    print('\n-----\nPushing to the cloud..')
-    
-
-    #=================================================
-    # Push New Local Info to the Cloud (if necessary)
-    #=================================================
-    # go through the local file info and save it to the cloud
-    for local_stuff in range(1, len(local_file_stuff)):
-        if local_file_stuff[local_stuff] not in cloud_file_stuff:
-
-            # activate for loop
-            wb_local
-            ws_local
-            wb_cloud
-            ws_cloud
-            
-            mrow_cloud  = str(int(ws_cloud.max_row) + 1) #add to the end of the file
-            str(local_stuff) #so it can be a cell indicator (below)
-
-            # log data
-            ws_cloud['A%s' %mrow_cloud].value = ws_local['A%s' %local_stuff].value #date
-            ws_cloud['B%s' %mrow_cloud].value = ws_local['B%s' %local_stuff].value #time
-            ws_cloud['C%s' %mrow_cloud].value = ws_local['C%s' %local_stuff].value #proj
-            ws_cloud['D%s' %mrow_cloud].value = ws_local['D%s' %local_stuff].value #proj_status
-            ws_cloud['E%s' %mrow_cloud].value = ws_local['E%s' %local_stuff].value #task
-            ws_cloud['F%s' %mrow_cloud].value = ws_local['F%s' %local_stuff].value #task_status
-            ws_cloud['G%s' %mrow_cloud].value = ws_local['G%s' %local_stuff].value #times
-            ws_cloud['H%s' %mrow_cloud].value = ws_local['H%s' %local_stuff].value #notes
-                
-            # save logged data
+            # save it
+            wb_local.save(local_file)
             wb_cloud.save(cloud_file)
-            wb_cloud.close()
-            wb_local.close()
 
-        else: #if there isn't anything in the local file that is not already in the cloud file
-            #reset
-            wb_cloud.close()
-            wb_local.close()
+        print('\n\n\nPrecipitating from cloud. . .\n\n\n')
+
+        for d_row in range(1, cloud_row_diff): #local needs to be updated with cloud information
+            diffrow = str(int(mrow_cloud) - d_row - local_row_diff)
+            mrow    = str(int(ws_local.max_row) + 1) #local file - max row plus one for recording
+            ws_local['A%s' %mrow].value = ws_cloud['A%s' %diffrow].value
+            ws_local['B%s' %mrow].value = ws_cloud['B%s' %diffrow].value
+            ws_local['C%s' %mrow].value = ws_cloud['C%s' %diffrow].value
+            ws_local['D%s' %mrow].value = ws_cloud['D%s' %diffrow].value
+            ws_local['E%s' %mrow].value = ws_cloud['E%s' %diffrow].value
+            ws_local['F%s' %mrow].value = ws_cloud['F%s' %diffrow].value
+            ws_local['G%s' %mrow].value = ws_cloud['G%s' %diffrow].value
+            ws_local['H%s' %mrow].value = ws_cloud['H%s' %diffrow].value
+
+            # save it
+            wb_local.save(local_file)
+            wb_cloud.save(cloud_file)
+
+    elif (local_row_diff != 0) and (cloud_row_diff == 0): #just the local sheet needs to be updated with the cloud information
+
+        print('\n\n\nPrecipitating from cloud. . .\n\n\n')
+
+        for d_row in range(1, cloud_row_diff): #local needs to be updated with cloud information
+            diffrow = str(int(mrow_cloud) - d_row)
+            mrow    = str(int(ws_local.max_row) + 1) #local file - max row plus one for recording
+            ws_local['A%s' %mrow].value = ws_cloud['A%s' %diffrow].value
+            ws_local['B%s' %mrow].value = ws_cloud['B%s' %diffrow].value
+            ws_local['C%s' %mrow].value = ws_cloud['C%s' %diffrow].value
+            ws_local['D%s' %mrow].value = ws_cloud['D%s' %diffrow].value
+            ws_local['E%s' %mrow].value = ws_cloud['E%s' %diffrow].value
+            ws_local['F%s' %mrow].value = ws_cloud['F%s' %diffrow].value
+            ws_local['G%s' %mrow].value = ws_cloud['G%s' %diffrow].value
+            ws_local['H%s' %mrow].value = ws_cloud['H%s' %diffrow].value
+
+            # save it
+            wb_local.save(local_file)
+            wb_cloud.save(cloud_file)
+
+    elif (local_row_diff == 0) and (cloud_row_diff != 0): #just the cloud sheet needs to be updated with the local information
+
+        print('\n\n\nEvaporating to cloud. . . \n\n\n')
+
+        for d_row in range(1, cloud_row_diff): #cloud needs to be updated with local information
+            diffrow = str(int(mrow) - d_row)
+            mrow_cloud  = str(int(ws_cloud.max_row) + 1) #cloud file - max row plus one for recording
+            ws_cloud['A%s' %mrow_cloud].value = ws_local['A%s' %diffrow].value
+            ws_cloud['B%s' %mrow_cloud].value = ws_local['B%s' %diffrow].value
+            ws_cloud['C%s' %mrow_cloud].value = ws_local['C%s' %diffrow].value
+            ws_cloud['D%s' %mrow_cloud].value = ws_local['D%s' %diffrow].value
+            ws_cloud['E%s' %mrow_cloud].value = ws_local['E%s' %diffrow].value
+            ws_cloud['F%s' %mrow_cloud].value = ws_local['F%s' %diffrow].value
+            ws_cloud['G%s' %mrow_cloud].value = ws_local['G%s' %diffrow].value
+            ws_cloud['H%s' %mrow_cloud].value = ws_local['H%s' %diffrow].value
+
+            # save it
+            wb_local.save(local_file)
+            wb_cloud.save(cloud_file)
+
+    elif (local_row_diff == 0) and (cloud_row_diff == 0): #no changes since last time
+        print('\nNo need to backup. The cloud file is the same as the local file.')
+
+    else:
+        print('WARNING: Impossible changes option...')
+
+    # save it
+    wb_local.save(local_file)
+    wb_local.close()
+    wb_cloud.save(cloud_file)
+    wb_cloud.close()
 
 
     #==================================================
@@ -311,10 +318,10 @@ if backup:
     wb_cloud.close()
    
     # the cloud is now up to date
-    print('\n-----\nThe cloud is updated.')
+    print('\n\n\nThe cloud is updated.\n\n\n')
 
     # pull all from the cloud
-    print('\n-----\nChecking the cloud to make sure we are up to date. . . ')
+    print('\n\n\nPulling from cloud. . . \n\n\n')
 
     
     #================================
@@ -349,10 +356,10 @@ if backup:
     wb_cloud.close()
 
     # Data Pulled from the Cloud
-    print('\n-----\nThe system is up to date!\n')
+    print('\n\n\nThe system is up to date!\n\n\n')
 
 else: #if cannot backup to the cloud for some reason
-    print('\n-----\n Not connected to the cloud....\n')
+    print('\n\n\n Not connected to the cloud....\n\n\n')
     
 
 #============================
@@ -720,22 +727,78 @@ while exe_loop == None:
     wb_local.save(local_file)
     wb_local.close()
 
+
+    #============
+    # Log Backup
+    #============
+
     # back it all up to the cloud by adding the missing input logs
     # this whole thing might seem a little weird, but if we are backing up, the backup file will actually be the working documents file
     if backup:
-        print('\n-----\nEvaporating to the cloud. . . ')
+        print('\n-----\nEvaporating to the cloud. . . \n\n\n')
 
-        # log cloud
-        mrow_cloud = str(int(ws_cloud.max_row) + 1) 
+        # just copy everything over to the cloud
+        wb_cloud
+        wb_local
+        ws_cloud
+        ws_local
 
-        ws_cloud['A%s' %mrow_cloud].value = date
-        ws_cloud['B%s' %mrow_cloud].value = time
-        ws_cloud['C%s' %mrow_cloud].value = proj
-        ws_cloud['D%s' %mrow_cloud].value = proj_status
-        ws_cloud['E%s' %mrow_cloud].value = task
-        ws_cloud['F%s' %mrow_cloud].value = task_status
-        ws_cloud['G%s' %mrow_cloud].value = times
-        ws_cloud['H%s' %mrow_cloud].value = notes
+        # max rows
+        mrow = int(ws_local.max_row) + 1
+        zmrow = range(2, mrow)
+
+        # copy the local information directly to the cloud
+        for zrow in zmrow:
+            ws_cloud['A%s' %zrow].value = ws_local['A%s' %zrow].value #date
+            ws_cloud['B%s' %zrow].value = ws_local['B%s' %zrow].value #time
+            ws_cloud['C%s' %zrow].value = ws_local['C%s' %zrow].value #project
+            ws_cloud['D%s' %zrow].value = ws_local['D%s' %zrow].value #project status
+            ws_cloud['E%s' %zrow].value = ws_local['E%s' %zrow].value #task
+            ws_cloud['F%s' %zrow].value = ws_local['F%s' %zrow].value #task status
+            ws_cloud['G%s' %zrow].value = ws_local['G%s' %zrow].value #time
+            ws_cloud['H%s' %zrow].value = ws_local['H%s' %zrow].value #notes
+
+        # save it!
+        wb_local.save(local_file)
+        wb_local.close()
+        wb_cloud.save(cloud_file)
+        wb_cloud.close()
+
+        # now calculate max rows
+        # just copy everything over to the cloud
+        wb_local
+        ws_local
+        ws_local_rows
+
+        wb_cloud
+        ws_cloud
+        ws_cloud_rows
+
+        # max rows
+        mrow = int(ws_local.max_row)
+        mrow_cloud = int(ws_cloud.max_row)
+
+        # calculate the number of rows that are different
+        if ws_cloud_rows['B2'].value == computer_name: #if the local computer was updated last time
+            local_inactive_rows_local = ws_cloud_rows['A3'].value #number of local rows in the inactive document last time it was updated
+        else: #if a different computer was updated last time
+            local_inactive_rows_local = ws_cloud_rows['A2'].value #number of local rows in the active document last time it was updated
+
+        wb_local
+        ws_local
+        ws_local_rows
+
+        ws_local_rows['A2'].value = zrow #number of rows in the cloud
+        ws_local_rows['A5'].value = 17
+
+        wb_cloud
+        ws_cloud
+        ws_cloud_rows
+        
+        ws_cloud_rows['A2'].value = zrow #number of rows on the active local computer
+        ws_cloud_rows['A3'].value = local_inactive_rows_local #number of rows on the inactive local computer
+        ws_cloud_rows['B2'].value = computer_name
+        ws_cloud_rows['B3'].value = other_computer
 
         #close it out
         wb_cloud.save(cloud_file)

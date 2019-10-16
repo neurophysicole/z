@@ -785,7 +785,6 @@ while exe_loop == None:
             local_inactive_rows_local = ws_cloud_rows['A2'].value #number of local rows in the active document last time it was updated
 
         ws_local_rows['A2'].value = zrow #number of rows in the cloud
-        ws_local_rows['A5'].value = 17
         
         ws_cloud_rows['A2'].value = zrow #number of rows on the active local computer
         ws_cloud_rows['A3'].value = local_inactive_rows_local #number of rows on the inactive local computer

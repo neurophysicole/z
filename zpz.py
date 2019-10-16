@@ -784,16 +784,8 @@ while exe_loop == None:
         else: #if a different computer was updated last time
             local_inactive_rows_local = ws_cloud_rows['A2'].value #number of local rows in the active document last time it was updated
 
-        wb_local
-        ws_local
-        ws_local_rows
-
         ws_local_rows['A2'].value = zrow #number of rows in the cloud
         ws_local_rows['A5'].value = 17
-
-        wb_cloud
-        ws_cloud
-        ws_cloud_rows
         
         ws_cloud_rows['A2'].value = zrow #number of rows on the active local computer
         ws_cloud_rows['A3'].value = local_inactive_rows_local #number of rows on the inactive local computer
@@ -801,6 +793,8 @@ while exe_loop == None:
         ws_cloud_rows['B3'].value = other_computer
 
         #close it out
+        wb_local.save(local_file)
+        wb_local.close()
         wb_cloud.save(cloud_file)
         wb_cloud.close()
 

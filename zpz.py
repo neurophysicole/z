@@ -53,18 +53,18 @@ from PySimpleGUI27 import SetOptions
 # local file parameters
 #=======================
 
-local_folder    = '/Users/zcole/Documents/file_drawer/dev/'
+local_folder    = '/Users/zjcole/Documents/file_drawer/dev/'
 local_filename  = 'zptz_local.xlsx'
-computer_name   = 'Oogway' #update this for each computer you use it on
-other_computer  = 'Donbot' #update this for each computer you use it on -- should be the name of the inactive computer
+computer_name   = 'Donbot' #update this for each computer you use it on
+other_computer  = 'Oogway' #update this for each computer you use it on -- should be the name of the inactive computer
 
 try: #check to see if can access the Box folder
-    cloud_folder = '/Users/zcole/Box/file_drawer/'
+    cloud_folder = '/Users/zjcole/Box/file_drawer/'
 except IOError: #in case can't connect to Box
     print('\n* ***** *\nNOT CONNECTED TO BOX\n\nThis will not be backed up....yet\n* ***** *\n')
     backup  = False #can't backup tp Box
 else:
-    cloud_folder = '/Users/zcole/Box/file_drawer/'
+    cloud_folder = '/Users/zjcole/Box/file_drawer/'
     backup  = True #backup
 
 # setup local file   

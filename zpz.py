@@ -76,7 +76,7 @@ ws_local        = wb_local["Sheet1"]
 ws_local_rows   = wb_local["Sheet2"]
 
 # would be nice to have a more prominent indicator of the beginning of this session
-print('\n====================\n\n====================\n\n~---* NEW SESH *---~\n\n====================\n\n====================\n\n')
+print('\n==============================\n\n==============================\n\n     ~---* NEW SESH *---~\n\n==============================\n\n==============================\n\n')
 
 if ws_local['A1'].value == '':
     # input headers -- sheet 2

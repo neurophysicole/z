@@ -14,7 +14,7 @@ from datetime import datetime, date, timedelta
 import os
 import sys
 reload(sys) #to help with seemingly random'ascii' encoding error
-sys.setdefaultencoding('utf8') # ^^ <--Pythong interpreter doesn't like it, but it works
+sys.setdefaultencoding('utf8') # ^^ <--Python interpreter doesn't like it, but it works
 from collections import OrderedDict
 import pandas as pd
 from pandas import read_excel
@@ -60,11 +60,15 @@ other_computer  = 'Oogway' #update this for each computer you use it on -- shoul
 
 try: #check to see if can access the Box folder
     cloud_folder = '/Users/zjcole/Box/file_drawer/'
+    cloud_filename  = 'zptz_cloud.xlsx'
+    cloud_file      = '%s%s' %(cloud_folder, cloud_filename)
 except IOError: #in case can't connect to Box
     print('\n* ***** *\nNOT CONNECTED TO BOX\n\nThis will not be backed up....yet\n* ***** *\n')
     backup  = False #can't backup tp Box
 else:
     cloud_folder = '/Users/zjcole/Box/file_drawer/'
+    cloud_filename  = 'zptz_cloud.xlsx'
+    cloud_file      = '%s%s' %(cloud_folder, cloud_filename)
     backup  = True #backup
 
 # setup local file   
@@ -123,8 +127,6 @@ if backup:
     #========================
 
     # open the workbook
-    cloud_filename  = 'zptz_cloud.xlsx'
-    cloud_file      = '%s%s' %(cloud_folder, cloud_filename)
     wb_cloud        = load_workbook(cloud_file)
     ws_cloud        = wb_cloud["Sheet1"] #Data
     ws_cloud_rows   = wb_cloud["Sheet2"] #RowCount

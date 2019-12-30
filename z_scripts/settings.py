@@ -7,7 +7,7 @@ def settings():
     from datetime import datetime, date, timedelta
 
     # determine the paths
-    laptop_path = '/Users/zcole/Documents/z'
+    laptop_path = '/Users/zcole/Documents/file_drawer/dev/z'
     imac_path   = '/Users/zjcole/Documents/z'
 
     # set the path to use

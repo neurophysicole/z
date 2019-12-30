@@ -20,7 +20,7 @@ def cloud_update(main_dir, backup_dir, branch, logfile):
     
     local_proj_list = next(os.walk(local_proj_path))[1]
     if os.path.isdir(cloud_proj_path):
-        print('Ckecing %s' %branch)
+        print('Ckecking %s' %branch)
     else: #there is no branch dir in the cloud
         print('\nGrowing the new %s branch in the cloud.\n' %branch)
         os.system('mkdir %s/%s' %(backup_dir, branch))

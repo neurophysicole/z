@@ -1,0 +1,2 @@
+def loadup():
+    print('Z')

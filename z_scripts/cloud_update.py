@@ -1,4 +1,4 @@
-def cloud_update(main_dir, backup_dir, segment, logfile):
+def cloud_update(main_dir, backup_dir, branch, logfile):
     # import packages
     import os
     import sys
@@ -15,17 +15,17 @@ def cloud_update(main_dir, backup_dir, segment, logfile):
     # see if the project list file is the same locally and on the cloud
 
     # create lists
-    local_proj_path = '%s/%s' %(main_dir, segment)
-    cloud_proj_path = '%s/%s' %(backup_dir, segment)
+    local_proj_path = '%s/%s' %(main_dir, branch)
+    cloud_proj_path = '%s/%s' %(backup_dir, branch)
     
     local_proj_list = next(os.walk(local_proj_path))[1]
     if os.path.isdir(cloud_proj_path):
-        print('Ckecing %s' %segment)
-    else: #there is no segment dir in the cloud
-        print('\nGrowing the new %s branch in the cloud.\n' %segment)
-        os.system('mkdir %s/%s' %(backup_dir, segment))
-        cloud_segment_log = open('%s/%s/log.txt' %(backup_dir, segment), 'w')
-        cloud_segment_log.close()
+        print('Ckecing %s' %branch)
+    else: #there is no branch dir in the cloud
+        print('\nGrowing the new %s branch in the cloud.\n' %branch)
+        os.system('mkdir %s/%s' %(backup_dir, branch))
+        cloud_branch_log = open('%s/%s/log.txt' %(backup_dir, branch), 'w')
+        cloud_branch_log.close()
 
     cloud_proj_list = next(os.walk(cloud_proj_path))[1]
 
@@ -80,13 +80,13 @@ def cloud_update(main_dir, backup_dir, segment, logfile):
         for proj in local_proj_list:
             if proj not in cloud_proj_list:
                 print('\nEvaporating ** %s ** project file to the cloud.\n' %proj)
-                os.system('cp -a -v %s/%s/%s %s/%s' %(main_dir, segment, proj, backup_dir, segment))
+                os.system('cp -a -v %s/%s/%s %s/%s' %(main_dir, branch, proj, backup_dir, branch))
             else: #project is already updated
                 print('\nProject ** %s ** is up to date in the cloud.\n' %proj)
 
             # task lists
-            local_task_path = '%s/%s/%s' %(main_dir, segment, proj)
-            cloud_task_path = '%s/%s/%s' %(backup_dir, segment, proj)
+            local_task_path = '%s/%s/%s' %(main_dir, branch, proj)
+            cloud_task_path = '%s/%s/%s' %(backup_dir, branch, proj)
 
             local_task_list = next(os.walk(local_task_path))[1]
             cloud_task_list = next(os.walk(cloud_task_path))[1]
@@ -97,8 +97,8 @@ def cloud_update(main_dir, backup_dir, segment, logfile):
 
             # log update
             # ----------
-            local_proj_log  = '%s/%s/%s/%s' %(main_dir, segment, proj, logfile)
-            cloud_proj_log  = '%s/%s/%s/%s' %(backup_dir, segment, proj, logfile)
+            local_proj_log  = '%s/%s/%s/%s' %(main_dir, branch, proj, logfile)
+            cloud_proj_log  = '%s/%s/%s/%s' %(backup_dir, branch, proj, logfile)
 
             local_proj_log  = open(local_proj_log, 'a+')
             local_proj_log  = local_proj_log.read()
@@ -128,14 +128,14 @@ def cloud_update(main_dir, backup_dir, segment, logfile):
                 for task in local_task_list:
                     if task not in cloud_task_list:
                         print('Project: %s.\nEvaporating ** %s ** task file to the cloud.\n' %(proj, task))
-                        os.system('cp -a -v %s/%s/%s/%s %s/%s/%s' %(main_dir, segment, proj, task, backup_dir, segment, proj))
+                        os.system('cp -a -v %s/%s/%s/%s %s/%s/%s' %(main_dir, branch, proj, task, backup_dir, branch, proj))
                     else: #the task is already updated
                         print('\nTask ** %s ** in Project ** %s ** is up to date in the cloud.\n' %(task, proj))
         
 
                     # note list
-                    local_note_path = '%s/%s/%s/%s' %(main_dir, segment, proj, task)
-                    cloud_note_path = '%s/%s/%s/%s' %(backup_dir, segment, proj, task)
+                    local_note_path = '%s/%s/%s/%s' %(main_dir, branch, proj, task)
+                    cloud_note_path = '%s/%s/%s/%s' %(backup_dir, branch, proj, task)
 
                     local_note_list = next(os.walk(local_note_path))[1]
                     cloud_note_list = next(os.walk(cloud_note_path))[1]
@@ -153,7 +153,7 @@ def cloud_update(main_dir, backup_dir, segment, logfile):
                         for note in local_note_list:
                             if note not in cloud_note_list:
                                 print('Project: %s. Task: %s.\nEvaporating ** %s ** note file to the cloud.\n' %(proj, task, note))
-                                os.system('cp -a -v %s/%s/%s/%s/%s %s/%s/%s/%s' %(main_dir, segment, proj, task, note, backup_dir, segment, proj, note))
+                                os.system('cp -a -v %s/%s/%s/%s/%s %s/%s/%s/%s' %(main_dir, branch, proj, task, note, backup_dir, branch, proj, note))
                             else: # the note is already updated
                                 print('\nNote ** %s ** in Task ** %s ** in Project ** %s ** is up to date in the cloud.\n' %(note, task, proj))
 
@@ -163,13 +163,13 @@ def cloud_update(main_dir, backup_dir, segment, logfile):
         for proj in cloud_proj_list:
             if proj not in local_proj_list:
                 print('Precipitating ** %s ** project files from the cloud.' %proj)
-                os.system('cp -a -v %s/%s/%s %s/%s' %(backup_dir, segment, proj, main_dir, proj))
+                os.system('cp -a -v %s/%s/%s %s/%s' %(backup_dir, branch, proj, main_dir, proj))
             else: #project is already updated
                 print('\nProject ** %s ** is up to date on the computer.\n' %proj)
             
             # task lists
-            local_task_path = '%s/%s/%s' %(main_dir, segment, proj)
-            cloud_task_path = '%s/%s/%s' %(backup_dir, segment, proj)
+            local_task_path = '%s/%s/%s' %(main_dir, branch, proj)
+            cloud_task_path = '%s/%s/%s' %(backup_dir, branch, proj)
 
             local_task_list = next(os.walk(local_task_path))[1]
             cloud_task_list = next(os.walk(cloud_task_path))[1]
@@ -187,14 +187,14 @@ def cloud_update(main_dir, backup_dir, segment, logfile):
                 for task in cloud_task_list:
                     if task not in local_task_list:
                         print('Project: %s.\nPrecipitating ** %s ** task file from the cloud.\n' %(proj, task))
-                        os.system('cp -a -v %s/%s/%s/%s %s/%s/%s' %(backup_dir, segment, proj, task, main_dir, segment, proj))
+                        os.system('cp -a -v %s/%s/%s/%s %s/%s/%s' %(backup_dir, branch, proj, task, main_dir, branch, proj))
 
                     else: #the task is already updated
                         print('\nTask ** %s ** in Project ** %s ** is up to date on the computer.\n' %(task, proj))
 
                     # note list
-                    local_note_path = '%s/%s/%s/%s' %(main_dir, segment, proj, task)
-                    cloud_note_path = '%s/%s/%s/%s' %(backup_dir, segment, proj, task)
+                    local_note_path = '%s/%s/%s/%s' %(main_dir, branch, proj, task)
+                    cloud_note_path = '%s/%s/%s/%s' %(backup_dir, branch, proj, task)
 
                     local_note_list = next(os.walk(local_note_path))[2]
                     cloud_note_list = next(os.walk(cloud_note_path))[2]
@@ -212,6 +212,6 @@ def cloud_update(main_dir, backup_dir, segment, logfile):
                         for note in cloud_note_list:
                             if note not in local_note_list:
                                 print('Project: %s. Task: %s.\nPrecipitating ** %s ** note file from the cloud.\n' %(proj, task, note))
-                                os.system('cp -a -v %s/%s/%s/%s/%s %s/%s/%s/%s' %(backup_dir, segment, proj, task, note, main_dir, segment, proj, note))
+                                os.system('cp -a -v %s/%s/%s/%s/%s %s/%s/%s/%s' %(backup_dir, branch, proj, task, note, main_dir, branch, proj, note))
                             else: # the note is already updated
                                 print('\nNote ** %s ** in Task ** %s ** in Project ** %s ** is up to date in the cloud.\n' %(note, task, proj))

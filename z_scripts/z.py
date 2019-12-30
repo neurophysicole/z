@@ -1,11 +1,11 @@
 #!/Library/Frameworks/Python.framework/Versions/2.7/bin/python
 
 # Folder Structure
-# Z -> Settings ~ [Segment]
+# Z -> Settings ~ [branch]
 #   Settings -> _settings
-#   [Segment] -> _log
+#   [branch] -> _log
 
-#   [Segment] -> [Project Folder] (i.e., ARC)
+#   [branch] -> [Project Folder] (i.e., ARC)
 #       [Project folder] -> Active
 #           Active -> [Task folder] (i.e., task_script)
 #               [Task folder] -> [Task file] (i.e., 19_12_26_2320)
@@ -59,7 +59,7 @@ logfile = 'log.txt'
 loadup.loadup()
 
 # load settings
-backup, main_dir, backup_dir, cur_segment_name = settings.settings()
+backup, main_dir, backup_dir, cur_branch_name = settings.settings()
 
 # -------
 # Loopit
@@ -67,7 +67,7 @@ exe_loop = True
 while exe_loop:
     # check the cloud
     if backup:
-        cloud_update.cloud_update(main_dir, backup_dir, cur_segment_name, logfile) #main dir, backup dir, segment, logfile name
+        cloud_update.cloud_update(main_dir, backup_dir, cur_branch_name, logfile) #main dir, backup dir, branch, logfile name
     else: #no cloud access
         print('\nNot Connected to the Internet.\n')
 
@@ -76,7 +76,7 @@ while exe_loop:
     # Determine To-Do's
     # ==================
     # projects
-    proj_path   = '%s/%s' %(main_dir, cur_segment_name)
+    proj_path   = '%s/%s' %(main_dir, cur_branch_name)
     proj_list   = next(os.walk(proj_path))[1]
 
     # list projects
@@ -171,7 +171,7 @@ while exe_loop:
     # ---------------
     # check the cloud
     if backup:
-        cloud_update.cloud_update(main_dir, backup_dir, cur_segment_name, logfile)
+        cloud_update.cloud_update(main_dir, backup_dir, cur_branch_name, logfile)
     else: #no cloud access
         print('\nNot able to backup because not connected to the Cloud.\n')
 

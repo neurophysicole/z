@@ -3,7 +3,7 @@ def cloud_update(main_dir, backup_dir, segment, logfile):
     import os
     import sys
     reload(sys) #to help with seemingly random'ascii' encoding error
-    sys.setdefaultencoding('utf8') # ^^ <--Pythong interpreter doesn't like it, but it works
+    sys.setdefaultencoding('utf8') # ^^ <--Python interpreter doesn't like it, but it works
 
     # check for projects, then check for tasks within each project
     print('Checking the local and cloud files for asymmetries..')
@@ -19,7 +19,16 @@ def cloud_update(main_dir, backup_dir, segment, logfile):
     cloud_proj_path = '%s/%s' %(backup_dir, segment)
     
     local_proj_list = next(os.walk(local_proj_path))[1]
+    if os.path.isdir(cloud_proj_path):
+        print('Ckecing %s' %segment)
+    else: #there is no segment dir in the cloud
+        print('\nGrowing the new %s branch in the cloud.\n' %segment)
+        os.system('mkdir %s/%s' %(backup_dir, segment))
+        cloud_segment_log = open('%s/%s/log.txt' %(backup_dir, segment), 'w')
+        cloud_segment_log.close()
+
     cloud_proj_list = next(os.walk(cloud_proj_path))[1]
+
 
     # compare lists
     proj_status     = set(local_proj_list) == set(cloud_proj_list)

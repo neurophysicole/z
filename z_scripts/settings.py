@@ -112,7 +112,7 @@ def settings():
                     os.system('mv -v -f %s/%s/%s %s/%s' %(main_dir, old_branch_name, seg_proj, main_dir, cur_branch_name))
 
             elif confirm_renew == 'n': #renewal not accepted
-                print('\n!Aborting renewal. Current branch: %s! If this isn\'t right, you might have to restart and update it correctly; or just go into the \'settings.txt\' file and update the segmeent information manually.' %cur_branch_name)
+                print('\n!Aborting renewal. Current branch: %s! If this isn\'t right, you might have to restart and update it correctly; or just go into the \'settings.txt\' file and update the branch information manually.' %cur_branch_name)
 
                 confirm_renew_loop = False
 

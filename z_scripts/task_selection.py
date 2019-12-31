@@ -1,17 +1,9 @@
-def task_selection(proj_path, proj_name):
+def task_selection(archive_task_list, task_path, task_name, task_list, proj_path, proj_name):
     # import command line packages
     import os
     import sys
     reload(sys) #to help with seemingly random'ascii' encoding error
     sys.setdefaultencoding('utf8') # ^^ <--Pythong interpreter doesn't like it, but it works
-
-    # get the task
-    task_path = '%s/%s' %(proj_path, proj_name)
-    task_list = next(os.walk(task_path))[1]
-    task_list.remove('archive') #remove archive selection from task list
-    # archive task list
-    archive_task_path = '%s/archive' %task_path
-    archive_task_list = next(os.walk(archive_task_path))[1]
 
     # select the task
     # ---------------
@@ -91,5 +83,3 @@ def task_selection(proj_path, proj_name):
 
                     else: #wtf
                         print('\nThat don\'t make no sense. Try again.\n')
-
-    return archive_task_list, task_path, task_name, task_list

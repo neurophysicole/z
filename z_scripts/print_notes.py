@@ -1,6 +1,16 @@
-def print_notes(archive_task_list, proj_path, proj_name, task_path, task_name, task_list):
+def print_proj_notes(proj_path, proj_name):
+    # printing all of the project notes before selecting the task could help inform of what needs to be worked on..
+    
     # import command line packages
     import os
+
+    # get the task
+    task_path = '%s/%s' %(proj_path, proj_name)
+    task_list = next(os.walk(task_path))[1]
+    task_list.remove('archive') #remove archive selection from task list
+    # archive task list
+    archive_task_path = '%s/archive' %task_path
+    archive_task_list = next(os.walk(archive_task_path))[1]
 
     # list all proj notes
     # archive notes
@@ -26,6 +36,13 @@ def print_notes(archive_task_list, proj_path, proj_name, task_path, task_name, t
             tasknote_contents = tasknote.read()
             print('\n> %s\n -- %s\n%s\n' %(task, note, tasknote_contents))
             tasknote.close()
+
+    return task_path, task_list, archive_task_list
+
+
+def print_task_notes(task_path, task_name):
+    # import command line packages
+    import os
 
     # current task notes
     print('\n\n-------------------\n-------------------\n\n%s NOTES\n\n' %task_name.upper())

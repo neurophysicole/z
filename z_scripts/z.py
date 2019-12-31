@@ -45,8 +45,9 @@ import loadup
 import settings
 import cloud_update
 import jobber
+from print_notes import print_proj_notes
 import task_selection
-import print_notes
+from print_notes import print_task_notes
 import task_interface
 import logit
 
@@ -99,15 +100,18 @@ while exe_loop:
     # ==========
     task_loop = True
     while task_loop:
+        # print all project notes
+        task_path, task_list, archive_task_list = print_notes.print_proj_notes(proj_path, proj_name)
+
         # run task selection module
-        archive_task_list, task_path, task_name, task_list = task_selection.task_selection(proj_path, proj_name)
+        task_name = task_selection.task_selection(archive_task_list, task_path, task_list, proj_path, proj_name)
 
 
         # ===========
         # List Notes
         # ===========
         # run notes module
-        print_notes.print_notes(archive_task_list, proj_path, proj_name, task_path, task_name, task_list)
+        print_notes.print_task_notes(archive_task_list, proj_path, proj_name, task_path, task_name, task_list)
 
         # ===============
         # Task Interface

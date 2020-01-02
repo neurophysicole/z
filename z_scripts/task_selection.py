@@ -1,4 +1,4 @@
-def task_selection(archive_task_list, task_path, task_name, task_list, proj_path, proj_name):
+def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name):
     # import command line packages
     import os
     import sys
@@ -83,3 +83,5 @@ def task_selection(archive_task_list, task_path, task_name, task_list, proj_path
 
                     else: #wtf
                         print('\nThat don\'t make no sense. Try again.\n')
+    
+    return task_name

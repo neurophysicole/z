@@ -29,7 +29,8 @@ def settings():
     # num_lines = sum(1 for line in open(settings_list))
      
     # date
-    date = datetime.today().strftime('%m-%d-%Y')
+    date        = datetime.today().date()
+    date_format = '%m.%d.%Y'
 
     # ======================
     # Get Branch Variables
@@ -39,11 +40,13 @@ def settings():
         # current branch
         # find the start
         if settings_list[line] == 'CURRENT BRANCH START':
-            cur_branch_start   = settings_list[(line + 1)]
+            cur_branch_start    = settings_list[(line + 1)]
+            cur_branch_start    = datetime.strptime(cur_branch_start, date_format).date()
 
         # find the end
         elif settings_list[line] == 'CURRENT BRANCH END':
-            cur_branch_end     = settings_list[(line + 1)]
+            cur_branch_end      = settings_list[(line + 1)]
+            cur_branch_end      = datetime.strptime(cur_branch_end, date_format).date()
 
         # get the branch name
         elif settings_list[line] == 'CURRENT BRANCH NAME':
@@ -52,11 +55,13 @@ def settings():
         # next branch
         # get the branch name
         elif settings_list[line] == 'NEXT BRANCH START':
-            next_branch_start  = settings_list[(line + 1)]
+            next_branch_start   = settings_list[(line + 1)]
+            next_branch_start   = datetime.strptime(next_branch_start, date_format).date()
 
         # find the end
         elif settings_list[line] == 'NEXT BRANCH END':
-            next_branch_end    = settings_list[(line + 1)]
+            next_branch_end     = settings_list[(line + 1)]
+            next_branch_end     = datetime.strptime(next_branch_end, date_format).date()
 
         # get the branch name
         elif settings_list[line] == 'NEXT BRANCH NAME':

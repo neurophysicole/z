@@ -26,12 +26,11 @@ def jobber(proj_list, proj_path, main_dir):
             search.search(main_dir)
             
             print('Done.')
-            
+        
             job_loop = False
-
             proj_name = 'SEARCH'
-
             break
+        
         elif job <= len(proj_list): #pick a project
             # get the project name
             proj_name = proj_list[(job - 1)]

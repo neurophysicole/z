@@ -80,17 +80,17 @@ while exe_loop:
     proj_path   = '%s/%s' %(main_dir, cur_branch_name)
     proj_list   = next(os.walk(proj_path))[1]
 
-    # list projects
-    print('\nProjects:')
-    for projects in proj_list:
-        print('(%s) %s' %((proj_list.index(projects) + 1), projects))
+    job_loop = True
+    while job_loop:
+        # list projects
+        print('\nProjects:')
+        for projects in proj_list:
+            print('(%s) %s' %((proj_list.index(projects) + 1), projects))
     
 
     # ===========
     # Select Job
     # ===========
-    job_loop = True
-    while job_loop:
         # run job selection module
         proj_name = jobber.jobber(proj_list, proj_path, main_dir)
         
@@ -103,11 +103,13 @@ while exe_loop:
                 if (keep_working == 'y') or (keep_working == ''):
                     keep_working_loop = False
                 elif keep_working == 'n':
-                    keep_working_loop = False
-                    break
+                    exit()
                 else: #wtf
                     print('\nThat don\'t make no sense! Try again.\n')
-
+            #if going to do something else, need to restart back at the beginning of the loop
+            if (keep_working == 'y') or (keep_working == ''):
+                continue
+            
         # ==========
         # Task Loop
         # ==========

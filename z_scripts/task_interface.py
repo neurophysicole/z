@@ -36,36 +36,16 @@ def task_interface(proj_name, task_name, proj_path):
     # project
     proj_timing_file    = open('%s/%s/time_on_task.txt' %(proj_path, proj_name), 'r')
     proj_time           = int(proj_timing_file.read())
-    proj_time_h         = proj_time/3600
-    # can't divide by 0
-    if proj_time_h < 1:
-        proj_time_h_m = 1
-    else:
-        proj_time_h_m = proj_time_h
-    proj_time_m         = (proj_time/60)/proj_time_h_m
-
-    if proj_time_h <= 0:
-        proj_time_h = 0
-    if proj_time_m <= 0:
-        proj_time_m = 0
+    proj_time_h         = proj_time / 3600
+    proj_time_m         = (proj_time - (proj_time_h * 3600)) / 60
 
     proj_time_total     = 'Hours %i: Minutes %i' %(proj_time_h, proj_time_m)
 
     # task
     task_timing_file    = open('%s/%s/%s/time_on_task.txt' %(proj_path, proj_name, task_name), 'r')
     task_time           = int(task_timing_file.read())
-    task_time_h         = task_time/3600
-    # can't divide by 0
-    if task_time_h < 1:
-        task_time_h_m = 1
-    else:
-        task_time_h_m = task_time_h
-    task_time_m         = (task_time/60)/task_time_h_m
-
-    if task_time_h <= 0:
-        task_time_h = 0
-    if task_time_m <= 0:
-        task_time_m = 0
+    task_time_h         = task_time / 3600
+    task_time_m         = (task_time - (task_time_h * 3600)) / 60
 
     task_time_total     = 'Hours %i: Minutes %i' %(task_time_h, task_time_m)
 

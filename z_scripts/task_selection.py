@@ -27,8 +27,10 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
                 continue
             else:
                 task_input_loop = False
+        if task == 0:
+            task_name = 'new_jobber'
 
-        if (task) <= len(task_list):
+        if task <= len(task_list):
             task_name = task_list[(task - 1)]
         
             # confirm the task

@@ -89,88 +89,107 @@ while exe_loop:
     # ===========
     # Select Job
     # ===========
-    # run job selection module
-    proj_name = jobber.jobber(proj_list, proj_path, main_dir)
-    
-    if proj_name == 'SEARCH':
-        break
-
-    # ==========
-    # Task Loop
-    # ==========
-    task_loop = True
-    while task_loop:
-        # print all project notes
-        task_path, task_list, archive_task_list = print_notes.print_proj_notes(proj_path, proj_name)
-
-        # run task selection module
-        task_name = task_selection.task_selection(archive_task_list, task_path, task_list, proj_path, proj_name)
-
-
-        # ===========
-        # List Notes
-        # ===========
-        # run notes module
-        print_notes.print_task_notes(archive_task_list, proj_path, proj_name, task_path, task_name, task_list)
-
-        # ===============
-        # Task Interface
-        # ===============
-        # run task interface module
-        # do work!
-        z_event, time, task_end, notes, time_s, proj_time = task_interface.task_interface(proj_name, task_name, proj_path)
-
+    job_loop = True
+    while job_loop:
+        # run job selection module
+        proj_name = jobber.jobber(proj_list, proj_path, main_dir)
+        
+        if proj_name == 'SEARCH':
+            #do something else?
+            keep_working_loop = True
+            while keep_working_loop:
+                keep_working = raw_input('\nOK, is there something else that you would like to work on? (y/n): ')
+                
+                if (keep_working == 'y') or (keep_working == ''):
+                    keep_working_loop = False
+                elif keep_working == 'n':
+                    break
+                    keep_working_loop = False
+                else: #wtf
+                    print('\nThat don\'t make no sense! Try again.\n')
 
         # ==========
-        # Follow-up
+        # Task Loop
         # ==========
-        # in some instances, do a follow-up to determine if should keep working or shut it down
-        follow_up_loop = True
-        while follow_up_loop:
-            # move completed project/task to archive folder
-            if z_event == 'Project Complete':
-                # move project to archive folder
-                os.system('mv -v -f %s/%s %s/archive' %(proj_path, proj_name, main_dir))
-            elif z_event == 'Task Complete':
-                # move task to archive folder
-                os.system('mv -v -f %s/%s %s/archive' %(task_path, task_name, task_path))
+        task_loop = True
+        while task_loop:
+            # print all project notes
+            task_path, task_list, archive_task_list = print_notes.print_proj_notes(proj_path, proj_name)
 
-            # working on a new task?  
-            follow_up = raw_input('\nKeep working? (y/n):  ')
-            if (follow_up == '') or (follow_up == 'y'): #want to keep working
-                follow_up_what_loop = True
-                while follow_up_what_loop:
-                    if z_event == 'Project Complete': #switch project
-                        task_loop           = False
-                        follow_up_loop      = False
-                        follow_up_what_loop = False
-                    else: #what to do?
-                        follow_up_what = raw_input('Same project? (y/n):  ')
-                        if (follow_up_what == '') or (follow_up_what == 'y'): #don't switch projects
-                            follow_up_loop      = False
-                            follow_up_what_loop = False
+            # run task selection module
+            task_name = task_selection.task_selection(archive_task_list, task_path, task_list, proj_path, proj_name)
 
-                        elif follow_up_what == 'n': #switch project
+            # determine if we need to go back to switch projects (searching through)
+            if task_name == 'new_jobber':
+                task_loop = False
+                continue
+            else:
+                job_loop = False
+
+            # ===========
+            # List Notes
+            # ===========
+            # run notes module
+            print_notes.print_task_notes(archive_task_list, proj_path, proj_name, task_path, task_name, task_list)
+
+            # ===============
+            # Task Interface
+            # ===============
+            # run task interface module
+            # do work!
+            z_event, time, task_end, notes, time_s, proj_time = task_interface.task_interface(proj_name, task_name, proj_path)
+
+
+            # ==========
+            # Follow-up
+            # ==========
+            # in some instances, do a follow-up to determine if should keep working or shut it down
+            follow_up_loop = True
+            while follow_up_loop:
+                # move completed project/task to archive folder
+                if z_event == 'Project Complete':
+                    # move project to archive folder
+                    os.system('mv -v -f %s/%s %s/archive' %(proj_path, proj_name, main_dir))
+                elif z_event == 'Task Complete':
+                    # move task to archive folder
+                    os.system('mv -v -f %s/%s %s/archive' %(task_path, task_name, task_path))
+
+                # working on a new task?  
+                follow_up = raw_input('\nKeep working? (y/n):  ')
+                if (follow_up == '') or (follow_up == 'y'): #want to keep working
+                    follow_up_what_loop = True
+                    while follow_up_what_loop:
+                        if z_event == 'Project Complete': #switch project
                             task_loop           = False
                             follow_up_loop      = False
                             follow_up_what_loop = False
+                        else: #what to do?
+                            follow_up_what = raw_input('Same project? (y/n):  ')
+                            if (follow_up_what == '') or (follow_up_what == 'y'): #don't switch projects
+                                follow_up_loop      = False
+                                follow_up_what_loop = False
 
-                        else: #wtf
-                            print('\nWait. That don\'t make no sense. Try again.\n')
+                            elif follow_up_what == 'n': #switch project
+                                task_loop           = False
+                                follow_up_loop      = False
+                                follow_up_what_loop = False
 
-            elif follow_up == 'n': #done with the sesh
-                exe_loop        = False
-                task_loop       = False
-                follow_up_loop  = False
-            else: #wtf
-                print('\nWait. That don\'t make no sense. Try again.\n')
+                            else: #wtf
+                                print('\nWait. That don\'t make no sense. Try again.\n')
+
+                elif follow_up == 'n': #done with the sesh
+                    exe_loop        = False
+                    task_loop       = False
+                    follow_up_loop  = False
+                else: #wtf
+                    print('\nWait. That don\'t make no sense. Try again.\n')
 
 
-        # ==============
-        # Log Responses
-        # ==============
-        # run logit module
-        logit.logit(proj_path, proj_name, task_path, task_name, time, task_end, notes, time_s, proj_time, z_event, main_dir)
+            # ==============
+            # Log Responses
+            # ==============
+            # run logit module
+            logit.logit(proj_path, proj_name, task_path, task_name, time, task_end, notes, time_s, proj_time, z_event, main_dir)
 
     # ---------------
     # check the cloud

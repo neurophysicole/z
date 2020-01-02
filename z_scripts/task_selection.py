@@ -22,7 +22,7 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
         task_input_loop = True
         while task_input_loop:
             try:
-                task = int(raw_input('\nTask? (Number):  '))
+                task = int(raw_input('\nTask?\nTo return to project selection, enter\'0\', otherwise, enter a number:  '))
             except ValueError:
                 continue
             else:

@@ -103,8 +103,8 @@ while exe_loop:
                 if (keep_working == 'y') or (keep_working == ''):
                     keep_working_loop = False
                 elif keep_working == 'n':
-                    break
                     keep_working_loop = False
+                    break
                 else: #wtf
                     print('\nThat don\'t make no sense! Try again.\n')
 
@@ -114,7 +114,7 @@ while exe_loop:
         task_loop = True
         while task_loop:
             # print all project notes
-            task_path, task_list, archive_task_list = print_notes.print_proj_notes(proj_path, proj_name)
+            task_path, task_list, archive_task_list = print_proj_notes(proj_path, proj_name)
 
             # run task selection module
             task_name = task_selection.task_selection(archive_task_list, task_path, task_list, proj_path, proj_name)
@@ -130,7 +130,7 @@ while exe_loop:
             # List Notes
             # ===========
             # run notes module
-            print_notes.print_task_notes(archive_task_list, proj_path, proj_name, task_path, task_name, task_list)
+            print_task_notes(task_path, task_name)
 
             # ===============
             # Task Interface

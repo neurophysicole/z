@@ -1,16 +1,11 @@
-def logit(proj_path, proj_name, task_path, task_name, time, task_end, notes, time_s, proj_time, z_event, main_dir):
+def logit(proj_path, proj_name, task_path, task_name, time, notes, time_s, z_event, main_dir, logfile):
     # import date/time packages
     import datetime
-    from datetime import datetime, date, timedelta
+    from datetime import datetime, date
     
-    # import command line packages
-    import os
-    import sys
-    reload(sys) #to help with seemingly random'ascii' encoding error
-    sys.setdefaultencoding('utf8') # ^^ <--Python interpreter doesn't like it, but it works
-
     # get the date (year first)
     date = datetime.today().strftime('%Y-%m-%d')
+    time = datetime.today().strftime('%-H:%M')
 
     # log task notes
     task_fname      = '%s_%s' %(date, time_s)
@@ -31,16 +26,16 @@ def logit(proj_path, proj_name, task_path, task_name, time, task_end, notes, tim
     task_note_file.write(notes)
     task_note_file.close()
 
-    log = '%s\t%s\t%s\t%s\n' %(task_fname, proj_name, task_name, time_s)
+    log = '%s\t%s\t%s\t%s\t%s\n' %(date, time, proj_name, task_name, time_s)
 
     # update project log
-    proj_log_fname  = '%s/log.txt' %(task_log_dir)
+    proj_log_fname  = '%s/%s' %(task_log_dir, logfile)
     proj_log_file   = open(proj_log_fname, 'a+')
     proj_log_file.write(log)
     proj_log_file.close()
     
     #update master log
-    master_log_fname    = '%s/log.txt' %proj_path
+    master_log_fname    = '%s/%s' %(proj_path, logfile)
     master_log_file     = open(master_log_fname, 'a+')
     master_log_file.write(log)
     proj_log_file.close()

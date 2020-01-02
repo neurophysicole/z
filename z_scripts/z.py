@@ -191,7 +191,7 @@ while exe_loop:
             # Log Responses
             # ==============
             # run logit module
-            logit.logit(proj_path, proj_name, task_path, task_name, time, task_end, notes, time_s, proj_time, z_event, main_dir)
+            logit.logit(proj_path, proj_name, task_path, task_name, time, notes, time_s, z_event, main_dir, logfile)
 
     # ---------------
     # check the cloud

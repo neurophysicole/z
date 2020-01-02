@@ -12,7 +12,7 @@ def search(main_dir):
 
         print('\nSearching. . .')
         main_dir_list = next(os.walk('%s' %main_dir))[1]
-        main_dir_list.remove('z_pydev')
+        main_dir_list.remove('z_scripts')
         for top_level_dir in main_dir_list: #main dir
             if top_level_dir != 'settings':
                 proj_dir_list = next(os.walk('%s/%s' %(main_dir, top_level_dir)))[1]

@@ -139,7 +139,7 @@ while exe_loop:
             # ===============
             # run task interface module
             # do work!
-            z_event, time, task_end, notes, time_s, proj_time = task_interface.task_interface(proj_name, task_name, proj_path)
+            z_event, task_start, task_end, notes, time_s, proj_time = task_interface.task_interface(proj_name, task_name, proj_path)
 
 
             # ==========
@@ -191,7 +191,7 @@ while exe_loop:
             # Log Responses
             # ==============
             # run logit module
-            logit.logit(proj_path, proj_name, task_path, task_name, time, notes, time_s, z_event, main_dir, logfile)
+            logit.logit(proj_path, proj_name, task_path, task_name, task_start, task_end, notes, time_s, z_event, main_dir, logfile)
 
     # ---------------
     # check the cloud

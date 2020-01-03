@@ -1,14 +1,13 @@
-def logit(proj_path, proj_name, task_path, task_name, time, notes, time_s, z_event, main_dir, logfile):
+def logit(proj_path, proj_name, task_path, task_name, task_start, task_end, notes, time_s, z_event, main_dir, logfile):
     # import date/time packages
     import datetime
     from datetime import datetime, date
     
     # get the date (year first)
     date = datetime.today().strftime('%Y-%m-%d')
-    time = datetime.today().strftime('%-H:%M')
 
     # log task notes
-    task_fname      = '%s_%s' %(date, time_s)
+    task_fname      = '%s_%s-%s' %(date, task_start, task_end)
 
     # if close task, need to save the current notes to the archive folder
     if z_event == 'Project Complete':
@@ -26,7 +25,7 @@ def logit(proj_path, proj_name, task_path, task_name, time, notes, time_s, z_eve
     task_note_file.write(notes)
     task_note_file.close()
 
-    log = '%s\t%s\t%s\t%s\t%s\n' %(date, time, proj_name, task_name, time_s)
+    log = '%s\t%s\t%s\t%s\t%s\t%s\n' %(date, task_start, task_end, proj_name, task_name, time_s)
 
     # update project log
     proj_log_fname  = '%s/%s' %(task_log_dir, logfile)

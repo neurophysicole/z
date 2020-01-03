@@ -2,7 +2,7 @@ def task_interface(proj_name, task_name, proj_path):
     # import date/time packages
     import datetime
     from dateutil.relativedelta import relativedelta
-    from datetime import datetime, date, timedelta
+    from datetime import datetime, date
 
     # import command line packages
     import os
@@ -117,4 +117,4 @@ def task_interface(proj_name, task_name, proj_path):
     os.system(stop_thymer)
     os.system(close_thymer)
 
-    return z_event, time, task_end, notes, time_s, proj_time
+    return z_event, task_start, task_end, notes, time_s, proj_time

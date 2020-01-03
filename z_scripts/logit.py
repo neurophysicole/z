@@ -4,8 +4,10 @@ def logit(proj_path, proj_name, task_path, task_name, task_start, task_end, note
     from datetime import datetime, date
     
     # get the date (year first)
-    date = datetime.today().strftime('%Y-%m-%d')
-
+    date        = datetime.today().strftime('%Y-%m-%d')
+    task_start  = task_start.strftime('%-H%M')
+    task_end    = task_end.strftime('%-H%M')
+    
     # log task notes
     task_fname      = '%s_%s-%s' %(date, task_start, task_end)
 

@@ -34,30 +34,52 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
     # ================
     # master
     # check that the local and cloud log sheets are all up to date
-    local_master_logfile   = '%s/%s' %(local_proj_path, logfile)
-    cloud_master_logfile   = '%s/%s' %(cloud_proj_path, logfile)
+    local_master_log        = '%s/%s' %(local_proj_path, logfile)
+    cloud_master_log        = '%s/%s' %(cloud_proj_path, logfile)
 
     # set files
-    local_master_log        = open(local_master_logfile, 'a+')
-    cloud_master_log        = open(cloud_master_logfile, 'a+')
+    local_master_log_file   = open(local_master_log, 'r')
+    cloud_master_log_file   = open(cloud_master_log, 'r')
 
-    local_master_log_list   = local_master_log.read().splitlines()
-    cloud_master_log_list   = cloud_master_log.read().splitlines()
+    local_master_log_list   = local_master_log_file.read().splitlines()
+    cloud_master_log_list   = cloud_master_log_file.read().splitlines()
 
     # master
     # not doing project level because will need to iterate through and check all projects in case updates were made on a different computer
+    cloud_appended = False #for updating
+    local_appended = False #for updating
 
-    # local to cloud
+    # check and update cloud master log list
     for line in local_master_log_list:
         if line not in cloud_master_log_list:
-            cloud_master_log.write(line)
+            cloud_master_log_list.append(line)
+            cloud_appended = True
     
-    # cloud to local
+    # check and update local master log list
     for line in cloud_master_log_list:
         if line not in local_master_log_list:
-            local_master_log.write(line)
+            local_master_log_list.append(line)
+            local_appended = True 
+    
+    # update local log file
+    if local_appended:
+        local_master_log_file.close()
+        with open(local_master_log, 'w') as local_master_log_file:
+            for line in local_master_log_list:
+                local_master_log_file.write('%s\n' %line)
 
+    # update cloud log file
+    if cloud_appended:
+        cloud_master_log_file.close()
+        with open(cloud_master_log, 'w') as cloud_master_log_file:
+            for line in cloud_master_log_list:
+                cloud_master_log_file.write('%s\n' %line)
 
+    # close out files
+    local_master_log_file.close()
+    cloud_master_log_file.close()
+
+    
     # ===============
     # Run the update
     # ===============
@@ -105,14 +127,14 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                 local_proj_log_file.close()
                 with open(local_proj_log, 'w') as local_proj_log_file:
                     for line in local_proj_log_list:
-                        local_proj_log_file.write(line)
+                        local_proj_log_file.write('%s\n' %line)
             
             # if cloud list was changed
             if cloud_appended:
                 cloud_proj_log_file.close()
                 with open(cloud_proj_log, 'w') as cloud_proj_log_file:
                     for line in cloud_proj_log_list:
-                        cloud_proj_log_file.write(line)
+                        cloud_proj_log_file.write('%s\n' %line)
 
 
             # task update

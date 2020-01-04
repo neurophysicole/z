@@ -5,6 +5,9 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
     reload(sys) #to help with seemingly random'ascii' encoding error
     sys.setdefaultencoding('utf8') # ^^ <--Pythong interpreter doesn't like it, but it works
 
+    # import time package
+    import time
+    
     # total time on the project
     # -------------------------
     proj_time_file  = open('%s/time_on_task.txt' %task_path, 'r')
@@ -36,6 +39,8 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
             # list it
             print('-x- %s\t\tH %i\tM %i' %(task, task_time_h, task_time_m))
 
+        time.sleep(.1)
+
         # list the active tasks
         print('\nTasks:')
         for task in task_list:
@@ -51,6 +56,8 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
 
             # list it
             print('(%s) %s\t\tH %i\tM %i' %((task_list.index(task) + 1), task, task_time_h, task_time_m))
+
+        time.sleep(.1)
 
         task_input_loop = True
         while task_input_loop:

@@ -5,8 +5,12 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
     reload(sys) #to help with seemingly random'ascii' encoding error
     sys.setdefaultencoding('utf8') # ^^ <--Python interpreter doesn't like it, but it works
 
+    # import time package
+    import time
+
     # check for projects, then check for tasks within each project
     print('Checking the local and cloud files for asymmetries..')
+    time.sleep(.1)
 
 
     # ==============
@@ -21,8 +25,11 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
     local_proj_list = next(os.walk(local_proj_path))[1]
     if os.path.isdir(cloud_proj_path):
         print('Checking %s' %cur_branch_name)
+        time.sleep(.1)
     else: #there is no branch dir in the cloud
         print('\nGrowing the new %s branch in the cloud.\n' %cur_branch_name)
+        time.sleep(.1)
+
         os.system('mkdir %s' %local_proj_path)
         cloud_branch_log = open('%s/%s' %(cloud_proj_path, logfile), 'w')
         cloud_branch_log.close()
@@ -89,9 +96,12 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
     for proj in local_proj_list:
         if proj not in cloud_proj_list:
             print('\nEvaporating ** %s ** project file to the cloud.\n' %proj)
+            time.sleep(.1)
+
             os.system('cp -a -v %s/%s %s' %(local_proj_path, proj, cloud_proj_path))
         else: #project is already there
             print('\nProject ** %s ** is up to date in the cloud.\n' %proj)
+            time.sleep(.1)
 
 
             # log update
@@ -150,6 +160,7 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
             for task in local_task_list:
                 if task not in cloud_task_list:
                     print('Project: %s.\nEvaporating ** %s ** task file to the cloud.\n' %(proj, task))
+                    time.sleep(.1)
 
                     # throw it up
                     os.system('rm -r -v -f %s/%s' %(cloud_task_path, task))
@@ -192,6 +203,7 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                     for note in local_note_list:
                         if note not in cloud_note_list:
                             print('Project: %s. Task: %s.\nEvaporating ** %s ** note file to the cloud.\n' %(proj, task, note))
+                            time.sleep(.1)
 
                             # throw it up
                             os.system('cp -v %s/%s %s' %(local_note_path, note, cloud_note_path))
@@ -237,6 +249,8 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
     for proj in cloud_proj_list:
         if proj not in local_proj_list:
             print('Precipitating ** %s ** project files from the cloud.' %proj)
+            time.sleep(.1)
+
             os.system('cp -a -v %s/%s %s' %(cloud_proj_path, proj, local_proj_path))
         else: #project is already updated
     
@@ -254,6 +268,7 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
             for task in cloud_task_list:
                 if task not in local_task_list:
                     print('Project: %s.\nPrecipitating ** %s ** task file from the cloud.\n' %(proj, task))
+                    time.sleep(.1)
 
                     # make the drop
                     os.system('cp -a -v %s/%s %s' %(cloud_task_path, task, local_task_path))
@@ -296,6 +311,7 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                     for note in cloud_note_list:
                         if note not in local_note_list:
                             print('Project: %s. Task: %s.\nPrecipitating ** %s ** note file from the cloud.\n' %(proj, task, note))
+                            time.sleep(.1)
 
                             # make the drop
                             os.system('cp -v %s/%s %s' %(cloud_note_path, note, local_note_path))

@@ -4,6 +4,9 @@ def print_proj_notes(proj_path, proj_name):
     # import command line packages
     import os
 
+    # import time package
+    import time
+
     # get the task
     task_path = '%s/%s' %(proj_path, proj_name)
     task_list = next(os.walk(task_path))[1]
@@ -25,6 +28,8 @@ def print_proj_notes(proj_path, proj_name):
             print('\n> %s\n -- %s\n%s\n' %(archive_task, archive_tasknote, archive_note_contents))
             archive_note.close()
 
+    time.sleep(.1)
+
     # active project notes
     print('\n\n-------------------\n-------------------\n\n%s NOTES - ACTIVE\n\n' %proj_name.upper())
     for task in task_list: #list of tasks in the project
@@ -36,6 +41,8 @@ def print_proj_notes(proj_path, proj_name):
             tasknote_contents = tasknote.read()
             print('\n> %s\n -- %s\n%s\n' %(task, note, tasknote_contents))
             tasknote.close()
+
+    time.sleep(.1)
 
     return task_path, task_list, archive_task_list
 
@@ -54,3 +61,5 @@ def print_task_notes(task_path, task_name):
         note_tasknote_contents = note_tasknote.read()
         print('\n--> %s\n%s\n' %(note, note_tasknote_contents))
         note_tasknote.close()
+
+    time.sleep(.1)

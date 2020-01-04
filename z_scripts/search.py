@@ -2,6 +2,9 @@ def search(main_dir):
     # import command line packages
     import os
 
+    # import time package
+    import time
+    
     # search through each note file
     # if there is a match, then copy the filename and the note
 
@@ -30,6 +33,8 @@ def search(main_dir):
                                 # if the search terms match, copy it to the command line
                                 if find in taskfile:
                                     print('\n--------------------\n%s\n--------------------\n%s\n\n' %(task_level_dir.upper, taskfile))
+                                
+                                    time.sleep(.1)
         
         #do another search?
         keep_searching_loop = True

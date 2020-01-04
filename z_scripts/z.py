@@ -23,6 +23,7 @@
 # Import Packages
 # ================
 # date/time packages
+import time
 import datetime
 from dateutil.relativedelta import relativedelta
 from datetime import datetime, date, timedelta
@@ -86,6 +87,7 @@ while exe_loop:
         print('\nProjects:')
         for projects in proj_list:
             print('(%s) %s' %((proj_list.index(projects) + 1), projects))
+            time.sleep(.1)
     
 
     # ===========

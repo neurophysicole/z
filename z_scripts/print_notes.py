@@ -51,6 +51,9 @@ def print_task_notes(task_path, task_name):
     # import command line packages
     import os
 
+    # import time package
+    import time
+
     # current task notes
     print('\n\n-------------------\n-------------------\n\n%s NOTES\n\n' %task_name.upper())
     note_dir = '%s/%s' %(task_path, task_name)

@@ -100,22 +100,23 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
             # project -- time on task update
             # -------------------
             # open the files
-            local_time_on_task = open('%s/%s/time_on_task.txt' %(local_proj_path, proj), 'r+')
-            cloud_time_on_task = open('%s/%s/time_on_task.txt' %(cloud_proj_path, proj), 'r+')
+            if proj != 'archive':
+                local_time_on_task = open('%s/%s/time_on_task.txt' %(local_proj_path, proj), 'r+')
+                cloud_time_on_task = open('%s/%s/time_on_task.txt' %(cloud_proj_path, proj), 'r+')
 
-            # get the values
-            local_time_on_task_value = int(local_time_on_task.read())
-            cloud_time_on_task_value = int(cloud_time_on_task.read())
+                # get the values
+                local_time_on_task_value = int(local_time_on_task.read())
+                cloud_time_on_task_value = int(cloud_time_on_task.read())
 
-            # compare and update as necessary
-            if local_time_on_task_value > cloud_time_on_task_value:
-                cloud_time_on_task.write(str(local_time_on_task_value))                
-            elif cloud_time_on_task > local_time_on_task:
-                local_time_on_task.write(str(cloud_time_on_task_value))
+                # compare and update as necessary
+                if local_time_on_task_value > cloud_time_on_task_value:
+                    cloud_time_on_task.write(str(local_time_on_task_value))                
+                elif cloud_time_on_task > local_time_on_task:
+                    local_time_on_task.write(str(cloud_time_on_task_value))
 
-            # close out files
-            local_time_on_task.close()
-            cloud_time_on_task.close()
+                # close out files
+                local_time_on_task.close()
+                cloud_time_on_task.close()
 
 
             # task update
@@ -138,22 +139,23 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                     # task -- time on task update
                     # -------------------
                     # open the files
-                    local_time_on_task = open('%s/%s/%s/time_on_task.txt' %(local_proj_path, proj, task), 'r+')
-                    cloud_time_on_task = open('%s/%s/%s/time_on_task.txt' %(cloud_proj_path, proj, task), 'r+')
+                    if task != 'archive':
+                        local_time_on_task = open('%s/%s/%s/time_on_task.txt' %(local_proj_path, proj, task), 'r+')
+                        cloud_time_on_task = open('%s/%s/%s/time_on_task.txt' %(cloud_proj_path, proj, task), 'r+')
 
-                    # get the values
-                    local_time_on_task_value = int(local_time_on_task.read())
-                    cloud_time_on_task_value = int(cloud_time_on_task.read())
+                        # get the values
+                        local_time_on_task_value = int(local_time_on_task.read())
+                        cloud_time_on_task_value = int(cloud_time_on_task.read())
 
-                    # compare and update as necessary
-                    if local_time_on_task_value > cloud_time_on_task_value:
-                        cloud_time_on_task.write(local_time_on_task_value)                
-                    elif cloud_time_on_task > local_time_on_task:
-                        local_time_on_task.write(cloud_time_on_task_value)
+                        # compare and update as necessary
+                        if local_time_on_task_value > cloud_time_on_task_value:
+                            cloud_time_on_task.write(local_time_on_task_value)                
+                        elif cloud_time_on_task > local_time_on_task:
+                            local_time_on_task.write(cloud_time_on_task_value)
 
-                    # close out files
-                    local_time_on_task.close()
-                    cloud_time_on_task.close()
+                        # close out files
+                        local_time_on_task.close()
+                        cloud_time_on_task.close()
 
 
                     # note update

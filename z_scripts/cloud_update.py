@@ -100,8 +100,8 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
             # -------------------
             # open the files
             if proj != 'archive':
-                local_time_on_task = open('%s/%s/time_on_task.txt' %(local_proj_path, proj), 'w')
-                cloud_time_on_task = open('%s/%s/time_on_task.txt' %(cloud_proj_path, proj), 'w')
+                local_time_on_task = open('%s/%s/time_on_task.txt' %(local_proj_path, proj), 'w+')
+                cloud_time_on_task = open('%s/%s/time_on_task.txt' %(cloud_proj_path, proj), 'w+')
 
                 # get the values
                 local_time_on_task_value = int(local_time_on_task.read())
@@ -139,8 +139,8 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                     # -------------------
                     # open the files
                     if task != 'archive':
-                        local_time_on_task = open('%s/%s/%s/time_on_task.txt' %(local_proj_path, proj, task), 'w')
-                        cloud_time_on_task = open('%s/%s/%s/time_on_task.txt' %(cloud_proj_path, proj, task), 'w')
+                        local_time_on_task = open('%s/%s/%s/time_on_task.txt' %(local_proj_path, proj, task), 'w+')
+                        cloud_time_on_task = open('%s/%s/%s/time_on_task.txt' %(cloud_proj_path, proj, task), 'w+')
 
                         # get the values
                         local_time_on_task_value = int(local_time_on_task.read())

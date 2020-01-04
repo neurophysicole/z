@@ -12,7 +12,7 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
     proj_time_h     = proj_time / 3600
     proj_time_m     = (proj_time - (proj_time_h * 3600)) / 60
 
-    print('%s: %i Hours & %i Minutes' %(proj_name.upper(), proj_time_h, proj_time_m))
+    print('====================\n%s: %i Hours & %i Minutes\n====================\n' %(proj_name.upper(), proj_time_h, proj_time_m))
 
 
     # ================

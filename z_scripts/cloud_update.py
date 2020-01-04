@@ -86,6 +86,9 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
 
             # compare log files, update if necessary
             # update cloud list
+            local_appended = False # for updating
+            cloud_appended = False # for updating
+
             for line in local_proj_log_list:
                 if line not in cloud_proj_log_list:
                     cloud_proj_log_list.append(line)

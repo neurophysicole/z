@@ -78,48 +78,38 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
             local_proj_log  = '%s/%s/%s' %(local_proj_path, proj, logfile)
             cloud_proj_log  = '%s/%s/%s' %(cloud_proj_path, proj, logfile)
 
-            local_proj_log          = open(local_proj_log, 'a+')
-            cloud_proj_log          = open(cloud_proj_log, 'a+')
+            local_proj_log_file     = open(local_proj_log, 'r')
+            cloud_proj_log_file     = open(cloud_proj_log, 'r')
 
-            local_proj_log_list     = local_proj_log.read().splitlines()
-            cloud_proj_log_list     = cloud_proj_log.read().splitlines()
+            local_proj_log_list     = local_proj_log_file.read().splitlines()
+            cloud_proj_log_list     = cloud_proj_log_file.read().splitlines()
 
             # compare log files, update if necessary
-            # local to cloud
+            # update cloud list
             for line in local_proj_log_list:
                 if line not in cloud_proj_log_list:
-                    cloud_proj_log.write(line)
+                    cloud_proj_log_list.append(line)
+                    cloud_appended = True
             
-            # cloud to local
+            # update local list
             for line in cloud_proj_log_list:
                 if line not in local_proj_log_list:
-                    local_proj_log.write(line)
-
-
-            # time on task update -- project
-            # -------------------
-            # open the files
-            if proj != 'archive':
-                local_time_on_task = open('%s/%s/time_on_task.txt' %(local_proj_path, proj), 'r')
-                cloud_time_on_task = open('%s/%s/time_on_task.txt' %(cloud_proj_path, proj), 'r')
-
-                # get the values
-                local_time_on_task_value = int(local_time_on_task.read())
-                cloud_time_on_task_value = int(cloud_time_on_task.read())
-
-                # compare and update as necessary
-                if local_time_on_task_value > cloud_time_on_task_value:
-                    cloud_time_on_task.close()
-                    cloud_time_on_task = open('%s/%s/time_on_task.txt' %(cloud_proj_path, proj), 'w')
-                    cloud_time_on_task.write(str(local_time_on_task_value))                
-                elif cloud_time_on_task > local_time_on_task:
-                    local_time_on_task.close()
-                    local_time_on_task = open('%s/%s/time_on_task.txt' %(local_proj_path, proj), 'w')
-                    local_time_on_task.write(str(cloud_time_on_task_value))
-
-                # close out files
-                local_time_on_task.close()
-                cloud_time_on_task.close()
+                    local_proj_log_list.append(line)
+                    local_appended = True
+            
+            # if local list was changed
+            if local_appended:
+                local_proj_log_file.close()
+                with open(local_proj_log, 'w') as local_proj_log_file:
+                    for line in local_proj_log_list:
+                        local_proj_log_file.write(line)
+            
+            # if cloud list was changed
+            if cloud_appended:
+                cloud_proj_log.close()
+                with open(cloud_proj_log, 'w') as cloud_proj_log_file:
+                    for line in cloud_proj_log_list:
+                        cloud_proj_log_file.write(line)
 
 
             # task update
@@ -136,34 +126,30 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                 if task not in cloud_task_list:
                     print('Project: %s.\nEvaporating ** %s ** task file to the cloud.\n' %(proj, task))
                     os.system('cp -a -v %s/%s/%s %s/%s' %(local_proj_path, proj, task, cloud_proj_path, proj))
-                else: #the task is already there
 
 
-                    # task -- time on task update
-                    # -------------------
-                    # open the files
-                    if task != 'archive':
-                        local_time_on_task = open('%s/%s/%s/time_on_task.txt' %(local_proj_path, proj, task), 'r')
-                        cloud_time_on_task = open('%s/%s/%s/time_on_task.txt' %(cloud_proj_path, proj, task), 'r')
+                    # update time on task -- project
+                    # ------------------------------
+                    # if adding new task, need to update project time on task
+                    if proj != 'archive':
+                        # open the files
+                        cloud_time_on_task = open('%s/%s/time_on_task.txt' %(cloud_proj_path, proj), 'r')
+                        local_task_time = open('%s/%s/%s/time_on_task.txt' %(local_proj_path, proj, task), 'r')
 
                         # get the values
-                        local_time_on_task_value = int(local_time_on_task.read())
-                        cloud_time_on_task_value = int(cloud_time_on_task.read())
+                        cloud_time_on_task_value    = int(cloud_time_on_task.read())
+                        local_task_time_value       = int(local_task_time.read())
 
-                        # compare and update as necessary
-                        if local_time_on_task_value > cloud_time_on_task_value:
-                            cloud_time_on_task.close()
-                            cloud_time_on_task = open('%s/%s/%s/time_on_task.txt' %(cloud_proj_path, proj, task), 'w')
-                            cloud_time_on_task.write(str(local_time_on_task_value))                
-                        elif cloud_time_on_task > local_time_on_task:
-                            local_time_on_task.close()
-                            local_time_on_task = open('%s/%s/%s/time_on_task.txt' %(local_proj_path, proj, task), 'w')
-                            local_time_on_task.write(str(cloud_time_on_task_value))
+                        cloud_time_on_task_value = cloud_time_on_task_value + local_task_time_value
+                        cloud_time_on_task.close()
+                        cloud_time_on_task = open('%s/%s/time_on_task.txt' %(cloud_proj_path, proj), 'w') #just tired of battling it...
+                        cloud_time_on_task.write(str(cloud_time_on_task_value))
 
                         # close out files
-                        local_time_on_task.close()
                         cloud_time_on_task.close()
+                        local_task_time.close()
 
+                else: #the task is already there
 
                     # note update
                     # -----------
@@ -181,9 +167,43 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                             os.system('cp -a -v %s/%s/%s/%s %s/%s/%s' %(local_proj_path, proj, task, note, cloud_proj_path, proj, note))
 
 
+                            # update time on task -- task
+                            # ---------------------------
+                            # if add a new note, need to update time on task for task and project
+                            if task != 'archive':
+                                # get original time on task
+                                old_cloud_time_on_task = open('%s/%s/%s/time_on_task.txt' %(cloud_proj_path, proj, task), 'r')
+                                old_cloud_time_on_task_value = int(old_cloud_time_on_task.read())
+                                old_cloud_time_on_task.close()
+
+                                # delete old task time, copy over new task time 
+                                os.system('rm -v -f %s/%s/%s/time_on_task.txt' %(cloud_proj_path, proj, task))
+                                os.system('cp %s/%s/%s/time_on_task.txt %s/%s/%s' %(local_proj_path, proj, task, cloud_proj_path, proj, task))
+
+                                # get new time on task
+                                cloud_time_on_task              = open('%s/%s/%s/time_on_task.txt' %(cloud_proj_path, proj, task), 'r')
+                                cloud_time_on_task_proj         = open('%s/%s/time_on_task.txt' %(cloud_proj_path, proj), 'r')
+
+                                cloud_time_on_task_value        = int(cloud_time_on_task.read())
+                                cloud_time_on_task_proj_value   = int(cloud_time_on_task_proj.read())
+
+                                # get the amount of time to add to project
+                                proj_task_time_add              = cloud_time_on_task_value - old_cloud_time_on_task_value
+                                cloud_time_on_task_proj_value   = cloud_time_on_task_proj_value + proj_task_time_add
+
+                                # update project time
+                                cloud_time_on_task_proj.close()
+                                cloud_time_on_task_proj         = open('%s/%s/time_on_task.txt' %(cloud_proj_path, proj), 'w')
+                                cloud_time_on_task_proj.write(str(cloud_time_on_task_proj_value))
+
+                                # close files
+                                cloud_time_on_task.close()
+                                cloud_time_on_task_proj.close()
+
+
     # copy projects from cloud
     # ------------------------
-    # NOTE: Log files already updated to-and-from the cloud above
+    # NOTE: Log files already updated to-and-from the cloud (above)
     for proj in cloud_proj_list:
         if proj not in local_proj_list:
             print('Precipitating ** %s ** project files from the cloud.' %proj)
@@ -206,6 +226,28 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                     print('Project: %s.\nPrecipitating ** %s ** task file from the cloud.\n' %(proj, task))
                     os.system('cp -a -v %s/%s %s' %(cloud_task_path, task, local_task_path))
 
+
+                    # update time on task -- project
+                    # ------------------------------
+                    # if adding new task, need to update project time on task
+                    if proj != 'archive':
+                        # open the files
+                        local_time_on_task = open('%s/%s/time_on_task.txt' %(local_proj_path, proj), 'r')
+                        cloud_task_time = open('%s/%s/%s/time_on_task.txt' %(cloud_proj_path, proj, task), 'r')
+
+                        # get the values
+                        local_time_on_task_value    = int(local_time_on_task.read())
+                        cloud_task_time_value       = int(cloud_task_time.read())
+
+                        local_time_on_task_value = local_time_on_task_value + cloud_task_time_value
+                        local_time_on_task.close()
+                        local_time_on_task = open('%s/%s/time_on_task.txt' %(local_proj_path, proj), 'w') #just tired of battling it...
+                        local_time_on_task.write(str(local_time_on_task_value))
+
+                        # close out files
+                        local_time_on_task.close()
+                        cloud_task_time.close()
+
                 else: #the task is already there
 
 
@@ -223,3 +265,37 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                         if note not in local_note_list:
                             print('Project: %s. Task: %s.\nPrecipitating ** %s ** note file from the cloud.\n' %(proj, task, note))
                             os.system('cp -a -v %s/%s/%s %s/%s' %(cloud_task_path, task, note, local_task_path, note))
+
+
+                            # update time on task -- task
+                            # ---------------------------
+                            # if add a new note, need to update time on task for task and project
+                            if task != 'archive':
+                                # get original time on task
+                                old_local_time_on_task = open('%s/%s/%s/time_on_task.txt' %(local_proj_path, proj, task), 'r')
+                                old_local_time_on_task_value = int(old_local_time_on_task.read())
+                                old_local_time_on_task.close()
+
+                                # delete old task time, copy over new task time 
+                                os.system('rm -v -f %s/%s/%s/time_on_task.txt' %(local_proj_path, proj, task))
+                                os.system('cp %s/%s/%s/time_on_task.txt %s/%s/%s' %(cloud_proj_path, proj, task, local_proj_path, proj, task))
+
+                                # get new time on task
+                                local_time_on_task              = open('%s/%s/%s/time_on_task.txt' %(local_proj_path, proj, task), 'r')
+                                local_time_on_task_proj         = open('%s/%s/time_on_task.txt' %(local_proj_path, proj), 'r')
+
+                                local_time_on_task_value        = int(local_time_on_task.read())
+                                local_time_on_task_proj_value   = int(local_time_on_task_proj.read())
+
+                                # get the amount of time to add to project
+                                proj_task_time_add              = local_time_on_task_value - old_local_time_on_task_value
+                                local_time_on_task_proj_value   = local_time_on_task_proj_value + proj_task_time_add
+
+                                # update project time
+                                local_time_on_task_proj.close()
+                                local_time_on_task_proj         = open('%s/%s/time_on_task.txt' %(local_proj_path, proj), 'w')
+                                local_time_on_task_proj.write(str(local_time_on_task_proj_value))
+
+                                # close files
+                                local_time_on_task.close()
+                                local_time_on_task_proj.close()

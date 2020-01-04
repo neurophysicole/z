@@ -7,7 +7,7 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
 
     # check for projects, then check for tasks within each project
     print('Checking the local and cloud files for asymmetries..')
-    
+
 
     # ==============
     # Project Check
@@ -104,8 +104,8 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
             cloud_time_on_task = open('%s/%s/time_on_task.txt' %(cloud_proj_path, proj), 'r+')
 
             # get the values
-            local_time_on_task_value = int(local_time_on_task)
-            cloud_time_on_task_value = int(cloud_time_on_task)
+            local_time_on_task_value = int(local_time_on_task.read())
+            cloud_time_on_task_value = int(cloud_time_on_task.read())
 
             # compare and update as necessary
             if local_time_on_task_value > cloud_time_on_task_value:
@@ -142,8 +142,8 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                     cloud_time_on_task = open('%s/%s/%s/time_on_task.txt' %(cloud_proj_path, proj, task), 'r+')
 
                     # get the values
-                    local_time_on_task_value = int(local_time_on_task)
-                    cloud_time_on_task_value = int(cloud_time_on_task)
+                    local_time_on_task_value = int(local_time_on_task.read())
+                    cloud_time_on_task_value = int(cloud_time_on_task.read())
 
                     # compare and update as necessary
                     if local_time_on_task_value > cloud_time_on_task_value:

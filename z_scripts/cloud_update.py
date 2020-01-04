@@ -149,9 +149,9 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
 
                         # compare and update as necessary
                         if local_time_on_task_value > cloud_time_on_task_value:
-                            cloud_time_on_task.write(local_time_on_task_value)                
+                            cloud_time_on_task.write(str(local_time_on_task_value))                
                         elif cloud_time_on_task > local_time_on_task:
-                            local_time_on_task.write(cloud_time_on_task_value)
+                            local_time_on_task.write(str(cloud_time_on_task_value))
 
                         # close out files
                         local_time_on_task.close()

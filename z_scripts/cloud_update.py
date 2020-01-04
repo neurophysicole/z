@@ -38,25 +38,23 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
     cloud_master_logfile   = '%s/%s' %(cloud_proj_path, logfile)
 
     # set files
-    local_master_log = open(local_master_logfile, 'a+')
-    local_master_log = local_master_log.readlines()
-    cloud_master_log = open(cloud_master_logfile, 'a+')
-    cloud_master_log = cloud_master_log.readlines()
+    local_master_log        = open(local_master_logfile, 'a+')
+    cloud_master_log        = open(cloud_master_logfile, 'a+')
 
+    local_master_log_list   = local_master_log.readlines()
+    cloud_master_log_list   = cloud_master_log.readlines()
 
-    # update to the cloud
-    # -------------------
     # master
     # not doing project level because will need to iterate through and check all projects in case updates were made on a different computer
 
     # local to cloud
-    for line in local_master_log:
-        if line not in cloud_master_log:
+    for line in local_master_log_list:
+        if line not in cloud_master_log_list:
             cloud_master_log.write(line)
     
     # cloud to local
-    for line in cloud_master_log:
-        if line not in local_master_log:
+    for line in cloud_master_log_list:
+        if line not in local_master_log_list:
             local_master_log.write(line)
 
 
@@ -80,29 +78,30 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
             local_proj_log  = '%s/%s/%s' %(local_proj_path, proj, logfile)
             cloud_proj_log  = '%s/%s/%s' %(cloud_proj_path, proj, logfile)
 
-            local_proj_log  = open(local_proj_log, 'a+')
-            local_proj_log  = local_proj_log.readlines()
-            cloud_proj_log  = open(cloud_proj_log, 'a+')
-            cloud_proj_log  = cloud_proj_log.readlines()
+            local_proj_log          = open(local_proj_log, 'a+')
+            cloud_proj_log          = open(cloud_proj_log, 'a+')
+
+            local_proj_log_list     = local_proj_log.readlines()
+            cloud_proj_log_list     = cloud_proj_log.readlines()
 
             # compare log files, update if necessary
             # local to cloud
-            for line in local_proj_log:
-                if line not in cloud_proj_log:
+            for line in local_proj_log_list:
+                if line not in cloud_proj_log_list:
                     cloud_proj_log.write(line)
             
             # cloud to local
-            for line in cloud_proj_log:
-                if line not in local_proj_log:
+            for line in cloud_proj_log_list:
+                if line not in local_proj_log_list:
                     local_proj_log.write(line)
 
 
-            # project -- time on task update
+            # time on task update -- project
             # -------------------
             # open the files
             if proj != 'archive':
-                local_time_on_task = open('%s/%s/time_on_task.txt' %(local_proj_path, proj), 'r+')
-                cloud_time_on_task = open('%s/%s/time_on_task.txt' %(cloud_proj_path, proj), 'r+')
+                local_time_on_task = open('%s/%s/time_on_task.txt' %(local_proj_path, proj), 'w')
+                cloud_time_on_task = open('%s/%s/time_on_task.txt' %(cloud_proj_path, proj), 'w')
 
                 # get the values
                 local_time_on_task_value = int(local_time_on_task.read())
@@ -140,8 +139,8 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                     # -------------------
                     # open the files
                     if task != 'archive':
-                        local_time_on_task = open('%s/%s/%s/time_on_task.txt' %(local_proj_path, proj, task), 'r+')
-                        cloud_time_on_task = open('%s/%s/%s/time_on_task.txt' %(cloud_proj_path, proj, task), 'r+')
+                        local_time_on_task = open('%s/%s/%s/time_on_task.txt' %(local_proj_path, proj, task), 'w')
+                        cloud_time_on_task = open('%s/%s/%s/time_on_task.txt' %(cloud_proj_path, proj, task), 'w')
 
                         # get the values
                         local_time_on_task_value = int(local_time_on_task.read())
@@ -208,8 +207,8 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                     local_note_path = '%s/%s' %(local_task_path, task)
                     cloud_note_path = '%s/%s' %(cloud_task_path, task)
 
-                    local_note_list = next(os.walk(local_note_path))[2]
-                    cloud_note_list = next(os.walk(cloud_note_path))[2]
+                    local_note_list = os.listdir(local_note_path)
+                    cloud_note_list = os.listdir(cloud_note_path)
 
                     # compare and update notes as necessary
                     for note in cloud_note_list:

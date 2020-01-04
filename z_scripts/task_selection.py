@@ -5,19 +5,52 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
     reload(sys) #to help with seemingly random'ascii' encoding error
     sys.setdefaultencoding('utf8') # ^^ <--Pythong interpreter doesn't like it, but it works
 
-    # select the task
-    # ---------------
+    # total time on the project
+    # -------------------------
+    proj_time_file  = open('%s/time_on_task.txt' %task_path, 'r')
+    proj_time       = int(proj_time_file.read())
+    proj_time_h     = proj_time / 3600
+    proj_time_m     = (proj_time - (proj_time_h * 3600)) / 60
+
+    print('%s: %i Hours & %i Minutes' %(proj_name.upper(), proj_time_h, proj_time_m))
+
+
+    # ================
+    # Select the Task
+    # ================
     task_check_loop = True
     while task_check_loop:
         # list tasks in the archive folder
         print('\nCompleted Tasks:')
-        for tasks in archive_task_list:
-            print('-x- %s' %(tasks))
+        for task in archive_task_list:
+
+            # total time spent
+            task_time_file  = open('%s/archive/%s/time_on_task.txt' %(task_path, task), 'r')
+            task_time       = int(task_time_file.read())
+            task_time_file.close()
+
+            # calculations - it is listed in seconds
+            task_time_h     = task_time / 3600
+            task_time_m     = (task_time - (task_time_h * 3600)) / 60
+
+            # list it
+            print('-x- %s\t\tH %i\tM %i' %(task, task_time_h, task_time_m))
 
         # list the active tasks
         print('\nTasks:')
-        for tasks in task_list:
-            print('(%s) %s' %((task_list.index(tasks) + 1), tasks))
+        for task in task_list:
+
+            # total time spent
+            task_time_file  = open('%s/%s/time_on_task.txt' %(task_path, task), 'r')
+            task_time       = int(task_time_file.read())
+            task_time_file.close()
+
+            # calculations - it is listed in seconds
+            task_time_h     = task_time / 3600
+            task_time_m     = (task_time - (task_time_h * 3600)) / 60
+
+            # list it
+            print('(%s) %s\t\tH %i\tM %i' %((task_list.index(task) + 1), task, task_time_h, task_time_m))
 
         task_input_loop = True
         while task_input_loop:

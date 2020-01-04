@@ -67,6 +67,8 @@ def settings():
         elif settings_list[line] == 'NEXT BRANCH NAME':
             next_branch_name   = settings_list[(line + 1)]
 
+    # close settings file
+    settings_file.close()
 
     # ========================
     # Confirm Current Branch
@@ -95,10 +97,10 @@ def settings():
 
                 confirm_renew_loop = False
 
-                #make new branch dir and move everything over there..
                 # ======================
                 # Establish New Branch
                 # ======================
+                # make new branch dir and move everything over there..
                 # make new branch directory
                 print('\nSetting up %s directory.\n' %cur_branch_name)
 
@@ -115,6 +117,45 @@ def settings():
                 # move all project dirs form old branch to new branch
                 for seg_proj in old_branch_list:
                     os.system('mv -v -f %s/%s/%s %s/%s' %(main_dir, old_branch_name, seg_proj, main_dir, cur_branch_name))
+
+                
+                # =====================
+                # Update Settings File
+                # =====================
+                # update the settings list
+                for line in range(1, len(settings_list)):
+                    # current branch
+                    # find the start
+                    if settings_list[line] == 'CURRENT BRANCH START':
+                        settings_list[(line + 1)] = cur_branch_start
+
+                    # find the end
+                    elif settings_list[line] == 'CURRENT BRANCH END':
+                        settings_list[(line + 1)] = cur_branch_end
+
+                    # get the branch name
+                    elif settings_list[line] == 'CURRENT BRANCH NAME':
+                        settings_list[(line + 1)] = cur_branch_name
+
+                    # next branch
+                    # get the branch name
+                    elif settings_list[line] == 'NEXT BRANCH START':
+                        settings_list[(line + 1)] = next_branch_start
+
+                    # find the end
+                    elif settings_list[line] == 'NEXT BRANCH END':
+                        settings_list[(line + 1)] = next_branch_end
+
+                    # get the branch name
+                    elif settings_list[line] == 'NEXT BRANCH NAME':
+                        settings_list[(line + 1)] = next_branch_name
+
+                # open the settings file
+                settings_file = '%s/settings.txt' %(main_dir)
+                with open(settings_file, 'w') as settings_file:
+                    for line in settings_list:
+                        settings_file.write('%s\n' %line)
+
 
             elif confirm_renew == 'n': #renewal not accepted
                 print('\n!Aborting renewal. Current branch: %s! If this isn\'t right, you might have to restart and update it correctly; or just go into the \'settings.txt\' file and update the branch information manually.' %cur_branch_name)

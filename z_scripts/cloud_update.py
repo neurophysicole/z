@@ -109,7 +109,7 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
             
             # if cloud list was changed
             if cloud_appended:
-                cloud_proj_log.close()
+                cloud_proj_log_file.close()
                 with open(cloud_proj_log, 'w') as cloud_proj_log_file:
                     for line in cloud_proj_log_list:
                         cloud_proj_log_file.write(line)

@@ -40,8 +40,6 @@ def jobber(proj_list, proj_path, main_dir):
             while proj_loop_check:
                 proj_loop = raw_input('\n%s? (y/n):  ' %proj_name)
                 if (proj_loop == '') or (proj_loop == 'y'):
-                    task_loop = True #pick a task
-
                     proj_loop_check = False
                     job_loop = False
 
@@ -78,8 +76,6 @@ def jobber(proj_list, proj_path, main_dir):
 
                             # create new project archive directory
                             os.system('mkdir %s/%s/archive' %(proj_path, proj_name))
-
-                            task_loop = True #pick a task
 
                             # abort loops
                             new_proj_confirm_loop   = False

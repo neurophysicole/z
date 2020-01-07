@@ -277,7 +277,7 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                     # update time on task -- project
                     # ------------------------------
                     # if adding new task, need to update project time on task
-                    if proj != 'archive':
+                    if (proj != 'archive') and (task != 'archive'):
                         # open the files
                         local_time_on_task = open('%s/%s/time_on_task.txt' %(local_proj_path, proj), 'r')
                         cloud_task_time = open('%s/%s/%s/time_on_task.txt' %(cloud_proj_path, proj, task), 'r')

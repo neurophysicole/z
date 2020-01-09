@@ -8,7 +8,7 @@ def settings():
 
     # determine the paths
     laptop_path = '/Users/zcole/Documents/file_drawer/dev/z'
-    imac_path   = '/Users/zjcole/Documents/z'
+    imac_path   = '/Users/zjcole/Documents/file_drawer/dev/z'
 
     # set the path to use
     if os.path.isdir(laptop_path):

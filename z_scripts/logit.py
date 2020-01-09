@@ -13,7 +13,7 @@ def logit(proj_path, proj_name, task_path, task_name, task_start, task_end, note
 
     # if close task, need to save the current notes to the archive folder
     if z_event == 'Project Complete':
-        task_note_dir   = '%s/archive/%s/%s' %(main_dir, proj_name, task_name)
+        task_note_dir   = '%s/archive/%s/archive/%s' %(main_dir, proj_name, task_name)
         task_log_dir    = '%s/archive/%s' %(main_dir, proj_name)
     elif z_event == 'Task Complete':
         task_note_dir   = '%s/archive/%s' %(task_path, task_name)

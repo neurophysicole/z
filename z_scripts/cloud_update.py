@@ -46,17 +46,13 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
     local_proj_list = next(os.walk(local_proj_path))[1]
     cloud_proj_list = next(os.walk(cloud_proj_path))[1]
 
-    # remove archive project from list
-    local_proj_list.remove('archive')
-    cloud_proj_list.remove('archive')
-
     # project archive check
     # ---------------------
     # if project is archived on Cloud, need to archive locally, so there aren't duplicates
     # if the project is archived locally, should be updated on the Cloud
     # create archive list
-    local_archive_proj_path = '%s/archive' %local_proj_path
-    cloud_archive_proj_path = '%s/archive' %cloud_proj_path
+    local_archive_proj_path = '%s/archive' %main_dir
+    cloud_archive_proj_path = '%s/archive' %backup_dir
 
     local_archive_proj_list = next(os.walk(local_archive_proj_path))[1]
     cloud_archive_proj_list = next(os.walk(cloud_archive_proj_path))[1]

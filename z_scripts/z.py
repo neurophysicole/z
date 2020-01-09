@@ -152,6 +152,8 @@ while exe_loop:
             while follow_up_loop:
                 # move completed project/task to archive folder
                 if z_event == 'Project Complete':
+                    # move task into the project archive folder
+                    os.system('mv -v -f %s/%s %s/archive' %(task_path, task_namem task_path))
                     # move project to archive folder
                     os.system('mv -v -f %s/%s %s/archive' %(proj_path, proj_name, main_dir))
                 elif z_event == 'Task Complete':

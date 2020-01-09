@@ -215,7 +215,7 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
             # check local first
             for task in local_archive_task_list:
                 if task not in cloud_archive_task_list:
-                    print('\nEvaporating task ** %s ** archived in the %s project to the cloud.\n' %(task, proj)
+                    print('\nEvaporating task ** %s ** archived in the %s project to the cloud.\n' %(task, proj))
                     time.sleep(.1)
 
                     os.system('cp -a -v %s/%s %s' %(local_archive_task_path, task, cloud_archive_task_path)) #copy the task

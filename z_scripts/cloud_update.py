@@ -36,9 +36,53 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
 
     cloud_proj_list = next(os.walk(cloud_proj_path))[1]
 
-    # ================
-    # Log Sheet Check
-    # ================
+
+    # project archive check
+    # ---------------------
+    # if project is archived on Cloud, need to archive locally, so there aren't duplicates
+    # if the project is archived locally, should be updated on the Cloud
+    # create archive list
+    local_archive_proj_path = '%s/archive' %local_proj_path
+    cloud_archive_proj_path = '%s/archive' %cloud_proj_path
+
+    local_archive_proj_list = next(os.walk(local_archive_proj_path))[1]
+    cloud_archive_proj_list = next(os.walk(cloud_archive_proj_path))[1]
+
+    # check local first
+    for proj in local_archive_proj_list:
+        if proj not in cloud_archive_proj_list:
+            print('\nEvaporating archived project ** %s ** to the cloud archive list.\n' %proj)
+            time.sleep(.1)
+
+            os.system('cp -a -v %s/%s %s' %(local_archive_proj_path, proj, cloud_archive_proj_path)) #copy the proj
+
+            # update the project directory
+            if os.path.isdir('%s/%s' %(cloud_proj_path, proj)):
+                os.system('rm -r -v -f %s/%s' %(cloud_proj_path, proj))
+
+            # update the project list
+            if proj in cloud_proj_list:
+                cloud_proj_list.remove(proj)
+
+    # now check cloud
+    for proj in cloud_archive_proj_list:
+        if proj not in local_archive_proj_list:
+            print('\nPrecipitating archived project ** %s ** from the cloud archive list.\n' %proj)
+            time.sleep(.1)
+
+            os.system('cp -a -v %s/%s %s' %(cloud_archive_proj_path, proj, local_archive_proj_path)) #copy the proj
+
+            # update the project directory
+            if os.path.isdir('%s/%s' %(local_proj_path, proj)):
+                os.system('rm -r -v -f %s/%s' %(local_proj_path, proj))
+
+            # update the project list
+            if proj in local_proj_list:
+                local_proj_list.remove(proj)
+
+
+    # project log sheet check
+    # -----------------------
     # master
     # check that the local and cloud log sheets are all up to date
     local_master_log        = '%s/%s' %(local_proj_path, logfile)
@@ -156,6 +200,52 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
             local_task_list = next(os.walk(local_task_path))[1]
             cloud_task_list = next(os.walk(cloud_task_path))[1]
 
+
+            # task archive check
+            # ------------------
+            # if task is archived on Cloud, need to archive locally, so there aren't duplicates
+            # if the task is archived locally, should be updated on the Cloud
+            # create archive list
+            local_archive_task_path = '%s/archive' %local_task_path
+            cloud_archive_task_path = '%s/archive' %cloud_task_path
+
+            local_archive_task_list = next(os.walk(local_archive_task_path))[1]
+            cloud_archive_task_list = next(os.walk(cloud_archive_task_path))[1]
+
+            # check local first
+            for task in local_archive_task_list:
+                if task not in cloud_archive_task_list:
+                    print('\nEvaporating task ** %s ** archived in the %s project to the cloud.\n' %(task, proj)
+                    time.sleep(.1)
+
+                    os.system('cp -a -v %s/%s %s' %(local_archive_task_path, task, cloud_archive_task_path)) #copy the task
+
+                    # update the project directory
+                    if os.path.isdir('%s/%s' %(cloud_task_path, task)):
+                        os.system('rm -r -v -f %s/%s' %(cloud_task_path, task))
+
+                    # update the project list
+                    if task in cloud_task_list:
+                        cloud_task_list.remove(task)
+
+            # now check cloud
+            for task in cloud_archive_task_list:
+                if task not in local_archive_task_list:
+                    print('\nPrecipitating task ** %s ** from the cloud archive list for the %s project.\n' %(task, proj))
+                    time.sleep(.1)
+
+                    os.system('cp -a -v %s/%s %s' %(cloud_archive_task_path, task, local_archive_task_path)) #copy the task
+
+                    # update the task directory
+                    if os.path.isdir('%s/%s' %(local_task_path, task)):
+                        os.system('rm -r -v -f %s/%s' %(local_task_path, task))
+
+                    # update the task list
+                    if task in local_task_list:
+                        local_task_list.remove(task)
+
+            # task update
+            # -----------
             # compare task lists and copy over necessary items
             for task in local_task_list:
                 if task not in cloud_task_list:

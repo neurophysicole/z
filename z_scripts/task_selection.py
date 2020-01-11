@@ -87,7 +87,7 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
                     task_confirm_loop   = False
 
                 elif task_confirm == 'n': #input incorrect task
-                    task_check_loop = False
+                    task_confirm_loop = False
 
                 else: #wtf
                     print('\nThat don\'t make no sense. Try again.\n')

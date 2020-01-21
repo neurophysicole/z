@@ -225,14 +225,14 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
 
                 # get file info
                 local_note_path = '%s/%s' %(local_task_path, task)
-                local_note_list = next(os.walk(local_note_path))[1]
+                local_note_list = next(os.walk(local_note_path))[2]
                 local_archive_note_path = '%s/archive/%s' %(local_task_path, task)
                 cloud_note_path = '%s/%s' %(cloud_task_path, task)
 
                 # --------------
                 # check for task
                 if os.path.isdir(cloud_note_path):
-
+                    update = False
                     # ---------------------------
                     # if task exists, check notes
                     for note in local_note_list:
@@ -240,11 +240,14 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                         local_note = '%s/%s' %(local_note_path, note)
                         if not os.path.isfile(cloud_note):
                             os.system('cp -v %s %s' %(local_note, cloud_note_path))
-                    
-                    print('\nEvaporating %s-%s task updates to the cloud.\n' %(proj, task))
-                    os.system('rm -r -v -f %s' %local_note_path)
-                    os.system('cp -a -v %s %s' %(cloud_note_path, local_task_path))
-                    time.sleep(.1)
+                            update = True
+
+                    if update:
+                        print('\nEvaporating %s-%s task updates to the cloud.\n' %(proj, task))
+                        os.system('rm -r -v -f %s' %local_note_path)
+                        os.system('cp -a -v %s %s' %(cloud_note_path, local_task_path))
+                        time.sleep(.1)
+                        update = False
 
                 else: #no task dir in cloud
                     # ---------------------------------------
@@ -270,12 +273,15 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                                 if not os.path.isfile(local_note):
                                     # precipitate down from cloud
                                     os.system('cp -v %s %s' %(cloud_archive_note, local_note_path))
+                                    update = True
 
-                            print('\nEvaporating %s-%s task updates to the cloud.\n' %(proj, task))
-                            os.system('cp -a -v %s %s' %(local_note_path, cloud_task_path))
-                            os.system('rm -r -v -f %s' %cloud_archive_note_path)
-                            cloud_archive_task_list.remove(task) #move to active tasks in cloud -- already updated, so no need to update the cloud active projects list
-                            time.sleep(.1)
+                            if update:
+                                print('\nEvaporating %s-%s task updates to the cloud.\n' %(proj, task))
+                                os.system('cp -a -v %s %s' %(local_note_path, cloud_task_path))
+                                os.system('rm -r -v -f %s' %cloud_archive_note_path)
+                                cloud_archive_task_list.remove(task) #move to active tasks in cloud -- already updated, so no need to update the cloud active projects list
+                                time.sleep(.1)
+                                update = False
 
                         elif (local_task_date < cloud_task_date) or precipitate_from_cloud: #cloud is most recent
                             # evaporate to cloud, then precipitate back to local
@@ -284,12 +290,15 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                                 local_note = '%s/%s' %(local_note_path, note)
                                 if not os.path.isfile(cloud_archive_note):
                                     os.system('cp -v %s %s' %(local_note, cloud_archive_note_path))
-                            
-                            print('\nPrecipitating %s-%s task updates from the cloud.\n' %(proj, task))
-                            os.system('cp -a -v %s %s' %(cloud_archive_note_path, local_archive_task_path)) #moved to local archive
-                            os.system('rm -r -v -f %s' %local_note_path) #this is defunct
-                            local_task_list.remove(task) #no longer in local task list
-                            time.sleep(.1)
+                                    update = True
+
+                            if update:
+                                print('\nPrecipitating %s-%s task updates from the cloud.\n' %(proj, task))
+                                os.system('cp -a -v %s %s' %(cloud_archive_note_path, local_archive_task_path)) #moved to local archive
+                                os.system('rm -r -v -f %s' %local_note_path) #this is defunct
+                                local_task_list.remove(task) #no longer in local task list
+                                time.sleep(.1)
+                                update = False
 
                     else: #task doesn't exist
                         print('\nEvaporating %s-%s to the cloud.\n' %(proj, task))
@@ -315,12 +324,16 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                         # evaporate to cloud, then precipitate back down
                         cloud_archive_note = '%s/%s' %(cloud_archive_note_path, note)
                         local_archive_note = '%s/%s' %(local_archive_note_path, note)
-                        if not os.path.isfile(cloud_archive_note_path):
+                        if not os.path.isfile(cloud_archive_note):
                             os.system('cp -v %s %s' %(local_archive_note, cloud_archive_note_path))
-                        
-                    print('\nPrecipitating archived task information for %s-%s from the cloud.\n' %(proj, task))
-                    os.system('rm -r -v -f %s' %local_archive_note_path) #remove it so there are no issues copying
-                    os.system('cp -a -v %s %s' %(cloud_archive_note_path, local_archive_task_path))
+                            update = True
+
+                    if update:
+                        print('\nPrecipitating archived task information for %s-%s from the cloud.\n' %(proj, task))
+                        os.system('rm -r -v -f %s' %local_archive_note_path) #remove it so there are no issues copying
+                        os.system('cp -a -v %s %s' %(cloud_archive_note_path, local_archive_task_path))
+                        time.sleep(.1)
+                        update = False
                             
                 else: #no task dir in cloud archived tasks
                     # --------------------------------------------------
@@ -345,12 +358,15 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                                 if not os.path.isfile(local_archive_note):
                                     # precipitate down from cloud
                                     os.system('cp -v %s %s' %(cloud_note, local_archive_note_path))
+                                    update = True
 
-                            print('\nEvaporating archived task information for %s-%s to the archived task folder in the cloud.\n' %(proj, task))
-                            os.system('cp -a -v %s %s' %(local_archive_note_path, cloud_archive_task_path))
-                            os.system('rm -r -v -f %s' %cloud_note_path) #moving to archive
-                            cloud_task_list.remove(task)
-                            time.sleep(.1)
+                            if update:
+                                print('\nEvaporating archived task information for %s-%s to the archived task folder in the cloud.\n' %(proj, task))
+                                os.system('cp -a -v %s %s' %(local_archive_note_path, cloud_archive_task_path))
+                                os.system('rm -r -v -f %s' %cloud_note_path) #moving to archive
+                                cloud_task_list.remove(task)
+                                time.sleep(.1)
+                                update = False
                             
                         elif (local_task_date < cloud_task_date) or precipitate_from_cloud: #cloud more up to date
                             for note in local_archive_note_list:
@@ -360,12 +376,15 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                                 if not os.path.isfile(cloud_archive_note):
                                     # evaporate to cloud
                                     os.system('cp -v %s %s' %(local_archive_note, cloud_note_path))
-                                
-                            print('\nPrecipitating %s-%s task info from cloud, and moving to active tasks.\n' %(proj, task))
-                            os.system('cp -a -v %s %s' %(cloud_note_path, local_task_path))
-                            os.system('rm -r -v -f %s' %local_archive_note_path)
-                            local_archive_task_list.remove(task)
-                            time.sleep(.1)
+                                    update = True
+
+                            if update:
+                                print('\nPrecipitating %s-%s task info from cloud, and moving to active tasks.\n' %(proj, task))
+                                os.system('cp -a -v %s %s' %(cloud_note_path, local_task_path))
+                                os.system('rm -r -v -f %s' %local_archive_note_path)
+                                local_archive_task_list.remove(task)
+                                time.sleep(.1)
+                                update = False
 
                     elif not os.path.isdir(cloud_note_path): #task doesn't exist
                         print('\nEvaporating %s-%s (archived) to the cloud archive.\n' %(proj, task))
@@ -376,7 +395,7 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
             for task in cloud_task_list:
                 # get task info
                 cloud_note_path = '%s/%s' %(cloud_task_path, task)
-                cloud_note_list = next(os.walk(cloud_note_path))[1]
+                cloud_note_list = next(os.walk(cloud_note_path))[2]
                 cloud_archive_note_path = '%s/archive/%s' %(cloud_task_path, task)
                 local_note_path = '%s/%s' %(local_task_path, task)
                 local_archive_note_path = '%s/%s' %(local_archive_task_path, task)
@@ -393,10 +412,14 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                         cloud_note = '%s/%s' %(cloud_note_path, note)
                         if not os.path.isfile(cloud_note):
                             # evaporate to the cloud
-                            os.system('cp -v %s %s' %(local_note_path, cloud_note_path))
+                            os.system('cp -v %s %s' %(local_note, cloud_note_path))
+                            update = True
 
-                    print('\nPrecipitating %s-%s down from the cloud.\n' %(proj, task))
-                    os.system('cp -a -v %s %s' %(cloud_note_path, local_task_path))
+                    if update:
+                        print('\nPrecipitating %s-%s down from the cloud.\n' %(proj, task))
+                        os.system('cp -a -v %s %s' %(cloud_note_path, local_task_path))
+                        time.sleep(.1)
+                        update = False
 
                 else: #no task dir in cloud
                     # ----------------------------
@@ -419,12 +442,15 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                                 if not os.path.isfile(local_archive_note):
                                     # precipitate down from cloud
                                     os.system('cp -v %s %s' %(cloud_note, local_archive_note_path))
+                                    update = True
 
-                            print('\nEvaporating %s task to the cloud %s archive.\n' %(proj, task))
-                            os.system('cp -a -v %s %s' %(local_archive_note_path, cloud_archive_task_path))
-                            os.system('rm -r -v -f %s' %cloud_note_path)
-                            cloud_task_list.remove(task)
-                            time.sleep(.1)
+                            if update:
+                                print('\nEvaporating %s task to the cloud %s archive.\n' %(proj, task))
+                                os.system('cp -a -v %s %s' %(local_archive_note_path, cloud_archive_task_path))
+                                os.system('rm -r -v -f %s' %cloud_note_path)
+                                cloud_task_list.remove(task)
+                                time.sleep(.1)
+                                update = False
 
                         elif (local_task_date < cloud_task_date) or precipitate_from_cloud: #cloud more up to date
                             for note in local_archive_note_list:
@@ -434,12 +460,15 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                                 # check archive for new stuff
                                 if not os.path.isfile(cloud_note):
                                     os.system('cp -v %s %s' %(local_archive_note, cloud_note_path))
-                                
-                            print('\nPrecipitating %s-%s task info from the cloud and moving from archived to active tasks.\n' %(proj, task))
-                            os.system('cp -a -v %s %s' %(cloud_note_path, local_task_path))
-                            os.system('rm -r -v -f %s' %local_archive_note_path)
-                            local_archive_task_list.remove(task)
-                            time.sleep(.1)
+                                    update = True
+
+                            if update:
+                                print('\nPrecipitating %s-%s task info from the cloud and moving from archived to active tasks.\n' %(proj, task))
+                                os.system('cp -a -v %s %s' %(cloud_note_path, local_task_path))
+                                os.system('rm -r -v -f %s' %local_archive_note_path)
+                                local_archive_task_list.remove(task)
+                                time.sleep(.1)
+                                update = False
 
                     elif not os.path.isdir(local_archive_note_path): #task doesn't exist
                         print('\nPrecipitating %s-%s from the cloud.\n' %(proj, task))
@@ -464,13 +493,16 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                         # evaporate to the cloud then precipitate back down
                         local_archive_note = '%s/%s' %(local_archive_note_path, note)
                         cloud_archive_note = '%s/%s' %(cloud_archive_note_path, note)
-                        if not os.path.isfile(cloud_archive_note_path):
+                        if not os.path.isfile(cloud_archive_note):
                             # evaporate to the cloud
                             os.system('cp -v %s %s' %(local_archive_note, cloud_archive_note_path))
-                        
-                    print('\nPrecipitating %s-%s down to the local archive.\n' %(proj, task))
-                    os.system('cp -a -v %s %s' %(cloud_archive_note_path, local_archive_task_path))
-                    time.sleep(.1)
+                            update = True
+                    
+                    if update:
+                        print('\nPrecipitating %s-%s down to the local archive.\n' %(proj, task))
+                        os.system('cp -a -v %s %s' %(cloud_archive_note_path, local_archive_task_path))
+                        time.sleep(.1)
+                        update = False
 
                 else: #no task dir in cloud
                 # ------------------------
@@ -497,12 +529,15 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                                 if not os.path.isfile(local_note):
                                     # precipitate down from cloud
                                     os.system('cp -v %s %s' %(cloud_archive_note, local_note_path))
+                                    update = True
 
-                            print('\nEvaporating %s-%s up to the cloud and removing from the cloud archive.\n' %(proj, task))
-                            os.system('cp -a -v %s %s' %(local_note_path, cloud_task_path))
-                            os.system('rm -r -v -f %s' %cloud_archive_note_path)
-                            cloud_archive_task_list.remove(task)
-                            time.sleep(.1)
+                            if update:
+                                print('\nEvaporating %s-%s up to the cloud and removing from the cloud archive.\n' %(proj, task))
+                                os.system('cp -a -v %s %s' %(local_note_path, cloud_task_path))
+                                os.system('rm -r -v -f %s' %cloud_archive_note_path)
+                                cloud_archive_task_list.remove(task)
+                                time.sleep(.1)
+                                update = False
                             
                         elif (local_task_date < cloud_task_date) or precipitate_from_cloud: #cloud is more up to date
                             for note in local_note_list:
@@ -511,12 +546,15 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                                 local_note = '%s/%s' %(local_note_path, note)
                                 if not os.path.isfile(local_note):
                                     os.system('cp -v %s %s' %(local_note, cloud_archive_note_path))
-
-                            print('\nPrecipitating %s-%s from the cloud to the archive.\n' %(proj, task))
-                            os.system('cp -a -v %s %s' %(cloud_archive_note_path, local_archive_task_path))
-                            os.system('rm -r -v -f %s' %local_note_path)
-                            local_task_list.remove(task)
-                            time.sleep(.1)
+                                    update = True
+                            
+                            if update:
+                                print('\nPrecipitating %s-%s from the cloud to the archive.\n' %(proj, task))
+                                os.system('cp -a -v %s %s' %(cloud_archive_note_path, local_archive_task_path))
+                                os.system('rm -r -v -f %s' %local_note_path)
+                                local_task_list.remove(task)
+                                time.sleep(.1)
+                                update = False
 
                     elif not os.path.isdir(local_note_path): #task doesn't exist
                         print('\nPrecipitating %s-%s from the cloud to the archive.\n' %(proj, task))
@@ -545,7 +583,7 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                     # precipitate from cloud, then evaporate
                     for task in cloud_archive_task_list:
                         local_note_path = '%s/%s' %(local_task_path, task)
-                        local_note_list = next(os.walk(local_task_path))[2]
+                        local_note_list = next(os.walk(local_note_path))[2]
                         cloud_archive_note_path = '%s/archive/%s' %(cloud_task_path, task)
                         cloud_archive_note_list = next(os.walk(cloud_archive_note_path))[2]
 
@@ -556,12 +594,15 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                                 local_note = '%s/%s' %(local_note_path, note)
                                 if not os.path.isfile(local_note):
                                     os.system('cp -v %s %s' %(cloud_archive_note, local_note_path))
-
+                                    update = True
+                            
+                            if update:
                                 print('\nEvaporating %s-%s to the cloud and removing from the cloud archive list.\n' %(proj, task))
                                 os.system('cp -v %s %s' %(local_note, cloud_note_path))
                                 os.system('rm -r -v -f %s' %cloud_archive_note_path)
                                 cloud_archive_note_list.remove(task)
                                 time.sleep(.1)
+                                update = False
 
                         else: #task doesn't exist
                             # search the archive tasks
@@ -574,10 +615,13 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                                     cloud_archive_note = '%s/%s' %(cloud_archive_note_path, note)
                                     if not os.path.isfile(cloud_archive_note):
                                         os.system('cp -v %s %s' %(local_archive_note, cloud_archive_note_path))
+                                        update = True
 
-                                print('\nEvaporate %s-%s from the cloud.\n' %(proj, task))
-                                os.system('cp -v %s %s' %(local_archive_task, cloud_archive_note_path))
-                                time.sleep(.1)
+                                if update:
+                                    print('\nEvaporate %s-%s from the cloud.\n' %(proj, task))
+                                    os.system('cp -v %s %s' %(local_archive_task, cloud_archive_note_path))
+                                    time.sleep(.1)
+                                    update = False
 
                             elif not os.path.isdir(local_archive_task): #not in the archive.. doesn't exist
                                 print('\nPrecipitating %s-%s from cloud archive to local archive.\n' %(proj, task))
@@ -599,14 +643,17 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                                 local_note = '%s/%s' %(local_note_path, note)
                                 if not os.path.isfile(cloud_archive_note):
                                     os.system('cp -v %s %s' %(local_note, cloud_archive_note_path))
-                            
-                            print('\nPrecipitating %s-%s from the cloud archive to the local archive list.\n' %(proj, task))
-                            os.system('cp -v %s %s' %(cloud_archive_note_path, local_archive_task_path))
-                            os.system('rm -r -v -f %s' %local_note_path)
-                            local_task_list.remove(task)
-                            time.sleep(.1)
+                                    update = True
 
-                        elif not os.path.sidir(local_note_path):
+                            if update:
+                                print('\nPrecipitating %s-%s from the cloud archive to the local archive list.\n' %(proj, task))
+                                os.system('cp -v %s %s' %(cloud_archive_note_path, local_archive_task_path))
+                                os.system('rm -r -v -f %s' %local_note_path)
+                                local_task_list.remove(task)
+                                time.sleep(.1)
+                                update = False
+
+                        elif not os.path.isdir(local_note_path):
                             if not os.path.isdir(local_archive_task_path):
                                 print('\nPrecipitating %s-%s from cloud archive to local archive.\n' %(proj, task))
                                 os.system('cp -a -v %s %s' %(cloud_archive_note_path, local_archive_task_path))

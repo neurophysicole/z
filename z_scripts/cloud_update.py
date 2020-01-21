@@ -34,44 +34,54 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
     for proj in local_proj_list:
         # local project info
         local_task_path = '%s/%s' %(local_proj_path, proj)
-        local_task_list = next(os.walk(local_task_path))[1]
-        local_task_list.remove('archive')
+        try:
+            local_task_list = next(os.walk(local_task_path))[1]
+        except StopIteration:
+            local_task_list = []
+        else:
+            local_task_list = next(os.walk(local_task_path))[1]
+            local_task_list.remove('archive')
 
-        # get local active logfile info
-        local_task_log = '%s/log.txt' %(local_task_path) #find it
-        read_local_task_log = open(local_task_log, 'r') #open it
-        local_task_log_list = read_local_task_log.read().splitlines() #read it in
+            # get local active logfile info
+            local_task_log = '%s/log.txt' %(local_task_path) #find it
+            read_local_task_log = open(local_task_log, 'r') #open it
+            local_task_log_list = read_local_task_log.read().splitlines() #read it in
 
-        # figure out final log date/time
-        last_line_local_task_list = local_task_log_list[-1] #find most recent
-        last_line_local_task_list_split = last_line_local_task_list.split() #find date/time
-        local_task_date = last_line_local_task_list_split[0] #pull out date
-        local_task_time = int(last_line_local_task_list_split[2]) #pull out time
+            # figure out final log date/time
+            last_line_local_task_list = local_task_log_list[-1] #find most recent
+            last_line_local_task_list_split = last_line_local_task_list.split() #find date/time
+            local_task_date = last_line_local_task_list_split[0] #pull out date
+            local_task_time = int(last_line_local_task_list_split[2]) #pull out time
 
-        # get local archive info
-        local_archive_task_path = '%s/%s/archive' %(local_proj_path, proj)
-        local_archive_task_list = next(os.walk(local_archive_task_path))[1]
+            # get local archive info
+            local_archive_task_path = '%s/%s/archive' %(local_proj_path, proj)
+            local_archive_task_list = next(os.walk(local_archive_task_path))[1]
 
         # ---------------
         # cloud proj info
         cloud_task_path = '%s/%s' %(cloud_proj_path, proj)
-        cloud_task_list = next(os.walk(cloud_task_path))[1]
-        cloud_task_list.remove('archive')
+        try:
+            cloud_task_list = next(os.walk(cloud_task_path))[1]
+        except StopIteration:
+            cloud_task_list = []
+        else:
+            cloud_task_list = next(os.walk(cloud_task_path))[1]
+            cloud_task_list.remove('archive')
 
-        # get logfile info
-        cloud_task_log = '%s/log.txt' %(cloud_task_path) #find it
-        read_cloud_task_log = open(cloud_task_log, 'r') #open it
-        cloud_task_log_list = read_cloud_task_log.read().splitlines() #read it in
+            # get logfile info
+            cloud_task_log = '%s/log.txt' %(cloud_task_path) #find it
+            read_cloud_task_log = open(cloud_task_log, 'r') #open it
+            cloud_task_log_list = read_cloud_task_log.read().splitlines() #read it in
 
-        # figure out final log date/time
-        last_line_cloud_task_list = cloud_task_log_list[-1] #find most recent
-        last_line_cloud_task_list_split = last_line_cloud_task_list.split() #find date/time
-        cloud_task_date = last_line_cloud_task_list_split[0] #pull out date
-        cloud_task_time = int(last_line_cloud_task_list_split[2]) #pull out time
+            # figure out final log date/time
+            last_line_cloud_task_list = cloud_task_log_list[-1] #find most recent
+            last_line_cloud_task_list_split = last_line_cloud_task_list.split() #find date/time
+            cloud_task_date = last_line_cloud_task_list_split[0] #pull out date
+            cloud_task_time = int(last_line_cloud_task_list_split[2]) #pull out time
 
-        # get cloud archive info
-        cloud_archive_task_path = '%s/archive' %(cloud_task_path)
-        cloud_archive_task_list = next(os.walk(cloud_archive_task_path))[1]
+            # get cloud archive info
+            cloud_archive_task_path = '%s/archive' %(cloud_task_path)
+            cloud_archive_task_list = next(os.walk(cloud_archive_task_path))[1]
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         # update each of the four proj locations (archive local, archive cloud, active local, archive local)

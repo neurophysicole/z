@@ -17,6 +17,44 @@ def cloud_update
     print('Checking the local and cloud files for asymmetries..')
     time.sleep(.1)
 
+    # ========================
+    # Update Master Log Sheet
+    # ========================
+    # ------
+    # master
+    # not doing project level because will need to iterate through and check all projects in case updates were made on a different computer
+    cloud_appended = False #for updating
+    local_appended = False #for updating
+
+    # check and update cloud master log list
+    for line in local_master_log_list:
+        if line not in cloud_master_log_list:
+            cloud_master_log_list.append(line)
+            cloud_appended = True
+    
+    # check and update local master log list
+    for line in cloud_master_log_list:
+        if line not in local_master_log_list:
+            local_master_log_list.append(line)
+            local_appended = True 
+    
+    # update local log file
+    if local_appended:
+        local_master_log_file.close()
+        with open(local_master_log, 'w') as local_master_log_file:
+            for line in local_master_log_list:
+                local_master_log_file.write('%s\n' %line)
+
+    # update cloud log file
+    if cloud_appended:
+        cloud_master_log_file.close()
+        with open(cloud_master_log, 'w') as cloud_master_log_file:
+            for line in cloud_master_log_list:
+                cloud_master_log_file.write('%s\n' %line)
+
+    # close out files
+    local_master_log_file.close()
+    cloud_master_log_file.close()
 
     # ==============
     # Project Check
@@ -74,6 +112,50 @@ def cloud_update
     # Check Local Project List
     # =========================
     for proj in local_proj_list:
+
+        # log update
+        # ----------
+        # project log
+        local_proj_log  = '%s/%s/%s' %(local_proj_path, proj, logfile)
+        cloud_proj_log  = '%s/%s/%s' %(cloud_proj_path, proj, logfile)
+
+        local_proj_log_file     = open(local_proj_log, 'r')
+        cloud_proj_log_file     = open(cloud_proj_log, 'r')
+
+        local_proj_log_list     = local_proj_log_file.read().splitlines()
+        cloud_proj_log_list     = cloud_proj_log_file.read().splitlines()
+
+        # compare log files, update if necessary
+        # update cloud list
+        local_appended = False # for updating
+        cloud_appended = False # for updating
+
+        for line in local_proj_log_list:
+            if line not in cloud_proj_log_list:
+                cloud_proj_log_list.append(line)
+                cloud_appended = True
+        
+        # update local list
+        for line in cloud_proj_log_list:
+            if line not in local_proj_log_list:
+                local_proj_log_list.append(line)
+                local_appended = True
+        
+        # if local list was changed
+        if local_appended:
+            local_proj_log_file.close()
+            with open(local_proj_log, 'w') as local_proj_log_file:
+                for line in local_proj_log_list:
+                    local_proj_log_file.write('%s\n' %line)
+        
+        # if cloud list was changed
+        if cloud_appended:
+            cloud_proj_log_file.close()
+            with open(cloud_proj_log, 'w') as cloud_proj_log_file:
+                for line in cloud_proj_log_list:
+                    cloud_proj_log_file.write('%s\n' %line)
+
+
         # local project info
         local_task_path = '%s/%s' %(local_proj_path, proj)
         local_task_list = next(os.walk(local_task_path))[1]
@@ -532,3 +614,18 @@ def cloud_update
             print('Precipitating %s from the cloud archive list to the local archive list.' %proj)
             os.system('cp -a -v %s/%s %s' %(cloud_archive_proj_path, proj, local_archive_proj_path))
             time.sleep(.1)
+
+
+    # project log sheet check
+    # -----------------------
+    # master
+    # check that the local and cloud log sheets are all up to date
+    local_master_log        = '%s/%s' %(local_proj_path, logfile)
+    cloud_master_log        = '%s/%s' %(cloud_proj_path, logfile)
+
+    # set files
+    local_master_log_file   = open(local_master_log, 'r')
+    cloud_master_log_file   = open(cloud_master_log, 'r')
+
+    local_master_log_list   = local_master_log_file.read().splitlines()
+    cloud_master_log_list   = cloud_master_log_file.read().splitlines()

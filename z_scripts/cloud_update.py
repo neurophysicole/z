@@ -681,6 +681,25 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
     # project in the cloud archive, but not the local archive
     for proj in cloud_archive_proj_list:
         if proj not in local_archive_proj_list:
-            print('\nPrecipitating %s from the cloud archive list to the local archive list.\n' %proj)
-            os.system('cp -a -v %s/%s %s' %(cloud_archive_proj_path, proj, local_archive_proj_path))
-            time.sleep(.1)
+            if proj not in local_proj_list:
+                print('\nPrecipitating %s from the cloud archive list to the local archive list.\n' %proj)
+                os.system('cp -a -v %s/%s %s' %(cloud_archive_proj_path, proj, local_archive_proj_path))
+                time.sleep(.1)
+            if proj in local_proj_list:
+                if local_task_date == cloud_task_date:
+                    if local_task_time > cloud_task_time:
+                        evaporate_to_cloud = True
+                    elif local_task_time < cloud_task_time:
+                        precipitate_from_cloud = True
+
+                if (local_task_date > cloud_task_date) or evaporate_to_cloud:
+                    print('\nEvaporating %s to cloud, and removing from the cloud archive.\n' %proj)
+                    os.system('cp -a -v %s/%s %s' %(local_proj_path, proj, cloud_proj_path))
+                    os.system('rm -r -v -f %s/%s' %cloud_archive_proj_path, proj)
+                    time.sleep(.1)
+
+                elif (local_task_date < cloud_task_date) or precipitate_from_cloud:
+                    print('\nPrecipitating %s from cloud archive, and moving to local archive.\n' %proj)
+                    os.system('cp -a -v %s/%s %s' %(cloud_archive_proj_path, proj, local_archive_proj_path))
+                    os.system('rm -r -v -f %s/%s' %(local_proj_path, proj))
+                

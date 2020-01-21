@@ -197,11 +197,11 @@ while exe_loop:
             # run logit module
             logit.logit(proj_path, proj_name, task_path, task_name, task_start, task_end, notes, time_s, z_event, main_dir, logfile)
 
-    # ---------------
-    # check the cloud
-    if backup:
-        cloud_update.cloud_update(main_dir, backup_dir, cur_branch_name, logfile)
-    else: #no cloud access
-        print('\nNot able to backup because not connected to the Cloud.\n')
+# ---------------
+# check the cloud
+if backup:
+    cloud_update.cloud_update(main_dir, backup_dir, cur_branch_name, logfile)
+else: #no cloud access
+    print('\nNot able to backup because not connected to the Cloud.\n')
 
 exit()

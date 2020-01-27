@@ -95,12 +95,12 @@ def task_interface(proj_name, task_name, proj_path, backup_dir, cur_branch_name)
 
     # add them to the project and task timings
     # project timing
-    proj_time = int(proj_time)
+    # proj_time = int(proj_time) <!-- MAYBE DON'T NEED THIS
     proj_time = str(proj_time + time_s)
     proj_timing_file.close()
 
     # task timing
-    task_time = int(task_time)
+    # task_time = int(task_time) <!-- MAYBE DON'T NEED THIS?
     task_time = str(task_time + time_s)
     task_timing_file.close()
 

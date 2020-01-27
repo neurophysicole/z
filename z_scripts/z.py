@@ -141,7 +141,7 @@ while exe_loop:
             # ===============
             # run task interface module
             # do work!
-            z_event, task_start, task_end, notes, time_s, proj_time = task_interface.task_interface(proj_name, task_name, proj_path)
+            z_event, task_start, task_end, notes, time_s, proj_time = task_interface.task_interface(proj_name, task_name, proj_path, backup_dir, cur_branch_name)
 
 
             # ==========

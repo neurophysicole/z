@@ -22,6 +22,7 @@ def print_proj_notes(proj_path, proj_name):
         archive_note_dir = '%s/archive/%s' %(task_path, archive_task)
         archive_note_list = next(os.walk(archive_note_dir))[2]
         archive_note_list.remove('time_on_task.txt')
+        archive_note_list = sorted(archive_note_list)
         for archive_tasknote in archive_note_list:
             archive_note = open('%s/%s' %(archive_note_dir, archive_tasknote), 'r')
             archive_note_contents = archive_note.read()
@@ -36,6 +37,7 @@ def print_proj_notes(proj_path, proj_name):
         task_dir = '%s/%s' %(task_path, task)
         task_dir = next(os.walk(task_dir))[2]
         task_dir.remove('time_on_task.txt')
+        task_dir = sorted(task_dir)
         for note in task_dir: #list of the notes within the task
             tasknote = open('%s/%s/%s' %(task_path, task, note), 'r')
             tasknote_contents = tasknote.read()
@@ -59,6 +61,7 @@ def print_task_notes(task_path, task_name):
     note_dir = '%s/%s' %(task_path, task_name)
     note_dir = next(os.walk(note_dir))[2]
     note_dir.remove('time_on_task.txt')
+    note_dir = sorted(note_dir)
     for note in note_dir: #list all of the notes within the current task
         note_tasknote = open('%s/%s/%s' %(task_path, task_name, note), 'r')
         note_tasknote_contents = note_tasknote.read()

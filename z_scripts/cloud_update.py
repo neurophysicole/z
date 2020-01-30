@@ -456,9 +456,9 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                 try:
                     cloud_archive_note_list = next(os.walk(cloud_archive_note_path))[2]
                 except StopIteration:
-                    local_archive_note_list = []
+                    cloud_archive_note_list = []
                 else:
-                    local_archive_note_list = next(os.walk(local_archive_note_path))[2]
+                    cloud_archive_note_list = next(os.walk(cloud_archive_note_path))[2]
 
                 # -------------------
                 # check local archive

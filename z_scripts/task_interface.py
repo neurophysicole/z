@@ -108,14 +108,14 @@ def task_interface(proj_name, task_name, proj_path, backup_dir, cur_branch_name)
     proj_timing_file = open('%s/%s/time_on_task.txt' %(proj_path, proj_name), 'w')
     proj_timing_file.write(proj_time)
     proj_timing_file.close()
-    print('\nEvaporating time on task to the cloud.\n')
-    os.system('cp -v %s/%s/time_on_task.txt %s/%s/%s' %(proj_path, proj_name, backup_dir, cur_branch_name, proj_name)) #need to backup timing...
+    # print('\nEvaporating time on task to the cloud.\n')
+    # os.system('cp -v %s/%s/time_on_task.txt %s/%s/%s' %(proj_path, proj_name, backup_dir, cur_branch_name, proj_name)) #need to backup timing...
 
     task_timing_file = open('%s/%s/%s/time_on_task.txt' %(proj_path, proj_name, task_name), 'w')
     task_timing_file.write(task_time)
     task_timing_file.close()
-    print('\nEvaporating time on task to the cloud.\n')
-    os.system('cp -v %s/%s/%s/time_on_task.txt %s/%s/%s/%s' %(proj_path, proj_name, task_name, backup_dir, cur_branch_name, proj_name, task_name)) # need to backup timing...
+    # print('\nEvaporating time on task to the cloud.\n')
+    # os.system('cp -v %s/%s/%s/time_on_task.txt %s/%s/%s/%s' %(proj_path, proj_name, task_name, backup_dir, cur_branch_name, proj_name, task_name)) # need to backup timing...
 
     # shutdown Thymer
     os.system(stop_thymer)

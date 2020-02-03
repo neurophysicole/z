@@ -228,8 +228,8 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
 
                     else: #task doesn't exist
                         print('\nEvaporating %s-%s to the cloud.\n' %(proj, task))
-                        os.system('cp -v %s/time_on_task.txt %s' %(local_task_path, cloud_task_path))
                         os.system('cp -a -v %s %s' %(local_note_path, cloud_task_path))
+                        os.system('cp -v %s/time_on_task.txt %s' %(local_task_path, cloud_task_path))
                         time.sleep(.1)
 
             # --------------------------
@@ -435,9 +435,9 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
 
                     elif not os.path.isdir(local_archive_note_path): #task doesn't exist
                         print('\nPrecipitating %s-%s from the cloud.\n' %(proj, task))
+                        os.system('cp -a -v %s %s' %(cloud_note_path, local_task_path))
                         os.system('cp -v %s/time_on_task.txt %s' %(cloud_note_path, local_note_path))
                         os.system('cp -v %s/time_on_task.txt %s' %(cloud_task_path, local_task_path))
-                        os.system('cp -a -v %s %s' %(cloud_note_path, local_task_path))
                         time.sleep(.1)
 
             # --------------------------
@@ -543,9 +543,9 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
 
                     elif not os.path.isdir(local_note_path): #task doesn't exist
                         print('\nPrecipitating %s-%s from the cloud to the archive.\n' %(proj, task))
+                        os.system('cp -a -v %s %s' %(cloud_archive_note_path, local_archive_task_path))         
                         os.system('cp -v %s/time_on_task.txt %s' %(cloud_archive_note_path, local_archive_note_path))
                         os.system('cp -v %s/time_on_task.txt %s' %(cloud_task_path, local_task_path))
-                        os.system('cp -a -v %s %s' %(cloud_archive_note_path, local_archive_task_path))         
                         time.sleep(.1)               
 
         else: #proj not in cloud list

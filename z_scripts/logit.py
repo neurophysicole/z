@@ -3,6 +3,12 @@ def logit(proj_path, proj_name, task_path, task_name, task_start, task_end, note
     import datetime
     from datetime import datetime, date
     
+    # import os packages
+    import os
+    import sys
+    reload(sys) #to help with seemingly random'ascii' encoding error
+    sys.setdefaultencoding('utf8') # ^^ <--Python interpreter doesn't like it, but it works
+    
     # get the date (year first)
     date        = datetime.today().strftime('%Y-%m-%d')
     task_start  = task_start.strftime('%-H%M')
@@ -15,9 +21,13 @@ def logit(proj_path, proj_name, task_path, task_name, task_start, task_end, note
     if z_event == 'Project Complete':
         task_note_dir   = '%s/archive/%s/archive/%s' %(main_dir, proj_name, task_name)
         task_log_dir    = '%s/archive/%s' %(main_dir, proj_name)
+        print('Moving %s project to the archive.' %proj_name)
+        os.system('mv -v -f %s/%s %s/archive' %main_dir, proj_name, main_dir)
     elif z_event == 'Task Complete':
         task_note_dir   = '%s/archive/%s' %(task_path, task_name)
         task_log_dir    = '%s' %(task_path)
+        print('Moving %s task to the %s archive folder.' %(task_name, proj_name))
+        os.system('mv -v -f %s/%s %s/archive' %(task_path, task_name, task_path))
     else: # no archiving
         task_note_dir   = '%s/%s' %(task_path, task_name)
         task_log_dir    = '%s' %task_path

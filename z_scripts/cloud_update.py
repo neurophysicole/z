@@ -309,11 +309,13 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                                     os.system('cp -v %s %s' %(local_archive_note, cloud_archive_note_path))
                                     update = True
 
-                            print('\nEvaporating archived task information for %s-%s to the archived task folder in the cloud.\n' %(proj, task))
-                            os.system('cp -v %s/time_on_task.txt %s' %(local_task_path, cloud_task_path))
-                            os.system('rm -r -v -f %s' %cloud_note_path) #moving to archive
-                            cloud_task_list.remove(task)
-                            time.sleep(.1)
+                            if update:
+                                print('\nEvaporating archived task information for %s-%s to the archived task folder in the cloud.\n' %(proj, task))
+                                os.system('cp -v %s/time_on_task.txt %s' %(local_task_path, cloud_task_path))
+                                os.system('rm -r -v -f %s' %cloud_note_path) #moving to archive
+                                cloud_task_list.remove(task)
+                                time.sleep(.1)
+                                update = False
                             
                         elif (local_task_date < cloud_task_date) or precipitate_from_cloud: #cloud more up to date
                             os.system('mkdir %s' %cloud_archive_note_path)
@@ -479,6 +481,7 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
                         os.system('cp -v %s/time_on_task.txt %s' %(cloud_archive_note_path, local_archive_note_path))
                         os.system('cp -v %s/time_on_task.txt %s' %(cloud_task_path, local_task_path))
                         os.system('cp -a -v %s %s' %(local_archive_note_path, cloud_archive_task_path))
+                        os.system('rm -r -v -f %s' %(local_note_path))
                         time.sleep(.1)
                         update = False
 

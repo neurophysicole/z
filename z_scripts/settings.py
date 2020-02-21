@@ -167,7 +167,8 @@ def settings():
     # check for backup
     # =================
     # if not connected to the internet 
-    if os.path.isdir(backup_dir):
+    backup_check = str('%s/dev-git/z_scripts' %backup_dir)
+    if os.path.isdir(backup_check):
         backup = True
     else:
         backup = False

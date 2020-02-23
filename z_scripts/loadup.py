@@ -1,5 +1,12 @@
 def loadup():
+
+    # import time package
     import time
+
+    # add a buffer
+    print('\n\n')
+
+    # get the ZzzzzzZZZzzzZz's
     print('       ZZ___      ')
     time.sleep(.1)
     print('       ZZ___      ')
@@ -65,4 +72,7 @@ def loadup():
     print('       ZZ___      ')
     time.sleep(.1)
     print('       ZZ___      ')
+
+    # add a buffer
+    print('\n\n')
     time.sleep(.5)

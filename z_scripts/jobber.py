@@ -69,10 +69,6 @@ def jobber(proj_list, proj_path, main_dir):
 
                             # create new project logfile
                             open('%s/%s/log.txt' %(proj_path, proj_name), 'w+')
-                            # create new project timing file
-                            proj_timing_file = open('%s/%s/time_on_task.txt' %(proj_path, proj_name), 'w+')
-                            proj_timing_file.write('0')
-                            proj_timing_file.close()
 
                             # create new project archive directory
                             os.system('mkdir %s/%s/archive' %(proj_path, proj_name))

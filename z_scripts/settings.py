@@ -24,9 +24,6 @@ def settings():
     settings_file = '%s/settings.txt' %(main_dir)
     settings_file = open(settings_file, 'r')
     settings_list = settings_file.read().splitlines()
-
-    # come up with number of lines in settings file
-    # num_lines = sum(1 for line in open(settings_list))
      
     # date
     date        = datetime.today().date()
@@ -65,7 +62,10 @@ def settings():
 
         # get the branch name
         elif settings_list[line] == 'NEXT BRANCH NAME':
-            next_branch_name   = settings_list[(line + 1)]
+            next_branch_name    = settings_list[(line + 1)]
+
+        elif settings_list[line] == 'DUPLICATE ID':
+            duplicate_id        = settings_list[(line + 1)]
 
     # close settings file
     settings_file.close()
@@ -74,9 +74,7 @@ def settings():
     # Confirm Current Branch
     # ========================
 
-    if cur_branch_start <= date <= cur_branch_end:
-        print('\nThe current branch is: %s.\n' %cur_branch_name)
-    else: #date is not within the boundaries of the current branch
+    if not cur_branch_start <= date <= cur_branch_end: #date is not within the boundaries of the current branch
         # update current and next branch
         confirm_renew_loop = True
         while confirm_renew_loop:
@@ -173,4 +171,4 @@ def settings():
     else:
         backup = False
 
-    return backup, main_dir, backup_dir, cur_branch_name
+    return backup, main_dir, backup_dir, cur_branch_name, duplicate_id

@@ -1,24 +1,5 @@
 #!/Library/Frameworks/Python.framework/Versions/2.7/bin/python
 
-# Folder Structure
-# Z -> Settings ~ [branch]
-#   Settings -> _settings
-#   [branch] -> _log
-
-#   [branch] -> [Project Folder] (i.e., ARC)
-#       [Project folder] -> Active
-#           Active -> [Task folder] (i.e., task_script)
-#               [Task folder] -> [Task file] (i.e., 19_12_26_2320)
-#       [Project folder] -> Archive
-#           Archive -> {SAME AS ACTIVE}
-
-# Capabilities 
-# change basic settings
-# update projects and tasks
-# search projects and tasks
-# present project/task statistics
-
-
 # ================
 # Import Packages
 # ================
@@ -44,6 +25,7 @@ import filecmp
 # import custom modules
 import loadup
 import settings
+import cleanup
 import cloud_update
 import jobber
 from print_notes import print_proj_notes
@@ -61,7 +43,11 @@ logfile = 'log.txt'
 loadup.loadup()
 
 # load settings
-backup, main_dir, backup_dir, cur_branch_name = settings.settings()
+backup, main_dir, backup_dir, cur_branch_name, duplicate_id = settings.settings()
+
+# cleanup duplicate Box files
+if backup:
+    cleanup.cleanup(backup, main_dir, backup_dir, cur_branch_name, duplicate_id)
 
 # -------
 # Loopit
@@ -69,7 +55,7 @@ exe_loop = True
 while exe_loop:
     # check the cloud
     if backup:
-        cloud_update.cloud_update(main_dir, backup_dir, cur_branch_name, logfile) #main dir, backup dir, branch, logfile name
+        cloud_update.cloud_update(main_dir, backup_dir, cur_branch_name, logfile)
     else: #no cloud access
         print('\nNot Connected to the Internet.\n')
 
@@ -77,6 +63,10 @@ while exe_loop:
     # ==================
     # Determine To-Do's
     # ==================
+    # current branch
+    print('\nBRANCH: %s\n' %cur_branch_name)
+    time.sleep(.1)
+
     # projects
     proj_path   = '%s/%s' %(main_dir, cur_branch_name)
     proj_list   = next(os.walk(proj_path))[1]
@@ -139,10 +129,19 @@ while exe_loop:
             # ===============
             # Task Interface
             # ===============
+            # create Thymer file to check so won't reset
+            thymer_fname = '%s/thymer.txt' %main_dir
+            if not os.path.isfile(thymer_fname):
+                thymer_file = open(thymer_fname, 'w') #create the file
+                thymer_file.close()
+                thymer = True #lock it
+            else:
+                print('\n..Thymer is already running..\n')
+                thymer = False #don't reset Thymer
+
             # run task interface module
             # do work!
-            z_event, task_start, task_end, notes, time_s, proj_time = task_interface.task_interface(proj_name, task_name, proj_path, backup_dir, cur_branch_name)
-
+            z_event, task_start, task_end, notes, time_s, proj_time = task_interface.task_interface(proj_name, task_name, proj_path, backup_dir, cur_branch_name, thymer)
 
             # ==========
             # Follow-up
@@ -203,5 +202,10 @@ if backup:
     cloud_update.cloud_update(main_dir, backup_dir, cur_branch_name, logfile)
 else: #no cloud access
     print('\nNot able to backup because not connected to the Cloud.\n')
+
+# if opened Thymer, shut it down
+if thymer:
+    print('\nUnlocking Thymer.')
+    os.system('rm -f %s' %thymer_fname)
 
 exit()

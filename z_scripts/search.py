@@ -7,7 +7,6 @@ def search(main_dir):
     
     # search through each note file
     # if there is a match, then copy the filename and the note
-
     search_loop = True
     while search_loop:
         # collect the search term or phrase

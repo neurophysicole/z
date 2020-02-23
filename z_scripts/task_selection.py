@@ -10,10 +10,26 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
     
     # total time on the project
     # -------------------------
-    proj_time_file  = open('%s/time_on_task.txt' %task_path, 'r')
-    proj_time       = int(proj_time_file.read())
-    proj_time_h     = proj_time / 3600
-    proj_time_m     = (proj_time - (proj_time_h * 3600)) / 60
+    # proj_time_file  = open('%s/time_on_task.txt' %task_path, 'r')
+    # proj_time       = int(proj_time_file.read())
+    # proj_time_h     = proj_time / 3600
+    # proj_time_m     = (proj_time - (proj_time_h * 3600)) / 60
+
+    # open main file
+    proj_timing_file    = open('%s/log.txt' %(proj_path), 'r')
+    proj_time           = proj_timing_file.read().splitlines()
+
+    # get proj time
+    proj_time_s = 0
+    for line in proj_time:
+        logtime      = line.split() #separate out the lines
+        logtime_proj = logtime[3] #get the project name
+        if logtime_proj == proj_name:
+            proj_time_s = proj_time_s + int(logtime[-1]) #add the seconds
+
+    # apply the project time
+    proj_time_h     = proj_time_s / 3600 #calc hours
+    proj_time_m     = (proj_time_s - (proj_time_h * 3600)) / 60 #calc mins
 
     print('====================\n%s: %i Hours & %i Minutes\n====================\n' %(proj_name.upper(), proj_time_h, proj_time_m))
 
@@ -28,13 +44,29 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
         for task in archive_task_list:
 
             # total time spent
-            task_time_file  = open('%s/archive/%s/time_on_task.txt' %(task_path, task), 'r')
-            task_time       = int(task_time_file.read())
-            task_time_file.close()
+            # task_time_file  = open('%s/archive/%s/time_on_task.txt' %(task_path, task), 'r')
+            # task_time       = int(task_time_file.read())
+            # task_time_file.close()
 
-            # calculations - it is listed in seconds
-            task_time_h     = task_time / 3600
-            task_time_m     = (task_time - (task_time_h * 3600)) / 60
+            # # calculations - it is listed in seconds
+            # task_time_h     = task_time / 3600
+            # task_time_m     = (task_time - (task_time_h * 3600)) / 60
+
+            # open proj log file
+            task_timing_file    = open('%s/%s/log.txt' %(proj_path, proj_name), 'r')
+            task_time           = task_timing_file.read().splitlines()
+
+            # get task time
+            task_time_s = 0
+            for line in task_time:
+                logtime      = line.split() #separate out the lines
+                logtime_task = logtime[-2] #get the task name
+                if logtime_task == task:
+                    task_time_s = task_time_s + int(logtime[-1]) #add the seconds
+
+            # apply the task time
+            task_time_h     = task_time_s / 3600 #calc hours
+            task_time_m     = (task_time_s - (task_time_h * 3600)) / 60 #calc mins
 
             # list it
             print('-x- %s\t\tH %i\tM %i' %(task, task_time_h, task_time_m))
@@ -45,14 +77,21 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
         print('\nTasks:')
         for task in task_list:
 
-            # total time spent
-            task_time_file  = open('%s/%s/time_on_task.txt' %(task_path, task), 'r')
-            task_time       = int(task_time_file.read())
-            task_time_file.close()
+            # open proj log file
+            task_timing_file    = open('%s/%s/log.txt' %(proj_path, proj_name), 'r')
+            task_time           = task_timing_file.read().splitlines()
 
-            # calculations - it is listed in seconds
-            task_time_h     = task_time / 3600
-            task_time_m     = (task_time - (task_time_h * 3600)) / 60
+            # get task time
+            task_time_s = 0
+            for line in task_time:
+                logtime      = line.split() #separate out the lines
+                logtime_task = logtime[-2] #get the task name
+                if logtime_task == task:
+                    task_time_s = task_time_s + int(logtime[-1]) #add the seconds
+
+            # apply the task time
+            task_time_h     = task_time_s / 3600 #calc hours
+            task_time_m     = (task_time_s - (task_time_h * 3600)) / 60 #calc mins 
 
             # list it
             print('(%s) %s\t\tH %i\tM %i' %((task_list.index(task) + 1), task, task_time_h, task_time_m))
@@ -114,9 +153,6 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
 
                         else: #is a brand new task
                             os.system('mkdir %s/%s' %(task_path, task_name)) #create new task directory
-                            # create a new timing file for the task
-                            task_timing_file = open('%s/%s/time_on_task.txt' %(task_path, task_name), 'w')
-                            task_timing_file.write('0')
                             task_timing_file.close()
 
                             # abort loops

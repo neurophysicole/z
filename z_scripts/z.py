@@ -205,7 +205,7 @@ else: #no cloud access
 
 # if opened Thymer, shut it down
 if thymer:
-    print('\nUnlocking Thymer.')
+    print('\nUnlocking Thymer.\n')
     os.system('rm -f %s' %thymer_fname)
 
 exit()

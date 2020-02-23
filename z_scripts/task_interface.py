@@ -23,8 +23,8 @@ def task_interface(proj_name, task_name, proj_path, backup_dir, cur_branch_name,
     stop_thymer  = 'osascript -e \'tell app "Thyme" to stop\''
     close_thymer = 'osascript -e \'quit app "Thyme"\''
 
-    # startup Thymer (operates in the top bar)
-    if thymer: #if Thymer isn't already running
+    # startup Thyme (operates in the top bar)
+    if thymer: #if Thyme isn't already running
         os.system(close_thymer)
         os.system(open_thymer)
         os.system(start_thymer)

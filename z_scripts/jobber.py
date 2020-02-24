@@ -50,6 +50,25 @@ def jobber(proj_list, proj_path, main_dir):
                     print('\nThat don\'t make no sense. Try again.\n')
 
         elif job > len(proj_list): #create a new project
+            # confirm new project
+            proj_loop_check = True
+            while proj_loop_check:
+                proj_loop = raw_input('\nNew project? (y/n):  ')
+                if (proj_loop == '') or (proj_loop == 'y'):
+                    proj_loop_check = False
+                    job_loop        = False
+                    no_new_proj     = False
+
+                elif proj_loop == 'n': #accidentally selected the wrong project
+                    proj_loop_check = False
+                    no_new_proj     = True
+                
+                else: #wtf
+                    print('\nThat don\'t make no sense. Try again.\n')
+
+            if no_new_proj:
+                continue
+
             # make a new project
             new_proj_loop = True
             while new_proj_loop:

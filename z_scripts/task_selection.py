@@ -8,13 +8,6 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
     # import time package
     import time
     
-    # total time on the project
-    # -------------------------
-    # proj_time_file  = open('%s/time_on_task.txt' %task_path, 'r')
-    # proj_time       = int(proj_time_file.read())
-    # proj_time_h     = proj_time / 3600
-    # proj_time_m     = (proj_time - (proj_time_h * 3600)) / 60
-
     # open main file
     proj_timing_file    = open('%s/log.txt' %(proj_path), 'r')
     proj_time           = proj_timing_file.read().splitlines()
@@ -42,15 +35,6 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
         # list tasks in the archive folder
         print('\nCompleted Tasks:')
         for task in archive_task_list:
-
-            # total time spent
-            # task_time_file  = open('%s/archive/%s/time_on_task.txt' %(task_path, task), 'r')
-            # task_time       = int(task_time_file.read())
-            # task_time_file.close()
-
-            # # calculations - it is listed in seconds
-            # task_time_h     = task_time / 3600
-            # task_time_m     = (task_time - (task_time_h * 3600)) / 60
 
             # open proj log file
             task_timing_file    = open('%s/%s/log.txt' %(proj_path, proj_name), 'r')
@@ -132,6 +116,26 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
                     print('\nThat don\'t make no sense. Try again.\n')
 
         else: #create new task
+            # confirm new task
+            task_confirm_loop = True
+            while task_confirm_loop:
+                task_confirm = raw_input('\nNew task? (y/n):  ')
+
+                if (task_confirm == '') or (task_confirm == 'y'):
+                    task_check_loop     = False
+                    task_confirm_loop   = False
+                    no_new_task         = False
+
+                elif task_confirm == 'n': #input incorrect task
+                    task_confirm_loop   = False
+                    no_new_task         = True
+
+                else: #wtf
+                    print('\nThat don\'t make no sense. Try again.\n')
+
+            if no_new_task:
+                continue
+
             new_task = True
             while new_task:
                 task_name = raw_input('\nNew Task (Name):  ')

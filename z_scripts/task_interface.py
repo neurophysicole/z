@@ -71,6 +71,8 @@ def task_interface(proj_name, task_name, proj_path, backup_dir, cur_branch_name,
 
     # ---------------
     # window sections
+    SetOptions(background_color = 'black', element_background_color = 'black', text_color = 'white', text_element_background_color = 'black', element_text_color = 'white', input_elements_background_color = 'black', input_text_color = 'white')
+
     proj_header             = [sg.Text('%s' %proj_name), sg.Text('%s' %proj_time_total)]
     proj_complete_button    = [sg.CloseButton('Project Complete')]
     task_header             = [sg.Text('%s' %task_name), sg.Text('%s' %task_time_total)]
@@ -79,8 +81,6 @@ def task_interface(proj_name, task_name, proj_path, backup_dir, cur_branch_name,
     dunzo_button            = sg.CloseButton('Dunzo')
 
     # window
-    SetOptions(background_color = 'black', element_background_color = 'black', text_color = 'white', text_element_background_color = 'black', element_text_color = 'white', input_elements_background_color = 'black', input_text_color = 'white')
-
     z_window = sg.Window(str('%s: %s' %(date, time)), resizable = True, disable_close = True, finalize = True)
     z_layout = [[sg.Frame(layout = [proj_header, proj_complete_button], title = 'Project', relief = sg.RELIEF_SUNKEN)],[sg.Frame(layout = [task_header, task_complete_button], title = 'Task', relief = sg.RELIEF_SUNKEN)],[text_entry],[dunzo_button]]
 

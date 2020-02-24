@@ -71,7 +71,7 @@ def task_interface(proj_name, task_name, proj_path, backup_dir, cur_branch_name,
 
     # ---------------
     # window sections
-    SetOptions(background_color = 'black', element_background_color = 'black', text_color = 'white', text_element_background_color = 'black', element_text_color = 'white', input_elements_background_color = 'black', input_text_color = 'white')
+    SetOptions(background_color = 'black', element_background_color = 'black', text_color = 'white', text_element_background_color = 'black', element_text_color = 'white')
 
     proj_header             = [sg.Text('%s' %proj_name), sg.Text('%s' %proj_time_total)]
     proj_complete_button    = [sg.CloseButton('Project Complete')]

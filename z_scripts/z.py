@@ -136,8 +136,19 @@ while exe_loop:
                 thymer_file.close()
                 thymer = True #lock it
             else:
-                print('\n..Thymer is already running..\n')
-                thymer = False #don't reset Thymer
+                thymer_loop = True
+                while thymer_loop:
+                    thymer_decision = raw_input('\nThymer is already running.. Did you want to restart it? (y/n): ')
+
+                    # determine whether Thymer needs to be reset or not
+                    if (thymer_decision == 'y') or (thymer_decision == ''):
+                        thymer      = True #reset the timer
+                        thymer_loop = False
+                    elif thymer_decision == 'n':
+                        thymer      = False #don't reset Thymer
+                        thymer_loop = False
+                    else: #wtf
+                        print('\nwtf? Try again.\n')
 
             # run task interface module
             # do work!

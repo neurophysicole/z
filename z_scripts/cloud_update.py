@@ -260,7 +260,7 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
 
                     if update:
                         print('\nPrecipitating archived task information for %s-%s from the cloud.\n' %(proj, task))
-                        os.system('cp -a -v %s %s' %(cloud_archive_note_path, local_task_path))
+                        os.system('cp -a -v %s %s' %(cloud_archive_note_path, local_archive_task_path))
                         time.sleep(.1)
                         update = False
                             

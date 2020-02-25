@@ -122,7 +122,8 @@ def task_interface(proj_name, task_name, proj_path, backup_dir, cur_branch_name,
     task_timing_file.close()
 
     # shutdown Thymer
-    os.system(stop_thymer)
-    os.system(close_thymer)
+    if thymer:
+        os.system(stop_thymer)
+        os.system(close_thymer)
 
     return z_event, task_start, task_end, notes, time_s, proj_time

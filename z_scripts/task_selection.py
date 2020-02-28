@@ -157,8 +157,15 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
 
                         else: #is a brand new task
                             os.system('mkdir %s/%s' %(task_path, task_name)) #create new task directory
-                            task_timing_file.close()
 
+                            try:
+                                task_timing_file.close()
+                            except UnboundLocalError:
+                                print('\nYou really think you have the time to start a new project?\n')
+                            except KeyboardInterrupt:
+                                print('\nYou really think you have the time to start a new project?\n')
+                            else:
+                                print('') #get to work?
                             # abort loops
                             new_task        = False
                             confirm_task    = False

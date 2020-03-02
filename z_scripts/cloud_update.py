@@ -656,45 +656,223 @@ def cloud_update(main_dir, backup_dir, cur_branch_name, logfile):
 
     # project in the cloud but not in the local list
     for proj in cloud_proj_list:
-        if proj not in local_proj_list:
-            print('\nPrecipitating %s from the cloud.\n' %proj)
-            os.system('cp -a -v %s/%s %s' %(cloud_proj_path, proj, local_proj_path))
-            time.sleep(.1)
-    
+        if proj not in local_proj_list: #if the project just doesn't exist
+            if proj in local_archive_proj_list:
+
+                cloud_task_path = '%s/%s' %(cloud_proj_path, proj)
+
+                # get logfile info
+                cloud_task_log = '%s/log.txt' %(cloud_task_path) #find it
+                read_cloud_task_log = open(cloud_task_log, 'r') #open it
+                cloud_task_log_list = read_cloud_task_log.read().splitlines() #read it in
+
+                # figure out final log date/time
+                last_line_cloud_task_list = cloud_task_log_list[-1] #find most recent
+                last_line_cloud_task_list_split = last_line_cloud_task_list.split() #find date/time
+                cloud_task_date = last_line_cloud_task_list_split[0] #pull out date
+                cloud_task_time = int(last_line_cloud_task_list_split[2]) #pull out time
+
+                # get the archive date/time to compare
+                archive_task_path = '%s/%s' %(local_archive_proj_path, proj)
+                # get logfile info
+                archive_task_log = '%s/log.txt' %(archive_task_path) #find it
+                read_archive_task_log = open(archive_task_log, 'r') #open it
+                archive_task_log_list = read_archive_task_log.read().splitlines() #read it in
+
+                # figure out final log date/time
+                last_line_archive_task_list = archive_task_log_list[-1] #find most recent
+                last_line_archive_task_list_split = last_line_archive_task_list.split() #find date/time
+                archive_task_date = last_line_archive_task_list_split[0] #pull out date
+                archive_task_time = int(last_line_archive_task_list_split[2]) #pull out time
+
+                # if the dates are the same, then check the time
+                if cloud_task_date == archive_task_date:
+                    if cloud_task_time > archive_task_time:
+                        precipitate_from_cloud = True
+                    elif cloud_task_time < archive_task_time:
+                        evaporate_to_cloud = True
+                    else: #wtf
+                        print('ERROR: Something wrong with cloud updating..')
+
+                elif (cloud_task_date > archive_task_date) or precipitate_from_cloud:
+                    # evaporate to cloud then precipitate
+                    # os.system('cp -a -v %s/%s %s' %(local_archive_proj_path, proj, cloud_proj_path)) #evap
+                    # time.sleep(.1)
+
+                    # ! if want to udpate stuff before copying down, need to go through task by task because some tasks may be in the project archive, when the project is sent to the main archive, but the non-archived version might not have moved all of the tasks over to the archive, which would mean that they will be copied over so there will be a copy of the task in the archive and in the main task -- this needs to be updated for both this and the next loop as well... I just don't have time to do that right now..
+
+                    print('\nPrecipitating %s from the cloud.\n' %proj)
+                    os.system('cp -a -v %s/%s %s' %(cloud_proj_path, proj, local_proj_path)) #precipitate
+                    time.sleep(.1)
+
+                    # remove old proj from archive
+                    os.system('rm -v -f %s/%s' %(local_archive_proj_path, proj))
+                    time.sleep(.1)
+
+                elif (cloud_task_date < archive_task_date) or evaporate_to_cloud:
+                    # precipitate from cloud then evaporate
+                    # os.system('cp -a -v %s/%s %s' %(cloud_proj_path, proj, local_archive_proj_path)) #precipitate
+                    # time.sleep(.1)
+
+                    print('\nEvaporating %s to the cloud.\n' %proj)
+                    os.system('cp -a -v %s/%s %s' %(local_archive_proj_path, proj, cloud_archive_proj_path)) #evap
+                    time.sleep(.1)
+
+                    # remove old proj from archive
+                    os.system('rm -v -f %s/%s' %(cloud_proj_path, proj))
+                    time.sleep(.1)    
+
+            else: #doesn't exist
+                print('\nPrecipitating %s from the cloud.\n' %proj)
+                os.system('cp -a -v %s/%s %s' %(cloud_proj_path, proj, local_proj_path)) #precipitate
+                time.sleep(.1)
+
     # project in the local archive, but not the cloud archive
     for proj in local_archive_proj_list:
         if proj not in cloud_archive_proj_list:
-            print('\nEvaporating %s to the cloud.\n' %proj)
-            os.system('cp -a -v %s/%s %s' %(local_archive_proj_path, proj, cloud_archive_proj_path))
-            time.sleep(.1)
+
+            # check if cloud list (not cloud archive)
+            if proj in cloud_proj_list:
+
+                cloud_task_path = '%s/%s' %(cloud_proj_path, proj)
+
+                # get logfile info
+                cloud_task_log = '%s/log.txt' %(cloud_task_path) #find it
+                read_cloud_task_log = open(cloud_task_log, 'r') #open it
+                cloud_task_log_list = read_cloud_task_log.read().splitlines() #read it in
+
+                # figure out final log date/time
+                last_line_cloud_task_list = cloud_task_log_list[-1] #find most recent
+                last_line_cloud_task_list_split = last_line_cloud_task_list.split() #find date/time
+                cloud_task_date = last_line_cloud_task_list_split[0] #pull out date
+                cloud_task_time = int(last_line_cloud_task_list_split[2]) #pull out time
+
+                # get the archive date/time to compare
+                archive_task_path = '%s/%s' %(local_archive_proj_path, proj)
+                # get logfile info
+                archive_task_log = '%s/log.txt' %(archive_task_path) #find it
+                read_archive_task_log = open(archive_task_log, 'r') #open it
+                archive_task_log_list = read_archive_task_log.read().splitlines() #read it in
+
+                # figure out final log date/time
+                last_line_archive_task_list = archive_task_log_list[-1] #find most recent
+                last_line_archive_task_list_split = last_line_archive_task_list.split() #find date/time
+                archive_task_date = last_line_archive_task_list_split[0] #pull out date
+                archive_task_time = int(last_line_archive_task_list_split[2]) #pull out time
+
+                # if the dates are the same, then check the time
+                if cloud_task_date == archive_task_date:
+                    if cloud_task_time > archive_task_time:
+                        precipitate_from_cloud = True
+                    elif cloud_task_time < archive_task_time:
+                        evaporate_to_cloud = True
+                    else: #wtf
+                        print('ERROR: Something wrong with cloud updating..')
+
+                elif (cloud_task_date > archive_task_date) or precipitate_from_cloud:
+                    # evaporate to cloud then precipitate
+                    # os.system('cp -a -v %s/%s %s' %(local_archive_proj_path, proj, cloud_proj_path)) #evap
+                    # time.sleep(.1)
+
+                    print('\nPrecipitating %s from the cloud.\n' %proj)
+                    os.system('cp -a -v %s/%s %s' %(cloud_proj_path, proj, local_proj_path)) #precipitate
+                    time.sleep(.1)
+
+                    # remove old proj from archive
+                    os.system('rm -v -f %s/%s' %(local_archive_proj_path, proj))
+                    time.sleep(.1)
+
+                elif (cloud_task_date < archive_task_date) or evaporate_to_cloud:
+                    # precipitate from cloud then evaporate
+                    # os.system('cp -a -v %s/%s %s' %(cloud_proj_path, proj, local_archive_proj_path)) #precipitate
+                    # time.sleep(.1)
+
+                    print('\nEvaporating %s to the cloud.\n' %proj)
+                    os.system('cp -a -v %s/%s %s' %(local_archive_proj_path, proj, cloud_archive_proj_path)) #evap
+                    time.sleep(.1)
+
+                    # remove old proj from archive
+                    os.system('rm -v -f %s/%s' %(cloud_proj_path, proj))
+                    time.sleep(.1)    
+
+            else: #doesn't exist
+                print('\nEvaporating %s to the cloud.\n' %proj)
+                os.system('cp -a -v %s/%s %s' %(local_archive_proj_path, proj, cloud_archive_proj_path))
+                time.sleep(.1)
 
     # project in the cloud archive, but not the local archive
     for proj in cloud_archive_proj_list:
         if proj not in local_archive_proj_list:
-            if proj not in local_proj_list:
-                print('\nPrecipitating %s from the cloud archive list to the local archive list.\n' %proj)
-                os.system('cp -a -v %s/%s %s' %(cloud_archive_proj_path, proj, local_archive_proj_path))
-                time.sleep(.1)
+
+            # check if cloud list (not cloud archive)
             if proj in local_proj_list:
 
-                evaporate_to_cloud = False
-                precipitate_from_cloud = False
-                if local_task_date == cloud_task_date:
-                    if local_task_time > cloud_task_time:
-                        evaporate_to_cloud = True
-                    elif local_task_time < cloud_task_time:
-                        precipitate_from_cloud = True
+                cloud_archive_task_path = '%s/%s' %(cloud_archive_proj_path, proj)
 
-                if (local_task_date > cloud_task_date) or evaporate_to_cloud:
-                    print('\nEvaporating %s to cloud, and removing from the cloud archive.\n' %proj)
-                    os.system('cp -a -v %s/%s %s' %(local_proj_path, proj, cloud_proj_path))
-                    os.system('rm -r -v -f %s/%s' %cloud_archive_proj_path, proj)
+                # get logfile info
+                cloud_archive_task_log = '%s/log.txt' %(cloud_archive_task_path) #find it
+                read_cloud_archive_task_log = open(cloud_archive_task_log, 'r') #open it
+                cloud_archive_task_log_list = read_cloud_archive_task_log.read().splitlines() #read it in
+
+                # figure out final log date/time
+                last_line_cloud_archive_task_list = cloud_archive_task_log_list[-1] #find most recent
+                last_line_cloud_archive_task_list_split = last_line_cloud_archive_task_list.split() #find date/time
+                cloud_archive_task_date = last_line_cloud_archive_task_list_split[0] #pull out date
+                cloud_archive_task_time = int(last_line_cloud_archive_task_list_split[2]) #pull out time
+
+                # get the archive date/time to compare
+                local_task_path = '%s/%s' %(local_proj_path, proj)
+                # get logfile info
+                local_task_log = '%s/log.txt' %(local_task_path) #find it
+                read_local_task_log = open(local_task_log, 'r') #open it
+                local_task_log_list = read_local_task_log.read().splitlines() #read it in
+
+                # figure out final log date/time
+                last_line_local_task_list = local_task_log_list[-1] #find most recent
+                last_line_local_task_list_split = last_line_local_task_list.split() #find date/time
+                local_task_date = last_line_local_task_list_split[0] #pull out date
+                local_task_time = int(last_line_local_task_list_split[2]) #pull out time
+
+                # if the dates are the same, then check the time
+                if cloud_archive_task_date == local_task_date:
+                    if cloud_archive_task_time > local_task_time:
+                        precipitate_from_cloud = True
+                    elif cloud_archive_task_time < local_task_time:
+                        evaporate_to_cloud = True
+                    else: #wtf
+                        print('ERROR: Something wrong with cloud updating..')
+
+                elif (cloud_archive_task_date > local_task_date) or precipitate_from_cloud:
+                    # evaporate to cloud then precipitate
+                    os.system('cp -a -v %s/%s %s' %(local_proj_path, proj, cloud_archive_proj_path)) #evap
                     time.sleep(.1)
 
-                elif (local_task_date < cloud_task_date) or precipitate_from_cloud:
-                    print('\nPrecipitating %s from cloud archive, and moving to local archive.\n' %proj)
-                    os.system('cp -a -v %s/%s %s' %(cloud_archive_proj_path, proj, local_archive_proj_path))
-                    os.system('rm -r -v -f %s/%s' %(local_proj_path, proj))
+                    print('\nPrecipitating %s from the cloud.\n' %proj)
+                    os.system('cp -a -v %s/%s %s' %(cloud_archive_proj_path, proj, local_archive_proj_path)) #precipitate
+                    time.sleep(.1)
+
+                    # remove old proj from archive
+                    os.system('rm -v -f %s/%s' %(local_proj_path, proj))
+                    time.sleep(.1)
+
+                elif (cloud_archive_task_date < local_task_date) or evaporate_to_cloud:
+                    # precipitate from cloud then evaporate
+                    os.system('cp -a -v %s/%s %s' %(cloud_archive_proj_path, proj, local_proj_path)) #precipitate
+                    time.sleep(.1)
+
+                    print('\nEvaporating %s to the cloud.\n' %proj)
+                    os.system('cp -a -v %s/%s %s' %(local_proj_path, proj, cloud_proj_path)) #evap
+                    time.sleep(.1)
+
+                    # remove old proj from archive
+                    os.system('rm -v -f %s/%s' %(cloud_archive_proj_path, proj))
+                    time.sleep(.1)    
+
+            else: #doesn't exist
+                print('\nPrecipitating %s from the cloud.\n' %proj)
+                os.system('cp -a -v %s/%s %s' %(cloud_archive_proj_path, proj, local_archive_proj_path))
+                time.sleep(.1)
+
                 
     # ========================
     # Update Master Log Sheet

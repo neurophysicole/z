@@ -8,4 +8,4 @@ NEXT BRANCH START
 BACKUP DIRECTORY
 /Users/zcole/Box/file_drawer/z
 DUPLICATE ID
-zcole2@unl.edu
+(zcole2@unl.edu)

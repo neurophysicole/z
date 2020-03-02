@@ -22,7 +22,7 @@ def logit(proj_path, proj_name, task_path, task_name, task_start, task_end, note
         task_note_dir   = '%s/archive/%s/archive/%s' %(main_dir, proj_name, task_name)
         task_log_dir    = '%s/archive/%s' %(main_dir, proj_name)
         print('Moving %s project to the archive.' %proj_name)
-        os.system('mv -v -f %s/%s %s/archive' %main_dir, proj_name, main_dir)
+        os.system('mv -v -f %s/%s %s/archive' %(main_dir, proj_name, main_dir))
     elif z_event == 'Task Complete':
         task_note_dir   = '%s/archive/%s' %(task_path, task_name)
         task_log_dir    = '%s' %(task_path)

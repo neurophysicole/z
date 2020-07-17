@@ -6,11 +6,9 @@ def settings():
     import datetime
     from datetime import datetime, date, timedelta
 
-    # determine the paths
-    path = os.path.dirname(os.path.abspath('%s/..' %__file__))
-
-    # set the path to use
-    main_dir        = path
+    # set the directories
+    main_dir = os.path.dirname(os.path.abspath('%s/..' %__file__)) #main directory
+    home_dir = os.getcwd()
 
     # open the settings file
     settings_file = '%s/settings.txt' %(main_dir)
@@ -40,12 +38,6 @@ def settings():
         # get the branch name
         elif settings_list[line] == 'NEXT BRANCH NAME':
             next_branch_name    = settings_list[(line + 1)]
-        
-        elif settings_list[line] == 'BACKUP DIRECTORY':
-            backup_dir          = settings_list[(line + 1)]
-
-        elif settings_list[line] == 'DUPLICATE ID':
-            duplicate_id        = settings_list[(line + 1)]
 
     # close settings file
     settings_file.close()
@@ -135,4 +127,11 @@ def settings():
     else:
         backup = False
 
-    return backup, main_dir, backup_dir, cur_branch_name, duplicate_id
+    # ====================
+    # Set Terminal Windows
+    # ====================
+    terminal        = int(raw_input('What is the terminal ID? (e.g., \'1\')'))
+    notes_terminal  = terminal + 1
+    dets_terminal   = terminal + 2
+
+    return backup, main_dir, home_dir, cur_branch_name, notes_terminal, dets_terminal

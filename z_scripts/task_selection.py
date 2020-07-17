@@ -166,6 +166,49 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
                                 print('\nYou really think you have the time to start a new project?\n')
                             else:
                                 print('') #get to work?
+
+                            # set due date
+                            due_date_loop = True
+                            while due_date_loop:
+                                due_date = raw_input('Is there a date by when this task should be completed? (y/n):  ')
+                                if (due_date == '') or (due_date == 'y'):
+                                    due_date_subloop = True
+                                    while due_date_subloop:
+                                        due         = raw_input('Input the date (e.g., August 24, 2020, 1:00:00 PM):  ')
+                                        due_confirm = raw_input('%s? (y/n):  ' %due)
+                                        if (due_confirm == '') or (due_confirm == 'y'):
+                                            # abort loops
+                                            due_date_subloop    = False
+                                    allday_subloop = True
+                                    while allday_subloop:
+                                        allday      = raw_input('All day event? (y/n):  ')
+                                        allday_confirm = raw_input('%s? (y/n):  ')
+                                        if (allday == 'y') and ((allday_confirm == 'y') or (allday_confirm == '')):
+                                            allday = 'true'
+                                            allday_subloop = False
+                                        elif (allday == 'n') and ((allday_confirm == 'y') or (allday_confirm == '')):
+                                            allday = 'false'
+                                            allday_subloop = False
+                                        else: #wtf
+                                            print('There is an issue with determining the allday nature of the event.')
+                                    eventname_loop = True
+                                    while eventname_loop:
+                                        event_name   = raw_input('Name the event:  ')
+                                        eventname_confirm = raw_input('%s? (y/n):  ')
+                                        if (eventname_confirm == 'y') or (eventname_confirm == ''):
+                                            eventname_loop = False
+                                        elif eventname_confirm == 'n':
+                                            eventname_loop = True
+                                        else: #wtf
+                                            print('There is something wrong with determining the event name.') 
+                                    # add to-do to calendar
+                                    os.system(str('osascript -e \'tell application \'iCal\"\ntell calendar \"To-Do\'s\"\nmake event with new properties {start date: date \"%s\", allday event: %s, summary: \"%s\"}\nend tell\nend tell\'' %(due, allday, event_name)))
+                                    due_date_loop       = False
+                                elif due_date == 'n':
+                                    due_date_loop = False
+                                else: #wtf
+                                    print('\nThat don\'t make no sense. Try again.\n')
+
                             # abort loops
                             new_task        = False
                             confirm_task    = False
@@ -177,4 +220,4 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
                     else: #wtf
                         print('\nThat don\'t make no sense. Try again.\n')
     
-    return task_name
+    return task_name, due, allday, event_name

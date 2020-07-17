@@ -86,8 +86,9 @@ def jobber(proj_list, proj_path, main_dir):
                             # create new project directory
                             os.system('mkdir %s/%s' %(proj_path, proj_name))
 
-                            # create new project logfile
+                            # create new project files
                             open('%s/%s/log.txt' %(proj_path, proj_name), 'w+')
+                            open('%s/%s/dets.txt' %(proj_path, proj_name), 'w+')
 
                             # create new project archive directory
                             os.system('mkdir %s/%s/archive' %(proj_path, proj_name))

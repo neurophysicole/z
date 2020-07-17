@@ -5,7 +5,3 @@ NEXT BRANCH NAME
 2020Summer
 NEXT BRANCH START
 06.01.2020
-BACKUP DIRECTORY
-/Users/zcole/Box/file_drawer/z
-DUPLICATE ID
-(zcole2@unl.edu)

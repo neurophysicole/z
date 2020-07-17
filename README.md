@@ -1,4 +1,7 @@
 
+# TO DO's
+- setup a daily email?
+
 # z
 This project has been my first real work in Python - well, my first real programming work entirely, really. So just a fair warning that things might get weird.
 

@@ -29,36 +29,33 @@ import cleanup
 import cloud_update
 import jobber
 from print_notes import print_proj_notes
-import task_selection
 from print_notes import print_task_notes
+import task_selection
 import task_interface
 import logit
+from cloud_update import repo_pull
+from cloud_update import repo_commit
+from cloud_update import repo_push
 
 # ------
 # Runit
-date    = datetime.today().strftime('%y-%m-%d')
-logfile = 'log.txt'
+date        = datetime.today().strftime('%y-%m-%d')
+logfile     = 'log.txt'
+status_file = 'status.txt'
 
 # loadup
 loadup.loadup()
 
 # load settings
-backup, main_dir, backup_dir, cur_branch_name, duplicate_id = settings.settings()
-
-# cleanup duplicate Box files
-if backup:
-    cleanup.cleanup(backup, main_dir, backup_dir, cur_branch_name, duplicate_id)
+backup, main_dir, home_dir, cur_branch_name, notes_terminal, dets_terminal = settings.settings()
 
 # -------
 # Loopit
 exe_loop = True
 while exe_loop:
-    # check the cloud
-    if backup:
-        cloud_update.cloud_update(main_dir, backup_dir, cur_branch_name, logfile)
-    else: #no cloud access
-        print('\nNot Connected to the Internet.\n')
 
+    # initial pull
+    repo_pull(home_dir, main_dir)
 
     # ==================
     # Determine To-Do's
@@ -67,15 +64,29 @@ while exe_loop:
     print('\nBRANCH: %s\n' %cur_branch_name)
     time.sleep(.1)
 
-    # projects
+    # get projects
     proj_path   = '%s/%s' %(main_dir, cur_branch_name)
     proj_list   = next(os.walk(proj_path))[1]
 
+    # status
+    status_header = '\nProject\tStatus'
+    print('%s' %status_header.upper())
+    for project in proj_list:
+        project_status_fname = '%s/%s/%s' %(proj_path, project, status_file)
+
+        proj_status_file = open(project_status_fname, 'r')
+        proj_status = proj_status_file.read()
+        
+        # display project status
+        print('\n%s\t%s' %(project, proj_status))
+        time.sleep(.1)
+
+    # list projects
     job_loop = True
     while job_loop:
-        # list projects
         print('\nProjects:')
         for projects in proj_list:
+            # display project
             print('(%s) %s' %((proj_list.index(projects) + 1), projects))
             time.sleep(.1)
     
@@ -108,10 +119,10 @@ while exe_loop:
         task_loop = True
         while task_loop:
             # print all project notes
-            task_path, task_list, archive_task_list = print_proj_notes(proj_path, proj_name)
+            task_path, task_list, archive_task_list = print_proj_notes(proj_path, proj_name, notes_terminal, dets_terminal)
 
             # run task selection module
-            task_name = task_selection.task_selection(archive_task_list, task_path, task_list, proj_path, proj_name)
+            task_name, due, allday, event_name = task_selection.task_selection(archive_task_list, task_path, task_list, proj_path, proj_name)
 
             # determine if we need to go back to switch projects (searching through)
             if task_name == 'new_jobber':
@@ -138,7 +149,7 @@ while exe_loop:
             else:
                 thymer_loop = True
                 while thymer_loop:
-                    thymer_decision = raw_input('\nThymer is already running.. Did you want to restart it? (y/n): ')
+                    thymer_decision = raw_input('\nRestart Thymer? (y/n): ')
 
                     # determine whether Thymer needs to be reset or not
                     if (thymer_decision == 'y') or (thymer_decision == ''):
@@ -152,7 +163,7 @@ while exe_loop:
 
             # run task interface module
             # do work!
-            z_event, task_start, task_end, notes, time_s, proj_time = task_interface.task_interface(proj_name, task_name, proj_path, backup_dir, cur_branch_name, thymer)
+            z_event, todo, task_start, task_end, task_details, task_notes, time_s, proj_time, project_status = task_interface.task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer)
 
             # ==========
             # Follow-up
@@ -205,14 +216,14 @@ while exe_loop:
             # Log Responses
             # ==============
             # run logit module
-            logit.logit(proj_path, proj_name, task_path, task_name, task_start, task_end, notes, time_s, z_event, main_dir, logfile)
+            logit.logit(proj_path, proj_name, task_path, task_name, todo, task_start, task_end, task_details, task_notes, time_s, z_event, main_dir, logfile, project_status)
 
-# ---------------
-# check the cloud
-if backup:
-    cloud_update.cloud_update(main_dir, backup_dir, cur_branch_name, logfile)
-else: #no cloud access
-    print('\nNot able to backup because not connected to the Cloud.\n')
+            # commit changes
+            repo_commit(home_dir, main_dir, proj_name, task_name, task_details)
+
+# ------------
+# push changes
+repo_push(home_dir, main_dir)
 
 # if opened Thymer, shut it down
 if thymer:

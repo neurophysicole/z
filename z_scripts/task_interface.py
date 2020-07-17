@@ -1,4 +1,4 @@
-def task_interface(proj_name, task_name, proj_path, backup_dir, cur_branch_name, thymer):
+def task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer):
     # import date/time packages
     import datetime
     from dateutil.relativedelta import relativedelta
@@ -11,8 +11,8 @@ def task_interface(proj_name, task_name, proj_path, backup_dir, cur_branch_name,
     sys.setdefaultencoding('utf8') # ^^ <--Python interpreter doesn't like it, but it works
 
     # import interface packages
-    import PySimpleGUI27 as sg
-    from PySimpleGUI27 import SetOptions
+    import PySimpleGUI as sg
+    from PySimpleGUI import SetOptions
 
     # task timer - start
     task_start = datetime.now()
@@ -73,16 +73,55 @@ def task_interface(proj_name, task_name, proj_path, backup_dir, cur_branch_name,
     # window sections
     SetOptions(background_color = 'black', element_background_color = 'black', text_color = 'white', text_element_background_color = 'black', element_text_color = 'white')
 
+    # info
     proj_header             = [sg.Text('%s' %proj_name), sg.Text('%s' %proj_time_total)]
     proj_complete_button    = [sg.CloseButton('Project Complete')]
     task_header             = [sg.Text('%s' %task_name), sg.Text('%s' %task_time_total)]
     task_complete_button    = [sg.CloseButton('Task Complete')]
-    text_entry              = sg.Multiline(size = (100, 8), key = 'notes', autoscroll = True, default_text = '----------\n')
+
+    # status
+    design_status   = False
+    dev_status      = False
+    data_status     = False
+    analysis_status = False
+    writing_status  = False
+    pub_status      = False
+
+    if proj_status == 'Design':
+        design_status = True
+    elif proj_status == 'Dev':
+        dev_status = True
+    elif proj_status == 'Data':
+        data_status = True
+    elif proj_status == 'Analysis':
+        analysis_status = True
+    elif proj_status == 'Writing':
+        writing_status = True
+    elif proj_status == 'Pub':
+        pub_status = True
+    else: #wtf
+        print('\nThere is something wrong with determining the project status.\n')
+
+    project_status          = [
+        sg.Radio('Design', "status", key = 'design_status_key', default = design_status, size = (10, 1)), sg.Radio('Dev', "status", key = 'dev_status_key', default = dev_status, size = (10,1)), sg.Radio('Data', "status", key = 'data_status_key', default = data_status, size = (10, 1)), sg.Radio('Analysis', "status", key = 'analysis_status_key', default = analysis_status, size = (10, 1)), sg.Radio('Writing', "status", key = 'writing_status_key', default = writing_status, size = (10, 1)), sg.Radio('Pub', "status", key = 'pub_status_key', default = pub_status, size = (10, 1))
+        ]
+
+    # list subtasks
+    subtasks                = [ sg.Text('To-Do\'s'), sg.InputText('NA', key = 'subtask_txt') sg.Listbox(values = (subtask_list), key = 'subtask_lst', size = (30, 3)) ]
+
+    # text entry boxes
+    text_entry_details      = [
+        sg.Text('Details'), sg.Multiline(size = (100, 8), key = 'details', autoscroll = True, default_text = '----------\n')
+        ]
+    text_entry_notes        = [
+        sg.Text('Notes'), sg.Multiline(size = (100, 8), key = 'notes', autoscroll = True, default_text = '----------\n')
+        ]
     dunzo_button            = sg.CloseButton('Dunzo')
 
+    # ------
     # window
     z_window = sg.Window(str('%s: %s' %(date, time)), resizable = True, disable_close = True, finalize = True)
-    z_layout = [[sg.Frame(layout = [proj_header, proj_complete_button], title = 'Project', relief = sg.RELIEF_SUNKEN)],[sg.Frame(layout = [task_header, task_complete_button], title = 'Task', relief = sg.RELIEF_SUNKEN)],[text_entry],[dunzo_button]]
+    z_layout = [[sg.Frame(layout = [proj_header, proj_complete_button], title = 'Project', relief = sg.RELIEF_SUNKEN), project_status],[sg.Frame(layout = [task_header, task_complete_button], title = 'Task', relief = sg.RELIEF_SUNKEN), subtasks],[text_entry_details],[text_entry_notes],[dunzo_button]]
 
 
     # ==========
@@ -91,8 +130,27 @@ def task_interface(proj_name, task_name, proj_path, backup_dir, cur_branch_name,
     # setup responses
     z_event, z_values = z_window.Layout(z_layout).Read()
 
-    # assing task notes to variable
-    notes = z_values['notes']
+    # notes
+    task_details    = z_values['details']
+    task_notes      = z_values['notes']
+
+    # to-dos
+    if z_values['subtask_txt'] == 'NA':
+        todo = z_values['subtask_lst']
+    elif z_values['subtask_txt'] != 'NA':
+        todo = z_values['subtask_txt']
+        open('%s/%s/%s/%s_notes.txt' %(proj_path, proj_name, task_name, todo), 'w+') #create new todo file
+    else: #wtf
+        print('Error determining the subtask')
+
+    # status
+    design_status   = z_values['design_status_key']
+    dev_status      = z_values['dev_status_key']
+    data_status     = z_values['data_status_key']
+    analysis_status = z_values['analysis_status_key']
+    writing_status  = z_values['writing_status_key']
+
+    project_status  = [ desgin_status, dev_status, data_status, analysis_status, writing_status ]
 
     # timing calculations
     # -------------------
@@ -126,4 +184,4 @@ def task_interface(proj_name, task_name, proj_path, backup_dir, cur_branch_name,
         os.system(stop_thymer)
         os.system(close_thymer)
 
-    return z_event, task_start, task_end, notes, time_s, proj_time
+    return z_event, todo, task_start, task_end, task_details, task_notes, time_s, proj_time, project_status

@@ -1,4 +1,4 @@
-def logit(proj_path, proj_name, task_path, task_name, todo, task_start, task_end, task_details, task_notes, time_s, z_event, main_dir, logfile, project_status):
+def logit(proj_path, proj_name, task_path, task_name, todo, task_start, task_end, task_details, task_notes, time_s, z_event, main_dir, logfile, project_status, status_file):
     # import date/time packages
     import datetime
     from datetime import datetime, date
@@ -6,8 +6,8 @@ def logit(proj_path, proj_name, task_path, task_name, todo, task_start, task_end
     # import os packages
     import os
     import sys
-    reload(sys) #to help with seemingly random'ascii' encoding error
-    sys.setdefaultencoding('utf8') # ^^ <--Python interpreter doesn't like it, but it works
+    # reload(sys) #to help with seemingly random'ascii' encoding error
+    # sys.setdefaultencoding('utf8') # ^^ <--Python interpreter doesn't like it, but it works
     
     # get the date (year first)
     date        = datetime.today().strftime('%Y-%m-%d')
@@ -68,8 +68,10 @@ def logit(proj_path, proj_name, task_path, task_name, todo, task_start, task_end
     master_log_file.write(log)
     proj_log_file.close()
 
+    # update todos
+    todo_fname  = '%s/' %(task_note_dir)
     # update project status
-    project_status_list = [ 'Design', 'Dev', 'Data', 'Analysis', 'Writing' ]
+    project_status_list = [ 'Design', 'Dev', 'Data', 'Analysis', 'Writing', 'List', 'Thoughts' ]
     for i in project_status:
         if project_status[i] == True:
             project_status = project_status_list[i]

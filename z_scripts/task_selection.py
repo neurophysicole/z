@@ -2,8 +2,8 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
     # import command line packages
     import os
     import sys
-    reload(sys) #to help with seemingly random'ascii' encoding error
-    sys.setdefaultencoding('utf8') # ^^ <--Pythong interpreter doesn't like it, but it works
+    # reload(sys) #to help with seemingly random'ascii' encoding error
+    # sys.setdefaultencoding('utf8') # ^^ <--Pythong interpreter doesn't like it, but it works
 
     # import time package
     import time
@@ -85,7 +85,7 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
         task_input_loop = True
         while task_input_loop:
             try:
-                task = int(raw_input('\nTask?\nTo return to project selection, enter \'0\', otherwise, enter a number:  '))
+                task = int(input('\nTask?\nTo return to project selection, enter \'0\', otherwise, enter a number:  '))
             except ValueError:
                 continue
             else:
@@ -103,9 +103,13 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
             # confirm the task
             task_confirm_loop = True
             while task_confirm_loop:
-                task_confirm = raw_input('\n%s? (y/n):  ' %task_name)
+                task_confirm = input('\n%s? (y/n):  ' %task_name)
 
                 if (task_confirm == '') or (task_confirm == 'y'):
+                    # fulfill vars
+                    due                 = ''
+                    allday              = ''
+                    event_name          = ''
                     task_check_loop     = False
                     task_confirm_loop   = False
 
@@ -119,7 +123,7 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
             # confirm new task
             task_confirm_loop = True
             while task_confirm_loop:
-                task_confirm = raw_input('\nNew task? (y/n):  ')
+                task_confirm = input('\nNew task? (y/n):  ')
 
                 if (task_confirm == '') or (task_confirm == 'y'):
                     task_check_loop     = False
@@ -138,12 +142,12 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
 
             new_task = True
             while new_task:
-                task_name = raw_input('\nNew Task (Name):  ')
+                task_name = input('\nNew Task (Name):  ')
 
                 confirm_task = True
                 while confirm_task:
                     # confirm the task name
-                    task_loop_confirm = raw_input('\n%s? (y/n)' %task_name)
+                    task_loop_confirm = input('\n%s? (y/n)' %task_name)
                     
                     if (task_loop_confirm == '') or (task_loop_confirm == 'y'):
                         # check to see if actually a task that was previously archived
@@ -170,19 +174,19 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
                             # set due date
                             due_date_loop = True
                             while due_date_loop:
-                                due_date = raw_input('Is there a date by when this task should be completed? (y/n):  ')
+                                due_date = input('Is there a date by when this task should be completed? (y/n):  ')
                                 if (due_date == '') or (due_date == 'y'):
                                     due_date_subloop = True
                                     while due_date_subloop:
-                                        due         = raw_input('Input the date (e.g., August 24, 2020, 1:00:00 PM):  ')
-                                        due_confirm = raw_input('%s? (y/n):  ' %due)
+                                        due         = input('Input the date (e.g., August 24, 2020, 1:00:00 PM):  ')
+                                        due_confirm = input('%s? (y/n):  ' %due)
                                         if (due_confirm == '') or (due_confirm == 'y'):
                                             # abort loops
                                             due_date_subloop    = False
                                     allday_subloop = True
                                     while allday_subloop:
-                                        allday      = raw_input('All day event? (y/n):  ')
-                                        allday_confirm = raw_input('%s? (y/n):  ')
+                                        allday      = input('All day event? (y/n):  ')
+                                        allday_confirm = input('%s? (y/n):  ')
                                         if (allday == 'y') and ((allday_confirm == 'y') or (allday_confirm == '')):
                                             allday = 'true'
                                             allday_subloop = False
@@ -193,8 +197,8 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
                                             print('There is an issue with determining the allday nature of the event.')
                                     eventname_loop = True
                                     while eventname_loop:
-                                        event_name   = raw_input('Name the event:  ')
-                                        eventname_confirm = raw_input('%s? (y/n):  ')
+                                        event_name   = input('Name the event:  ')
+                                        eventname_confirm = input('%s? (y/n):  ')
                                         if (eventname_confirm == 'y') or (eventname_confirm == ''):
                                             eventname_loop = False
                                         elif eventname_confirm == 'n':
@@ -205,7 +209,10 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
                                     os.system(str('osascript -e \'tell application \'iCal\"\ntell calendar \"To-Do\'s\"\nmake event with new properties {start date: date \"%s\", allday event: %s, summary: \"%s\"}\nend tell\nend tell\'' %(due, allday, event_name)))
                                     due_date_loop       = False
                                 elif due_date == 'n':
-                                    due_date_loop = False
+                                    due             = ''
+                                    due_date_loop   = False
+                                    allday          = ''
+                                    event_name      = ''
                                 else: #wtf
                                     print('\nThat don\'t make no sense. Try again.\n')
 
@@ -219,5 +226,12 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
 
                     else: #wtf
                         print('\nThat don\'t make no sense. Try again.\n')
+
+    # subtasks (todos)
+    todo_dir    = '%s/%s' %(task_path, task_name)
+    todo_list   = next(os.walk(todo_dir))[2]
+    for i in range(0, len(todo_list)):
+        todo_list[i] = os.path.splitext(todo_list[i])[0]
+        todo_list[i] = todo_list[i][:-6]
     
-    return task_name, due, allday, event_name
+    return task_name, due, allday, event_name, todo_list

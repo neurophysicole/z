@@ -1,4 +1,4 @@
-def task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer):
+def task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer, proj_status, todo_list):
     # import date/time packages
     import datetime
     from dateutil.relativedelta import relativedelta
@@ -7,8 +7,8 @@ def task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer):
     # import command line packages
     import os
     import sys
-    reload(sys) #to help with seemingly random'ascii' encoding error
-    sys.setdefaultencoding('utf8') # ^^ <--Python interpreter doesn't like it, but it works
+    # reload(sys) #to help with seemingly random'ascii' encoding error
+    # sys.setdefaultencoding('utf8') # ^^ <--Python interpreter doesn't like it, but it works
 
     # import interface packages
     import PySimpleGUI as sg
@@ -74,10 +74,10 @@ def task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer):
     SetOptions(background_color = 'black', element_background_color = 'black', text_color = 'white', text_element_background_color = 'black', element_text_color = 'white')
 
     # info
-    proj_header             = [sg.Text('%s' %proj_name), sg.Text('%s' %proj_time_total)]
-    proj_complete_button    = [sg.CloseButton('Project Complete')]
-    task_header             = [sg.Text('%s' %task_name), sg.Text('%s' %task_time_total)]
-    task_complete_button    = [sg.CloseButton('Task Complete')]
+    # proj_header             = [[sg.Text('%s' %proj_name)], [sg.Text('%s' %proj_time_total)]]
+    # proj_complete_button    = [sg.CloseButton('Project Complete')]
+    # task_header             = [sg.Text('%s' %task_name), sg.Text('%s' %task_time_total)]
+    # task_complete_button    = [sg.CloseButton('Task Complete')]
 
     # status
     design_status   = False
@@ -102,27 +102,29 @@ def task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer):
     else: #wtf
         print('\nThere is something wrong with determining the project status.\n')
 
-    project_status          = [
-        sg.Radio('Design', "status", key = 'design_status_key', default = design_status, size = (10, 1)), sg.Radio('Dev', "status", key = 'dev_status_key', default = dev_status, size = (10,1)), sg.Radio('Data', "status", key = 'data_status_key', default = data_status, size = (10, 1)), sg.Radio('Analysis', "status", key = 'analysis_status_key', default = analysis_status, size = (10, 1)), sg.Radio('Writing', "status", key = 'writing_status_key', default = writing_status, size = (10, 1)), sg.Radio('Pub', "status", key = 'pub_status_key', default = pub_status, size = (10, 1))
-        ]
+    # project_status          = [sg.Radio('Design', "status", key = 'design_status_key', default = design_status, size = (10, 1)), sg.Radio('Dev', "status", key = 'dev_status_key', default = dev_status, size = (10,1)), sg.Radio('Data', "status", key = 'data_status_key', default = data_status, size = (10, 1)), sg.Radio('Analysis', "status", key = 'analysis_status_key', default = analysis_status, size = (10, 1)), sg.Radio('Writing', "status", key = 'writing_status_key', default = writing_status, size = (10, 1)), sg.Radio('Pub', "status", key = 'pub_status_key', default = pub_status, size = (10, 1))]
 
-    # list subtasks
-    subtasks                = [ sg.Text('To-Do\'s'), sg.InputText('NA', key = 'subtask_txt') sg.Listbox(values = (subtask_list), key = 'subtask_lst', size = (30, 3)) ]
-
-    # text entry boxes
-    text_entry_details      = [
-        sg.Text('Details'), sg.Multiline(size = (100, 8), key = 'details', autoscroll = True, default_text = '----------\n')
-        ]
-    text_entry_notes        = [
-        sg.Text('Notes'), sg.Multiline(size = (100, 8), key = 'notes', autoscroll = True, default_text = '----------\n')
-        ]
-    dunzo_button            = sg.CloseButton('Dunzo')
+    # # subtask interface
+    # subtasks                = [sg.Text('To-Do\'s')], [sg.InputText(key = 'subtask_txt', default_text = 'NA')], [sg.Listbox(values = todo_list, key = 'subtask_lst', size = (30, 3))]
+    
+    # # text entry boxes
+    # text_entry_details      = [sg.Text('Details'), sg.Multiline(size = (100, 8), key = 'details', autoscroll = True)]
+    # text_entry_notes        = [sg.Text('Notes'), sg.Multiline(size = (100, 8), key = 'notes', autoscroll = True)]
+    # dunzo_button            = [sg.CloseButton('Dunzo')]
 
     # ------
     # window
     z_window = sg.Window(str('%s: %s' %(date, time)), resizable = True, disable_close = True, finalize = True)
-    z_layout = [[sg.Frame(layout = [proj_header, proj_complete_button], title = 'Project', relief = sg.RELIEF_SUNKEN), project_status],[sg.Frame(layout = [task_header, task_complete_button], title = 'Task', relief = sg.RELIEF_SUNKEN), subtasks],[text_entry_details],[text_entry_notes],[dunzo_button]]
-
+    z_layout = [
+        [sg.Frame(layout = [[sg.Text(str('%s' %proj_name))], [sg.Text(str('%s' %proj_time_total))],[sg.CloseButton('Project Complete')]], title = 'Project', relief = sg.RELIEF_SUNKEN), sg.Frame(layout = [[sg.Text(str('%s' %task_name))], [sg.Text(str('%s' %task_time_total))], [sg.CloseButton('Task Complete')]], title = 'Task', relief = sg.RELIEF_SUNKEN)],
+        [sg.Text('To-Do\'s')], [sg.InputText(key = 'subtask_txt', default_text = 'NA', size = (30, 1))], [sg.Listbox(values = todo_list, key = 'subtask_lst', size = (30, 3))],
+        [sg.Radio('Design', "status", key = 'design_status_key', default = design_status, size = (10, 1)), sg.Radio('Dev', "status", key = 'dev_status_key', default = dev_status, size = (10,1)), sg.Radio('Data', "status", key = 'data_status_key', default = data_status, size = (10, 1)), sg.Radio('Analysis', "status", key = 'analysis_status_key', default = analysis_status, size = (10, 1)), sg.Radio('Writing', "status", key = 'writing_status_key', default = writing_status, size = (10, 1)), sg.Radio('Pub', "status", key = 'pub_status_key', default = pub_status, size = (10, 1))], 
+        [sg.Text('Details')], 
+        [sg.Multiline(size = (100, 8), key = 'details', autoscroll = True)], 
+        [sg.Text('Notes')], 
+        [sg.Multiline(size = (100, 8), key = 'notes', autoscroll = True)], 
+        [sg.CloseButton('Dunzo')]
+    ]
 
     # ==========
     # Responses
@@ -150,7 +152,7 @@ def task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer):
     analysis_status = z_values['analysis_status_key']
     writing_status  = z_values['writing_status_key']
 
-    project_status  = [ desgin_status, dev_status, data_status, analysis_status, writing_status ]
+    project_status  = [ design_status, dev_status, data_status, analysis_status, writing_status ]
 
     # timing calculations
     # -------------------

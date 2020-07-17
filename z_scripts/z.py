@@ -28,6 +28,7 @@ import settings
 import jobber
 from print_notes import print_proj_notes
 from print_notes import print_task_notes
+from print_notes import print_proj_details
 import task_selection
 import task_interface
 import logit
@@ -45,7 +46,7 @@ status_file = 'status.txt'
 loadup.loadup()
 
 # load settings
-backup, main_dir, home_dir, cur_branch_name, notes_terminal, dets_terminal = settings.settings()
+main_dir, home_dir, cur_branch_name, notes_terminal, dets_terminal = settings.settings()
 
 # -------
 # Loopit
@@ -64,7 +65,13 @@ while exe_loop:
 
     # get projects
     proj_path   = '%s/%s' %(main_dir, cur_branch_name)
-    proj_list   = next(os.walk(proj_path))[1]
+
+    try:
+        proj_list   = next(os.walk(proj_path))[1]
+    except StopIteration:
+        proj_list   = []
+    else:
+        proj_list   = next(os.walk(proj_path))[1]
 
     # status
     status_header = '\nProject\tStatus'
@@ -99,7 +106,7 @@ while exe_loop:
             #do something else?
             keep_working_loop = True
             while keep_working_loop:
-                keep_working = raw_input('\nOK, is there something else that you would like to work on? (y/n): ')
+                keep_working = input('\nOK, is there something else that you would like to work on? (y/n): ')
                 
                 if (keep_working == 'y') or (keep_working == ''):
                     keep_working_loop = False
@@ -118,9 +125,10 @@ while exe_loop:
         while task_loop:
             # print all project notes
             task_path, task_list, archive_task_list = print_proj_notes(proj_path, proj_name, notes_terminal, dets_terminal)
+            print_proj_details(proj_path, proj_name, notes_terminal, dets_terminal)
 
             # run task selection module
-            task_name, due, allday, event_name = task_selection.task_selection(archive_task_list, task_path, task_list, proj_path, proj_name)
+            task_name, due, allday, event_name, todo_list = task_selection.task_selection(archive_task_list, task_path, task_list, proj_path, proj_name)
 
             # determine if we need to go back to switch projects (searching through)
             if task_name == 'new_jobber':
@@ -133,7 +141,7 @@ while exe_loop:
             # List Notes
             # ===========
             # run notes module
-            print_task_notes(task_path, task_name)
+            print_task_notes(task_path, task_name, notes_terminal, dets_terminal)
 
             # ===============
             # Task Interface
@@ -147,7 +155,7 @@ while exe_loop:
             else:
                 thymer_loop = True
                 while thymer_loop:
-                    thymer_decision = raw_input('\nRestart Thymer? (y/n): ')
+                    thymer_decision = input('\nRestart Thymer? (y/n): ')
 
                     # determine whether Thymer needs to be reset or not
                     if (thymer_decision == 'y') or (thymer_decision == ''):
@@ -161,7 +169,7 @@ while exe_loop:
 
             # run task interface module
             # do work!
-            z_event, todo, task_start, task_end, task_details, task_notes, time_s, proj_time, project_status = task_interface.task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer)
+            z_event, todo, task_start, task_end, task_details, task_notes, time_s, proj_time, project_status = task_interface.task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer, proj_status, todo_list)
 
             # ==========
             # Follow-up
@@ -180,7 +188,7 @@ while exe_loop:
                     os.system('mv -v -f %s/%s %s/archive' %(task_path, task_name, task_path))
 
                 # working on a new task?  
-                follow_up = raw_input('\nKeep working? (y/n):  ')
+                follow_up = input('\nKeep working? (y/n):  ')
                 if (follow_up == '') or (follow_up == 'y'): #want to keep working
                     follow_up_what_loop = True
                     while follow_up_what_loop:
@@ -189,7 +197,7 @@ while exe_loop:
                             follow_up_loop      = False
                             follow_up_what_loop = False
                         else: #what to do?
-                            follow_up_what = raw_input('Same project? (y/n):  ')
+                            follow_up_what = input('Same project? (y/n):  ')
                             if (follow_up_what == '') or (follow_up_what == 'y'): #don't switch projects
                                 follow_up_loop      = False
                                 follow_up_what_loop = False
@@ -214,7 +222,7 @@ while exe_loop:
             # Log Responses
             # ==============
             # run logit module
-            logit.logit(proj_path, proj_name, task_path, task_name, todo, task_start, task_end, task_details, task_notes, time_s, z_event, main_dir, logfile, project_status)
+            logit.logit(proj_path, proj_name, task_path, task_name, todo, task_start, task_end, task_details, task_notes, time_s, z_event, main_dir, logfile, project_status, status_file)
 
             # commit changes
             repo_commit(home_dir, main_dir, proj_name, task_name, task_details)

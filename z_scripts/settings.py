@@ -50,15 +50,15 @@ def settings():
         # update current and next branch
         confirm_renew_loop = True
         while confirm_renew_loop:
-            confirm_renew = raw_input('\nRenewing the current branch.\n\nCONFIRM that this should be carried out (y/n): ')
+            confirm_renew = input('\nRenewing the current branch.\n\nCONFIRM that this should be carried out (y/n): ')
             if confirm_renew == '':
                 # need to update the current branch
                 old_branch_name    = cur_branch_name
                 cur_branch_name    = next_branch_name
 
                 # need to update the next branch
-                next_branch_name   = raw_input('\nCome up with a name for the next branch (e.g., \'20_Fall\'):\n')
-                next_branch_start  = raw_input('\nInput the date that the next branch should start (e.g., \'19-12-26\'):\n')
+                next_branch_name   = input('\nCome up with a name for the next branch (e.g., \'20_Fall\'):\n')
+                next_branch_start  = input('\nInput the date that the next branch should start (e.g., \'19-12-26\'):\n')
 
                 print('\nOkay, the current branch is set to %s.\nIf for some reason, this is inaccurate, you will need to update the settings (during job selection -- coming up), or just manually update the settings in the \'settings.txt\' file.\n' %cur_branch_name)
 
@@ -117,21 +117,15 @@ def settings():
 
                 confirm_renew_loop = False
 
-
-    # =================
-    # check for backup
-    # =================
-    # if not connected to the internet 
-    if os.path.isdir(backup_dir):
-        backup = True
-    else:
-        backup = False
-
     # ====================
     # Set Terminal Windows
     # ====================
-    terminal        = int(raw_input('What is the terminal ID? (e.g., \'1\')'))
+    terminal        = int(input('What is the terminal ID? (e.g., \'1\')\nNote, it is always one more than what is actually listed in the Terminal window:  '))
     notes_terminal  = terminal + 1
     dets_terminal   = terminal + 2
 
-    return backup, main_dir, home_dir, cur_branch_name, notes_terminal, dets_terminal
+    # open new terminal windows
+    os.system('open -n -a Terminal')
+    os.system('open -n -a Terminal')
+
+    return main_dir, home_dir, cur_branch_name, notes_terminal, dets_terminal

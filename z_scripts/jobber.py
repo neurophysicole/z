@@ -2,8 +2,8 @@ def jobber(proj_list, proj_path, main_dir):
     # import command line packages
     import os
     import sys
-    reload(sys) #to help with seemingly random'ascii' encoding error
-    sys.setdefaultencoding('utf8') # ^^ <--Pythong interpreter doesn't like it, but it works
+    # reload(sys) #to help with seemingly random'ascii' encoding error
+    # sys.setdefaultencoding('utf8') # ^^ <--Pythong interpreter doesn't like it, but it works
 
     # import modified packages
     import search
@@ -13,7 +13,7 @@ def jobber(proj_list, proj_path, main_dir):
         job_input_loop = True
         while job_input_loop:
             try:
-                job = int(raw_input('\nWhat do you want to work on? Indicate the project you would like to work on by typing in the number, or enter in one of the other options (below):\n0 = Search\n\nJOB:  '))
+                job = int(input('\nWhat do you want to work on? Indicate the project you would like to work on by typing in the number, or enter in one of the other options (below):\n0 = Search\n\nJOB:  '))
             except ValueError:
                 continue
             else:
@@ -38,7 +38,7 @@ def jobber(proj_list, proj_path, main_dir):
             # confirm project
             proj_loop_check = True
             while proj_loop_check:
-                proj_loop = raw_input('\n%s? (y/n):  ' %proj_name)
+                proj_loop = input('\n%s? (y/n):  ' %proj_name)
                 if (proj_loop == '') or (proj_loop == 'y'):
                     proj_loop_check = False
                     job_loop = False
@@ -53,7 +53,7 @@ def jobber(proj_list, proj_path, main_dir):
             # confirm new project
             proj_loop_check = True
             while proj_loop_check:
-                proj_loop = raw_input('\nNew project? (y/n):  ')
+                proj_loop = input('\nNew project? (y/n):  ')
                 if (proj_loop == '') or (proj_loop == 'y'):
                     proj_loop_check = False
                     job_loop        = False
@@ -72,11 +72,11 @@ def jobber(proj_list, proj_path, main_dir):
             # make a new project
             new_proj_loop = True
             while new_proj_loop:
-                proj_name = raw_input('\nNew Project (Name):  ')
+                proj_name = input('\nNew Project (Name):  ')
 
                 new_proj_confirm_loop = True
                 while new_proj_confirm_loop:
-                    new_proj_confirm = raw_input('\n%s? (y/n):  ' %proj_name)
+                    new_proj_confirm = input('\n%s? (y/n):  ' %proj_name)
                     if (new_proj_confirm == '') or (new_proj_confirm == 'y'):
                         # if new project is actually an old archived project, move the project over to be active
                         if os.path.isdir('%s/archive/%s' %(main_dir, proj_name)):
@@ -89,6 +89,14 @@ def jobber(proj_list, proj_path, main_dir):
                             # create new project files
                             open('%s/%s/log.txt' %(proj_path, proj_name), 'w+')
                             open('%s/%s/dets.txt' %(proj_path, proj_name), 'w+')
+                            open('%s/%s/status.txt' %(proj_path, proj_name), 'w+')
+
+                            # udpate status
+                            status_file = '%s/%s/status.txt' %(proj_path, proj_name)
+                            status_file = open(status_file, 'a+')
+                            status_input = input('Task Status (e.g., Design, List, Thoughts, etc.):  ')
+                            status_file.write(status_input)
+                            status_file.close()
 
                             # create new project archive directory
                             os.system('mkdir %s/%s/archive' %(proj_path, proj_name))

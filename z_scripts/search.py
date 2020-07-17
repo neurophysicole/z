@@ -10,7 +10,7 @@ def search(main_dir):
     search_loop = True
     while search_loop:
         # collect the search term or phrase
-        find = raw_input('\nEnter in the term or phrase you would like to search for:\n\n')
+        find = input('\nEnter in the term or phrase you would like to search for:\n\n')
 
         print('\nSearching. . .')
         main_dir_list = next(os.walk('%s' %main_dir))[1]
@@ -38,7 +38,7 @@ def search(main_dir):
         #do another search?
         keep_searching_loop = True
         while keep_searching_loop:
-            keep_searching = raw_input('\n\nWould you like to do another search? (y/n): ')
+            keep_searching = input('\n\nWould you like to do another search? (y/n): ')
             if (keep_searching == 'y') or (keep_searching == ''):
                 keep_searching_loop = False
             elif keep_searching == 'n':

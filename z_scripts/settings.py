@@ -10,6 +10,8 @@ def settings():
     home_dir = os.getcwd()
     main_dir = os.path.dirname(os.path.abspath('%s/..' %__file__)) #main directory
 
+    print('%s' %main_dir)
+    
     # open the settings file
     settings_file = '%s/settings.txt' %(main_dir)
     settings_file = open(settings_file, 'r')

@@ -81,6 +81,7 @@ while exe_loop:
 
         proj_status_file = open(project_status_fname, 'r')
         proj_status = proj_status_file.read()
+        proj_status_file.close()
         
         # display project status
         print('\n%s\t%s' %(project, proj_status))
@@ -100,7 +101,7 @@ while exe_loop:
     # Select Job
     # ===========
         # run job selection module
-        proj_name = jobber.jobber(proj_list, proj_path, main_dir)
+        proj_name, proj_status = jobber.jobber(proj_list, proj_path, main_dir)
         
         if proj_name == 'SEARCH':
             #do something else?

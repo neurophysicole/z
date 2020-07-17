@@ -72,13 +72,13 @@ def logit(proj_path, proj_name, task_path, task_name, todo, task_start, task_end
     todo_fname  = '%s/' %(task_note_dir)
     # update project status
     project_status_list = [ 'Design', 'Dev', 'Data', 'Analysis', 'Writing', 'List', 'Thoughts' ]
-    for i in project_status:
-        if project_status[i] == True:
-            project_status = project_status_list[i]
+    for i in range(0, len(project_status)):
+        if project_status[i]:
+            status = project_status_list[i]
+            project_status_fname    = '%s/%s' %(proj_path, status_file)
+            project_status_file     = open(project_status_fname, 'w')
+            project_status_file.write(status)
+            project_status_file.close()
         else:
-            print('\nThere is an error determining project status.\n')
+            print('\nStatus didn\'t change. Or, there is an error determining project status.\n')
     
-    project_status_fname    = '%s/%s' %(proj_path, status_file)
-    project_status_file     = open(project_status_fname, 'w')
-    project_status_file.write(project_status)
-    project_status_file.close()

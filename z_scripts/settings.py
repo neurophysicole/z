@@ -7,8 +7,8 @@ def settings():
     from datetime import datetime, date, timedelta
 
     # set the directories
-    main_dir = os.path.dirname(os.path.abspath('%s/..' %__file__)) #main directory
     home_dir = os.getcwd()
+    main_dir = os.path.dirname(os.path.abspath('%s/..' %__file__)) #main directory
 
     # open the settings file
     settings_file = '%s/settings.txt' %(main_dir)

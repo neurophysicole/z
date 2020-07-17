@@ -92,11 +92,13 @@ def jobber(proj_list, proj_path, main_dir):
                             open('%s/%s/status.txt' %(proj_path, proj_name), 'w+')
 
                             # udpate status
-                            status_file = '%s/%s/status.txt' %(proj_path, proj_name)
-                            status_file = open(status_file, 'a+')
+                            status_fname = '%s/%s/status.txt' %(proj_path, proj_name)
+                            status_file = open(status_fname, 'w+')
                             status_input = input('Task Status (e.g., Design, List, Thoughts, etc.):  ')
                             status_file.write(status_input)
                             status_file.close()
+                            
+
 
                             # create new project archive directory
                             os.system('mkdir %s/%s/archive' %(proj_path, proj_name))
@@ -115,4 +117,8 @@ def jobber(proj_list, proj_path, main_dir):
         else: #wtf
             print('\nERROR: Impossible job selection..\n')
 
-    return proj_name
+    status_file = open(status_fname, 'r')
+    proj_status = status_file.read()
+    status_file.close()
+
+    return proj_name, proj_status

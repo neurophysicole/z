@@ -1,4 +1,4 @@
-def repo_pull(home_dir, main_dir)
+def repo_pull(home_dir, main_dir):
 
     # load packages
     import os
@@ -10,7 +10,7 @@ def repo_pull(home_dir, main_dir)
 
     os.system('cd %s' %home_dir) #return back to the home directory
 
-def repo_commit(home_dir, main_dir, proj_name, task_name, task_details)
+def repo_commit(home_dir, main_dir, proj_name, task_name, task_details):
 
     # load packages
     import os
@@ -22,7 +22,7 @@ def repo_commit(home_dir, main_dir, proj_name, task_name, task_details)
 
     os.system('cd %s' %home_dir) #return back to the home directory
 
-def repo_push(home_dir, main_dir)
+def repo_push(home_dir, main_dir):
 
     # load packages
     import os

@@ -12,12 +12,12 @@ from datetime import datetime, date, timedelta
 # command line packages
 import os
 import sys
-reload(sys) #to help with seemingly random'ascii' encoding error
-sys.setdefaultencoding('utf8') # ^^ <--Python interpreter doesn't like it, but it works
+# reload(sys) #to help with seemingly random'ascii' encoding error
+# sys.setdefaultencoding('utf8') # ^^ <--Python interpreter doesn't like it, but it works
 
 # interface packages
-import PySimpleGUI27 as sg
-from PySimpleGUI27 import SetOptions
+import PySimpleGUI as sg
+from PySimpleGUI import SetOptions
 
 # other necessary packages
 import filecmp
@@ -25,8 +25,6 @@ import filecmp
 # import custom modules
 import loadup
 import settings
-import cleanup
-import cloud_update
 import jobber
 from print_notes import print_proj_notes
 from print_notes import print_task_notes

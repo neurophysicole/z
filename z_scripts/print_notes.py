@@ -95,7 +95,7 @@ def print_task_notes(task_path, task_name):
     time.sleep(.1)
 
 
-def print_proj_details(proj_path, proj_name)
+def print_proj_details(proj_path, proj_name):
     # import command line packages
     import os
 

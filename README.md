@@ -9,13 +9,13 @@ This project has been my first real work in Python - well, my first real program
 This program was designed to run on a Mac. Although I am sure it can run on a window's computer (maybe with some minor tweaks), I have not tried, and I do not plan to. Installing the program is simple, just download the package. The real work is in the setup.
 
 #### Packages
-You will need to have Python 2.7 (that is what I have programmed this in, although it may work with Py3 or other.. this is untested), and you will have to make sure that the packages that are used in this program are installed on your computer. The packages you will need are as follows:
+You will need to have Python 3, and you will have to make sure that the packages that are used in this program are installed on your computer. The packages you will need are as follows:
 - time
 - datetime
 - dateutil
 - os
 - sys
-- PySimpleGUI27 (NOTE: If you do decide to use Py3, you will have to use a different version of PySimpleGUI -- I think it just doesn't have the 27 at the end of the filename.)
+- PySimpleGUI
 - filecmp
 
 (Generally, packages can be installed on the command line using pip, or some other tool. Google it.)
@@ -68,3 +68,6 @@ The cloud is checked at the beginning and end of each session, to make sure that
 
 #### Thyme
 This program has the capability to work on multiple sessions at the same time, on the same computer (although this would probably be a little disingenuous with regard to your time on task). As such, this would involve restarting _Thyme_. Because this could get confusing. _Thyme_ activation will be locked by the first session that was opened, and will be made available again when that session is complete. This is done by creating a file in the main dir named `thymer.txt`. This file is empty, but holds the _Thyme_ app locked so subsequently opened sessions will not restart the timer. This file is deleted by the session that created it, thus opening up the timer to be started by subsequent sessions. In the event that the session which started _Thyme_ crashes, the timer will keep going in the top bar, and subsequent sessions will likely not be able to open up the app. To fix this, simply go into the main directory and delete the file named `thymer.txt`. If this file does not exist, you have a different problem.
+
+#### Something Weird
+If you have too many Terminal windows open, it won't work.. Not totally sure why at the moment..

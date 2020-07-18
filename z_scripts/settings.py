@@ -1,10 +1,14 @@
 def settings():
     # import command line packages
     import os
+    import glob
 
     # import date/time packages
     import datetime
-    from datetime import datetime, date, timedelta
+    from datetime import datetime, date
+
+    # import timing package
+    import time
 
     # set the directories
     home_dir = os.getcwd()
@@ -122,12 +126,20 @@ def settings():
     # ====================
     # Set Terminal Windows
     # ====================
-    terminal        = int(input('What is the terminal ID? (e.g., \'1\')\nNote, it is always one more than what is actually listed in the Terminal window:  '))
-    notes_terminal  = terminal + 1
-    dets_terminal   = terminal + 2
+    term_wins_before = glob.glob('../../dev/ttys00*') # get list of terminal windows (before)
+    os.system('open -n -a Terminal') # open new terminal window
+    os.system('open -n -a Terminal') # again!
+    time.sleep(3) # needs time to make the window or else it won't work..
+    term_wins_after = glob.glob('../../dev/ttys00*') # get list of terminal windows (after)
 
-    # open new terminal windows
-    os.system('open -n -a Terminal')
-    os.system('open -n -a Terminal')
+    # compare terminal window lists
+    newterm_list = []
+    for i in range(0, len(term_wins_after)):
+        if term_wins_after[i] not in term_wins_before:
+            newterm_list.append(term_wins_after[i][5:])
+        
+    notes_terminal  = newterm_list[0]
+    dets_terminal   = newterm_list[1]
+
 
     return main_dir, home_dir, cur_branch_name, notes_terminal, dets_terminal

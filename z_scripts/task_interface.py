@@ -49,7 +49,7 @@ def task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer, pro
 
     # apply the project time
     proj_time_h     = proj_time_s / 3600 #calc hours
-    proj_time_m     = (proj_time_s - (proj_time_h * 3600)) / 60 #calc mins
+    proj_time_m     = (proj_time_s - (int(proj_time_h) * 3600)) / 60 #calc mins
     proj_time_total = 'Hours %i: Minutes %i' %(proj_time_h, proj_time_m) #put it together
 
     # open proj log file
@@ -60,13 +60,13 @@ def task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer, pro
     task_time_s = 0
     for line in task_time:
         logtime      = line.split() #separate out the lines
-        logtime_task = logtime[-2] #get the task name
+        logtime_task = logtime[-3] #get the task name
         if logtime_task == task_name:
             task_time_s = task_time_s + int(logtime[-1]) #add the seconds
 
     # apply the task time
     task_time_h     = task_time_s / 3600 #calc hours
-    task_time_m     = (task_time_s - (task_time_h * 3600)) / 60 #calc mins 
+    task_time_m     = (task_time_s - (int(task_time_h) * 3600)) / 60 #calc mins 
     task_time_total = 'Hours %i: Minutes %i' %(task_time_h, task_time_m) #put it together
 
     # ---------------
@@ -124,7 +124,7 @@ def task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer, pro
     if z_values['subtask_txt'] == 'NA':
         todo = z_values['subtask_lst']
     elif z_values['subtask_txt'] != 'NA':
-        todo = z_values['subtask_txt']
+        todo = z_values['subtask_txt'] #this gets logged as a list, take index 0
         open('%s/%s/%s/%s_notes.txt' %(proj_path, proj_name, task_name, todo), 'w+') #create new todo file
     else: #wtf
         print('Error determining the subtask')

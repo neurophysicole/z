@@ -22,7 +22,7 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
 
     # apply the project time
     proj_time_h     = proj_time_s / 3600 #calc hours
-    proj_time_m     = (proj_time_s - (proj_time_h * 3600)) / 60 #calc mins
+    proj_time_m     = (proj_time_s - (int(proj_time_h) * 3600)) / 60 #calc mins
 
     print('====================\n%s: %i Hours & %i Minutes\n====================\n' %(proj_name.upper(), proj_time_h, proj_time_m))
 
@@ -44,13 +44,13 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
             task_time_s = 0
             for line in task_time:
                 logtime      = line.split() #separate out the lines
-                logtime_task = logtime[-2] #get the task name
+                logtime_task = logtime[-3] #get the task name
                 if logtime_task == task:
                     task_time_s = task_time_s + int(logtime[-1]) #add the seconds
 
             # apply the task time
             task_time_h     = task_time_s / 3600 #calc hours
-            task_time_m     = (task_time_s - (task_time_h * 3600)) / 60 #calc mins
+            task_time_m     = (task_time_s - (int(task_time_h) * 3600)) / 60 #calc mins
 
             # list it
             print('-x- %s\t\tH %i\tM %i' %(task, task_time_h, task_time_m))
@@ -69,13 +69,13 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
             task_time_s = 0
             for line in task_time:
                 logtime      = line.split() #separate out the lines
-                logtime_task = logtime[-2] #get the task name
+                logtime_task = logtime[-3] #get the task name
                 if logtime_task == task:
                     task_time_s = task_time_s + int(logtime[-1]) #add the seconds
 
             # apply the task time
             task_time_h     = task_time_s / 3600 #calc hours
-            task_time_m     = (task_time_s - (task_time_h * 3600)) / 60 #calc mins 
+            task_time_m     = (task_time_s - (int(task_time_h) * 3600)) / 60 #calc mins 
 
             # list it
             print('(%s) %s\t\tH %i\tM %i' %((task_list.index(task) + 1), task, task_time_h, task_time_m))
@@ -161,6 +161,8 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
 
                         else: #is a brand new task
                             os.system('mkdir %s/%s' %(task_path, task_name)) #create new task directory
+                            open('%s/%s/log.txt' %(task_path, task_name), 'w+') #create task logfile
+                            open('%s/%s/dets.txt' %(task_path, task_name), 'w+') #create dets file
 
                             try:
                                 task_timing_file.close()
@@ -228,10 +230,17 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
                         print('\nThat don\'t make no sense. Try again.\n')
 
     # subtasks (todos)
-    todo_dir    = '%s/%s' %(task_path, task_name)
-    todo_list   = next(os.walk(todo_dir))[2]
-    for i in range(0, len(todo_list)):
-        todo_list[i] = os.path.splitext(todo_list[i])[0]
-        todo_list[i] = todo_list[i][:-6]
-    
+    if task_name != 'new_jobber':
+        todo_dir    = '%s/%s' %(task_path, task_name)
+        todo_list   = next(os.walk(todo_dir))[2]
+        for i in range(0, len(todo_list)):
+            todo_list[i] = os.path.splitext(todo_list[i])[0]
+            todo_list[i] = todo_list[i][:-6]
+            
+    if task_name == 'new_jobber':
+        due         = ''
+        allday      = ''
+        event_name  = ''
+        todo_list   = ''
+
     return task_name, due, allday, event_name, todo_list

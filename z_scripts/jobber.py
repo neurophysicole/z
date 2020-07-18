@@ -117,6 +117,7 @@ def jobber(proj_list, proj_path, main_dir):
         else: #wtf
             print('\nERROR: Impossible job selection..\n')
 
+    status_fname = '%s/%s/status.txt' %(proj_path, proj_name)
     status_file = open(status_fname, 'r')
     proj_status = status_file.read()
     status_file.close()

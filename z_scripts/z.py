@@ -24,11 +24,13 @@ import filecmp
 
 # import custom modules
 import loadup
+import cleanup
 import settings
 import jobber
 from print_notes import print_proj_notes
 from print_notes import print_task_notes
 from print_notes import print_proj_details
+from print_notes import print_task_dets
 import task_selection
 import task_interface
 import logit
@@ -56,6 +58,10 @@ while exe_loop:
     # initial pull
     repo_pull(home_dir, main_dir)
 
+    # run clean up
+    # looking for .DS_Store nuggets
+    cleanup.cleanup(main_dir, cur_branch_name)
+
     # ==================
     # Determine To-Do's
     # ==================
@@ -75,7 +81,7 @@ while exe_loop:
 
     # status
     status_header = '\nProject\tStatus'
-    print('%s' %status_header.upper())
+    print('\n%s\n~*~*~*~*~*~*~*~*~*~*~\n~*~*~*~*~*~*~*~*~*~*~' %status_header.upper())
     for project in proj_list:
         project_status_fname = '%s/%s/%s' %(proj_path, project, status_file)
 
@@ -86,6 +92,7 @@ while exe_loop:
         # display project status
         print('\n%s\t%s' %(project, proj_status))
         time.sleep(.1)
+    print('~*~*~*~*~*~*~*~*~*~*~')
 
     # list projects
     job_loop = True
@@ -143,6 +150,7 @@ while exe_loop:
             # ===========
             # run notes module
             print_task_notes(task_path, task_name, notes_terminal, dets_terminal)
+            print_task_dets(task_path, task_name, notes_terminal, dets_terminal)
 
             # ===============
             # Task Interface

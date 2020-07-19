@@ -181,26 +181,26 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
                                     due_date_subloop = True
                                     while due_date_subloop:
                                         due         = input('Input the date (e.g., August 24, 2020, 1:00:00 PM):  ')
-                                        due_confirm = input('%s? (y/n):  ' %due)
+                                        due_confirm = input(str('%s? (y/n):  ' %due))
                                         if (due_confirm == '') or (due_confirm == 'y'):
                                             # abort loops
                                             due_date_subloop    = False
                                     allday_subloop = True
                                     while allday_subloop:
                                         allday      = input('All day event? (y/n):  ')
-                                        allday_confirm = input('%s? (y/n):  ')
-                                        if (allday == 'y') and ((allday_confirm == 'y') or (allday_confirm == '')):
-                                            allday = 'true'
+                                        allday_confirm = input(str('%s? (y/n):  '))
+                                        if ((allday == 'y') or (allday == '')) and ((allday_confirm == 'y') or (allday_confirm == '')):
+                                            allday = str('true')
                                             allday_subloop = False
                                         elif (allday == 'n') and ((allday_confirm == 'y') or (allday_confirm == '')):
-                                            allday = 'false'
+                                            allday = str('false')
                                             allday_subloop = False
                                         else: #wtf
                                             print('There is an issue with determining the allday nature of the event.')
                                     eventname_loop = True
                                     while eventname_loop:
                                         event_name   = input('Name the event:  ')
-                                        eventname_confirm = input('%s? (y/n):  ')
+                                        eventname_confirm = input(str('%s? (y/n):  '))
                                         if (eventname_confirm == 'y') or (eventname_confirm == ''):
                                             eventname_loop = False
                                         elif eventname_confirm == 'n':
@@ -208,7 +208,7 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
                                         else: #wtf
                                             print('There is something wrong with determining the event name.') 
                                     # add to-do to calendar
-                                    os.system(str('osascript -e \'tell application \'iCal\"\ntell calendar \"To-Do\'s\"\nmake event with new properties {start date: date \"%s\", allday event: %s, summary: \"%s\"}\nend tell\nend tell\'' %(due, allday, event_name)))
+                                    os.system(str('osascript -e \'tell application \"iCal\" to tell calendar \"To-Dos\" to make event with properties {start date: date \"%s\", allday event: %s, summary: \"%s\"}\'' %(due, allday, event_name)))
                                     due_date_loop       = False
                                 elif due_date == 'n':
                                     due             = ''

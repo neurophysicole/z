@@ -144,8 +144,7 @@ def print_task_dets(task_path, task_name, notes_terminal, dets_terminal):
     dets_contents   = dets_file.read()
 
     # print note
-    dets = str( '\n\n%s To Do\n-------------------\n%s\n' %(task_name, dets_contents) )
-    os.system(str('echo \'%s\' > %s' %(dets, dets_terminal)))
+    os.system(str('echo \'%s\' > %s' %(dets_contents, dets_terminal)))
 
     dets_file.close()
 

@@ -167,9 +167,9 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
                             try:
                                 task_timing_file.close()
                             except UnboundLocalError:
-                                print('\nYou really think you have the time to start a new project?\n')
+                                print('\n\n')
                             except KeyboardInterrupt:
-                                print('\nYou really think you have the time to start a new project?\n')
+                                print('\n\n')
                             else:
                                 print('') #get to work?
 

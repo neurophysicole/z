@@ -122,9 +122,9 @@ def task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer, pro
 
     # to-dos
     if z_values['subtask_txt'] == 'NA':
-        todo = z_values['subtask_lst']
+        todo = str(z_values['subtask_lst'][0])  #this gets logged as a list, take index 0
     elif z_values['subtask_txt'] != 'NA':
-        todo = z_values['subtask_txt'] #this gets logged as a list, take index 0
+        todo = z_values['subtask_txt']
         open('%s/%s/%s/%s_notes.txt' %(proj_path, proj_name, task_name, todo), 'w+') #create new todo file
     else: #wtf
         print('Error determining the subtask')

@@ -64,7 +64,7 @@ def print_proj_notes(proj_path, proj_name, notes_terminal, dets_terminal):
             task_note_contents  = task_note.read()
 
             # print note
-            note = str( '\n\n%s To Do\n-------------------\n%s\n' %(os.path.splitext(task_todo)[0][:-10], task_note_contents) )
+            note = str( '\n\n%s To Do\n-------------------\n%s\n' %(os.path.splitext(task_todo)[0][:-6], task_note_contents) )
             os.system(str('echo \'%s\' > %s' %(note, notes_terminal)))
 
             task_note.close()

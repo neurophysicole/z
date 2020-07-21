@@ -122,8 +122,7 @@ def print_proj_details(proj_path, proj_name, notes_terminal, dets_terminal):
     dets_file       = open('%s/dets.txt' %task_path, 'r')
     dets_contents   = dets_file.read()
 
-    dets = str('%s' %dets_contents)
-    os.system(str('echo \'%s\' > %s' %(dets, dets_terminal)))
+    os.system(str('echo \'%s\' > %s' %(dets_contents, dets_terminal)))
 
     dets_file.close()
 

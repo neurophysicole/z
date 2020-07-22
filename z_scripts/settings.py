@@ -141,5 +141,8 @@ def settings():
     notes_terminal  = newterm_list[0]
     dets_terminal   = newterm_list[1]
 
+    # ID Terminal Windows
+    os.system(str('echo \'Dets\' > %s' %dets_terminal))
+    os.system(str('echo \'Notes\' > %s' %notes_terminal))
 
     return main_dir, home_dir, cur_branch_name, notes_terminal, dets_terminal

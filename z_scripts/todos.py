@@ -13,7 +13,6 @@ print('This is going to be kinda gross. Need to clean up later. But it works!')
 # status filename
 status_file = 'status.txt'
 due = str('') #I know this is a dumb place but it will work..
-arrow = str('-->')
 
 # dirs
 main_dir = os.path.dirname(os.path.abspath('%s/..' %__file__)) #main directory
@@ -69,9 +68,8 @@ while loopit:
     print('\n\nTODOS\n~*~*~*~*~*~*~*~*~*~*~\n~*~*~*~*~*~*~*~*~*~*~\n[#] Project\tTodo\tDue Date\tNote\n-----------------------------------')
     line_counter = 1
     for line in todos:
-        if line[0:3] == arrow:
-            print('[%i] %s' %(line_counter, line))
-            line_counter += 1
+        print('[%i] %s' %(line_counter, line))
+        line_counter += 1
         time.sleep(.1)
 
     todo_file.close()
@@ -233,7 +231,10 @@ while loopit:
                         print('There was an issue with confirming the todo.')
             
             todo_notes  = input('Any notes?\n')
-            log_todo    = str('\n%s %s\t%s\t%s\t%s' %(arrow, make_proj, in_todo, due, todo_notes))
+            if todos != []:
+                log_todo    = str('%s\t%s\t%s\t%s\n' %(make_proj, in_todo, due, todo_notes))
+            else:
+                log_todo    = str('%s\t%s\t%s\t%s\n' %(make_proj, in_todo, due, todo_notes))
 
             update_confirm = True
             while update_confirm:
@@ -254,7 +255,7 @@ while loopit:
         elif update_check == 'x':
             check_loop = True
             while check_loop:
-                check = int(input('Which todo would you like to check off (#)?  '))
+                check = int(input('Which todo would you like to check off (#)?  ')) - 1
                 if check > (len(proj_list)):
                     print('There was something wrong with that input. Try again.')
                     continue

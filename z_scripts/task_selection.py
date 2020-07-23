@@ -78,7 +78,7 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
             task_time_m     = (task_time_s - (int(task_time_h) * 3600)) / 60 #calc mins 
 
             # list it
-            print('(%s) %s\t\tH %i\tM %i' %((task_list.index(task) + 1), task, task_time_h, task_time_m))
+            print('[%i] %s\t\tH %i\tM %i' %((task_list.index(task) + 1), task, task_time_h, task_time_m))
 
         time.sleep(.1)
 

@@ -34,13 +34,15 @@ def print_proj_notes(proj_path, proj_name, notes_terminal, dets_terminal):
 
         for archive_todo in archive_note_list:
             archive_note            = open('%s/%s' %(archive_note_dir, archive_todo), 'r')
-            archive_note_contents   = archive_note.read()
+            archive_note_contents   = archive_note.readlines()
 
             # print note
             note = str( '\n\n%s To Do\n-------------------\n%s\n' %(os.path.splitext(archive_todo)[0][:-10], archive_note_contents) )
             os.system(str('echo \'%s\' > %s' %(note, notes_terminal)))
 
             archive_note.close()
+
+            time.sleep(.1)
 
     time.sleep(.1)
 
@@ -68,6 +70,8 @@ def print_proj_notes(proj_path, proj_name, notes_terminal, dets_terminal):
             os.system(str('echo \'%s\' > %s' %(note, notes_terminal)))
 
             task_note.close()
+
+            time.sleep(.1)
 
     time.sleep(.1)
 
@@ -101,6 +105,8 @@ def print_task_notes(task_path, task_name, notes_terminal, dets_terminal):
 
         task_note.close()
 
+        time.sleep(.1)
+
     time.sleep(.1)
 
 
@@ -120,9 +126,12 @@ def print_proj_details(proj_path, proj_name, notes_terminal, dets_terminal):
     os.system(str('echo \'%s\' > %s' %(det_header, dets_terminal)))
 
     dets_file       = open('%s/dets.txt' %task_path, 'r')
-    dets_contents   = dets_file.read()
+    dets_contents   = dets_file.readlines()
 
-    os.system(str('echo \'%s\' > %s' %(dets_contents, dets_terminal)))
+    for line in dets_contents:
+        # print note
+        os.system(str('echo \'%s\' > %s' %(line, dets_terminal)))
+        time.sleep(.1)
 
     dets_file.close()
 
@@ -140,10 +149,12 @@ def print_task_dets(task_path, task_name, notes_terminal, dets_terminal):
     os.system(str('echo \'%s\' > %s' %(task_header, dets_terminal)))
 
     dets_file       = open('%s/%s/dets.txt' %(task_path, task_name), 'r')
-    dets_contents   = dets_file.read()
+    dets_contents   = dets_file.readlines()
 
-    # print note
-    os.system(str('echo \'%s\' > %s' %(dets_contents, dets_terminal)))
+    for line in dets_contents:
+        # print note
+        os.system(str('echo \'%s\' > %s' %(line, dets_terminal)))
+        time.sleep(.1)
 
     dets_file.close()
 

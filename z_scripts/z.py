@@ -1,5 +1,3 @@
-#!/Library/Frameworks/Python.framework/Versions/2.7/bin/python
-
 # ================
 # Import Packages
 # ================
@@ -48,7 +46,7 @@ status_file = 'status.txt'
 loadup.loadup()
 
 # load settings
-main_dir, home_dir, cur_branch_name, notes_terminal, dets_terminal = settings.settings()
+main_dir, home_dir, cur_branch_name, todo_terminal, notes_terminal, dets_terminal = settings.settings()
 
 # -------
 # Loopit
@@ -79,20 +77,9 @@ while exe_loop:
     else:
         proj_list   = next(os.walk(proj_path))[1]
 
-    # status
-    status_header = '\nProject\tStatus'
-    print('\n%s\n~*~*~*~*~*~*~*~*~*~*~\n~*~*~*~*~*~*~*~*~*~*~' %status_header.upper())
-    for project in proj_list:
-        project_status_fname = '%s/%s/%s' %(proj_path, project, status_file)
-
-        proj_status_file = open(project_status_fname, 'r')
-        proj_status = proj_status_file.read()
-        proj_status_file.close()
-        
-        # display project status
-        print('\n%s\t%s' %(project, proj_status))
-        time.sleep(.1)
-    print('~*~*~*~*~*~*~*~*~*~*~')
+    # list project status and update todos
+    todo_header = str('To check the status of your projects, and update your todo list, type todoz.') #todoz is an alias
+    os.system('echo \'%s\' > %s' %(todo_header, todo_terminal)) #best way I could figure out how to do this..
 
     # list projects
     job_loop = True
@@ -100,7 +87,7 @@ while exe_loop:
         print('\nProjects:')
         for projects in proj_list:
             # display project
-            print('(%s) %s' %((proj_list.index(projects) + 1), projects))
+            print('[%i] %s' %((proj_list.index(projects) + 1), projects))
             time.sleep(.1)
     
 
@@ -133,6 +120,7 @@ while exe_loop:
         while task_loop:
             # print all project notes
             task_path, task_list, archive_task_list = print_proj_notes(proj_path, proj_name, notes_terminal, dets_terminal)
+            time.sleep(.1)
             print_proj_details(proj_path, proj_name, notes_terminal, dets_terminal)
 
             # run task selection module

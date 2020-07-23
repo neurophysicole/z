@@ -15,7 +15,7 @@ def logit(proj_path, proj_name, task_path, task_name, todo, task_start, task_end
     task_end    = task_end.strftime('%-H%M')
     
     # log task notes
-    task_header      = '%s: %s, %s-%s' %(todo[0], date, task_start, task_end)
+    task_header      = '%s: %s, %s-%s' %(todo, date, task_start, task_end)
 
     # if close task, need to save the current notes to the archive folder
     if z_event == 'Project Complete':
@@ -33,7 +33,7 @@ def logit(proj_path, proj_name, task_path, task_name, todo, task_start, task_end
         task_log_dir    = '%s' %task_path
 
     # setup log
-    log = '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' %(date, task_start, task_end, proj_name, task_name, todo[0], time_s)
+    log = '%s\t%s\t%s\t%s\t%s\t%s\t%s\n' %(date, task_start, task_end, proj_name, task_name, todo, time_s)
 
     # log details in project file
     proj_dets_file = '%s/dets.txt' %(task_log_dir)
@@ -48,7 +48,7 @@ def logit(proj_path, proj_name, task_path, task_name, todo, task_start, task_end
     task_dets_file.close()
 
     # log notes in file
-    task_note_file = '%s/%s_notes.txt' %(task_note_dir, todo[0])
+    task_note_file = '%s/%s_notes.txt' %(task_note_dir, todo)
     task_note_file = open(task_note_file, 'a+')
     task_note_file.write('\n%s\n%s%s' %(task_header, log, task_notes))
     task_note_file.close()

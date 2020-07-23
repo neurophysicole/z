@@ -127,8 +127,9 @@ def settings():
     # Set Terminal Windows
     # ====================
     term_wins_before = glob.glob('../../dev/ttys00*') # get list of terminal windows (before)
-    os.system('open -n -a Terminal') # open new terminal window
-    os.system('open -n -a Terminal') # again!
+    os.system('osascript -e \"tell application \\"System Events\\" to keystroke \\"t\\" using {command down}\"')
+    os.system('osascript -e \"tell application \\"System Events\\" to keystroke \\"t\\" using {command down}\"')
+    os.system('osascript -e \"tell application \\"System Events\\" to keystroke \\"t\\" using {command down}\"')
     time.sleep(3) # needs time to make the window or else it won't work..
     term_wins_after = glob.glob('../../dev/ttys00*') # get list of terminal windows (after)
 
@@ -138,11 +139,13 @@ def settings():
         if term_wins_after[i] not in term_wins_before:
             newterm_list.append(term_wins_after[i][5:])
         
-    notes_terminal  = newterm_list[0]
-    dets_terminal   = newterm_list[1]
+    todo_terminal   = newterm_list[0]
+    notes_terminal  = newterm_list[1]
+    dets_terminal   = newterm_list[2]
 
     # ID Terminal Windows
+    os.system(str('echo \'Todos\' > %s' %todo_terminal))
     os.system(str('echo \'Dets\' > %s' %dets_terminal))
     os.system(str('echo \'Notes\' > %s' %notes_terminal))
 
-    return main_dir, home_dir, cur_branch_name, notes_terminal, dets_terminal
+    return main_dir, home_dir, cur_branch_name, todo_terminal, notes_terminal, dets_terminal

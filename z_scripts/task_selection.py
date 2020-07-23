@@ -30,6 +30,7 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
     # ================
     # Select the Task
     # ================
+    archive_task_list.sort()
     task_check_loop = True
     while task_check_loop:
         # list tasks in the archive folder
@@ -58,6 +59,7 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
         time.sleep(.1)
 
         # list the active tasks
+        task_list.sort()
         print('\nTasks:')
         for task in task_list:
 

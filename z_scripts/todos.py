@@ -8,6 +8,8 @@ import time
 # import settings
 import settings
 
+print('This is going to be kinda gross. Need to clean up later. But it works!')
+
 # status filename
 status_file = 'status.txt'
 due = str('') #I know this is a dumb place but it will work..
@@ -40,6 +42,8 @@ except StopIteration:
 else:
     proj_list   = next(os.walk(proj_path))[1]
 
+proj_list.sort()
+
 loopit = True
 while loopit:
     # status
@@ -61,14 +65,13 @@ while loopit:
     todo_fname  = '%s/todos.txt' %proj_path
     todo_file   = open(todo_fname, 'r')
     todos       = todo_file.readlines()
-    todo_list   = []
+    todos.sort()
     print('\n\nTODOS\n~*~*~*~*~*~*~*~*~*~*~\n~*~*~*~*~*~*~*~*~*~*~\n[#] Project\tTodo\tDue Date\tNote\n-----------------------------------')
     line_counter = 1
     for line in todos:
         if line[0:3] == arrow:
             print('[%i] %s' %(line_counter, line))
             line_counter += 1
-        todo_list.append(line)
         time.sleep(.1)
 
     todo_file.close()
@@ -87,7 +90,7 @@ while loopit:
                         for proj in proj_list:
                             print('[%i] %s' %((proj_list.index(proj) + 1), proj))
                         which_proj = int(input('Input the number associated with the project:  ')) - 1
-                        if which_proj > (len(proj)):
+                        if which_proj > (len(proj_list)):
                             print('We\'re not on the same page.')
                             continue
                         confirm = True
@@ -177,7 +180,10 @@ while loopit:
                             allday_subloop = True
                             while allday_subloop:
                                 allday      = input('All day event? (y/n):  ')
-                                allday_confirm = input(str('%s? (y/n):  '))
+                                if allday == '':
+                                    allday_confirm = input(str('y (y/n)?  '))
+                                else:
+                                    allday_confirm = input(str('%s (y/n)?  ' %allday))
                                 if ((allday == 'y') or (allday == '')) and ((allday_confirm == 'y') or (allday_confirm == '')):
                                     allday = str('true')
                                     allday_subloop = False
@@ -189,7 +195,7 @@ while loopit:
                             eventname_loop = True
                             while eventname_loop:
                                 event_name   = input('Name the event:  ')
-                                eventname_confirm = input(str('%s? (y/n):  '))
+                                eventname_confirm = input(str('%s? (y/n):  '%event_name))
                                 if (eventname_confirm == 'y') or (eventname_confirm == ''):
                                     eventname_loop = False
                                 elif eventname_confirm == 'n':
@@ -254,7 +260,7 @@ while loopit:
                     continue
                 check_confirm_loop = True
                 while check_confirm_loop:
-                    check_confirm = input('%s (y/n)?  ' %todo_list[check]) #not sure if that will work after the doc is closed...
+                    check_confirm = input('%s (y/n)?  ' %todos[check]) #not sure if that will work after the doc is closed...
                     if (check_confirm == 'y') or (check_confirm == ''):
                         # delete line
                         new_todos = []
@@ -262,13 +268,13 @@ while loopit:
                         todo_file.write('')
                         todo_file.close()
                         todo_file = open(todo_fname, 'a+')
-                        for line in range(0, len(todo_list)):
-                            if todo_list[check] != todo_list[line]:
+                        for line in range(0, len(todos)):
+                            if todos[check] != todos[line]:
                                 if line > 0:
-                                    if todo_list[(check - 1)] != todo_list[(line - 1)]:
-                                        todo_file.write('%s' %todo_list[line])
+                                    if todos[(check - 1)] != todos[(line - 1)]:
+                                        todo_file.write('%s' %todos[line])
                                 else:
-                                    todo_file.write('%s' %todo_list[line])                   
+                                    todo_file.write('%s' %todos[line])                   
                         todo_file.close()
 
                         check_confirm_loop = False

@@ -77,6 +77,8 @@ while exe_loop:
     else:
         proj_list   = next(os.walk(proj_path))[1]
 
+    proj_list.sorted()
+
     # list project status and update todos
     todo_header = str('To check the status of your projects, and update your todo list, type todoz.') #todoz is an alias
     os.system('echo \'%s\' > %s' %(todo_header, todo_terminal)) #best way I could figure out how to do this..

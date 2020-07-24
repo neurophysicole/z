@@ -256,7 +256,7 @@ while loopit:
             check_loop = True
             while check_loop:
                 check = int(input('Which todo would you like to check off (#)?  ')) - 1
-                if check > (len(proj_list)):
+                if check > (len(todos)):
                     print('There was something wrong with that input. Try again.')
                     continue
                 check_confirm_loop = True

@@ -36,8 +36,10 @@ def print_proj_notes(proj_path, proj_name, notes_terminal, dets_terminal):
             archive_note            = open('%s/%s' %(archive_note_dir, archive_todo), 'r')
             archive_note_contents   = archive_note.read()
 
+            note = archive_note_contents.replace("'", "").replace('"', "")
+
             # print note
-            note = str( '\n\n%s To Do\n-------------------\n%s\n' %(os.path.splitext(archive_todo)[0][:-10], archive_note_contents) )
+            note = str( '\n\n%s To Do\n-------------------\n%s\n' %(os.path.splitext(archive_todo)[0][:-10], note) )
             os.system(str('echo \'%s\' > %s' %(note, notes_terminal)))
 
             archive_note.close()
@@ -65,8 +67,10 @@ def print_proj_notes(proj_path, proj_name, notes_terminal, dets_terminal):
             task_note           = open('%s/%s' %(note_dir, task_todo), 'r')
             task_note_contents  = task_note.read()
 
+            note = task_note_contents.replace("'", "").replace('"', "")
+
             # print note
-            note = str( '\n\n%s To Do\n-------------------\n%s\n' %(os.path.splitext(task_todo)[0][:-6], task_note_contents) )
+            note = str( '\n\n%s To Do\n-------------------\n%s\n' %(os.path.splitext(task_todo)[0][:-6], note) )
             os.system(str('echo \'%s\' > %s' %(note, notes_terminal)))
 
             task_note.close()
@@ -99,8 +103,10 @@ def print_task_notes(task_path, task_name, notes_terminal, dets_terminal):
         task_note           = open('%s/%s' %(note_dir, task_todo), 'r')
         task_note_contents  = task_note.read()
 
+        note = task_note_contents.replace("'", "").replace('"', "")
+
         # print note
-        note = str( '\n\n%s To Do\n-------------------\n%s\n' %(os.path.splitext(task_todo)[0][:-10], task_note_contents) )
+        note = str( '\n\n%s To Do\n-------------------\n%s\n' %(os.path.splitext(task_todo)[0][:-10], note) )
         os.system(str('echo \'%s\' > %s' %(note, notes_terminal)))
 
         task_note.close()
@@ -128,8 +134,10 @@ def print_proj_details(proj_path, proj_name, notes_terminal, dets_terminal):
     dets_file       = open('%s/dets.txt' %task_path, 'r')
     dets_contents   = dets_file.read()
 
+    dets = dets_contents.replace("'", "").replace('"', "")
+
     # print note
-    os.system(str('echo \'%s\' > %s' %(dets_contents, dets_terminal)))
+    os.system(str('echo \'%s\' > %s' %(dets, dets_terminal)))
 
     dets_file.close()
 
@@ -149,8 +157,10 @@ def print_task_dets(task_path, task_name, notes_terminal, dets_terminal):
     dets_file       = open('%s/%s/dets.txt' %(task_path, task_name), 'r')
     dets_contents   = dets_file.read()
 
+    dets = dets_contents.replace("'", "").replace('"', "")
+
     # print note
-    os.system(str('echo \'%s\' > %s' %(dets_contents, dets_terminal)))
+    os.system(str('echo \'%s\' > %s' %(dets, dets_terminal)))
 
     dets_file.close()
 

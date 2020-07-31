@@ -8,6 +8,10 @@ import time
 # import settings
 import settings
 
+# import data presentation packages
+from tabulate import tabulate
+import pandas as pd
+
 print('This is going to be kinda gross. Need to clean up later. But it works!')
 
 # status filename
@@ -46,31 +50,85 @@ proj_list.sort()
 loopit = True
 while loopit:
     # status
-    status_header = '\nProject\tStatus'
-    print('\n%s\n~*~*~*~*~*~*~*~*~*~*~\n~*~*~*~*~*~*~*~*~*~*~' %status_header.upper())
+    status_header = '\nProject Status'
+    print('\n%s\n~*~*~*~*~*~*~*~*~*~*~\n~*~*~*~*~*~*~*~*~*~*~\n\n' %status_header.upper())
+    status_list = []
     for project in proj_list:
         project_status_fname = '%s/%s/%s' %(proj_path, project, status_file)
 
         proj_status_file = open(project_status_fname, 'r')
         proj_status = proj_status_file.read()
+
+        # append lists
+        status_list.append(proj_status)
+
         proj_status_file.close()
         
-        # display project status
-        print('%s\t%s' %(project, proj_status))
-        time.sleep(.1)
-    print('~*~*~*~*~*~*~*~*~*~*~')
+    status_df = pd.DataFrame({'Project': proj_list, 'Status': status_list})
+    print(tabulate(status_df, headers = 'keys', tablefmt = 'psql', showindex = False))
+    print('\n\n~*~*~*~*~*~*~*~*~*~*~')
 
     # print todos
+    print('\n\nTODOS\n~*~*~*~*~*~*~*~*~*~*~\n~*~*~*~*~*~*~*~*~*~*~\n\n')
     todo_fname  = '%s/todos.txt' %proj_path
     todo_file   = open(todo_fname, 'r')
     todos       = todo_file.readlines()
+
+    # make dataframe
+    idx_list    = []
+    projdf_list = []
+    todo_list   = []
+    ddate_list  = []
+    note_list   = []
+
     todos.sort()
-    print('\n\nTODOS\n~*~*~*~*~*~*~*~*~*~*~\n~*~*~*~*~*~*~*~*~*~*~\n[#] Project\tTodo\tDue Date\tNote\n-----------------------------------')
-    line_counter = 1
     for line in todos:
-        print('[%i] %s' %(line_counter, line))
-        line_counter += 1
-        time.sleep(.1)
+        idx = todos.index(line) + 1
+        idx_list.append(idx)
+        
+        line = line.split('\t')
+        projdf_list.append(line[0])
+
+        # sometimes they are super long.. making multiple lines..
+        todo_words = line[1].split()
+        if len(todo_words) > 10:
+            todo_words.insert(9, '\n')
+        if len(todo_words) > 20:
+            todo_words.insert(19, '\n')
+        if len(todo_words) > 30:
+            todo_words.insert(29, '\n')
+        if len(todo_words) > 40:
+            todo_words.insert(39, '\n')
+        if len(todo_words) > 50:
+            todo_words.insert(49, '\n')
+        todo_words = ' '.join(todo_words)
+        todo_list.append(todo_words)
+
+        ddate_list.append(line[2])
+
+        # making multiple lines again
+        note_words = line[3].split()
+        if len(note_words) > 10:
+            note_words.insert(9, '\n')
+        if len(note_words) > 20:
+            note_words.insert(19, '\n')
+        if len(note_words) > 30:
+            note_words.insert(29, '\n')
+        if len(note_words) > 40:
+            note_words.insert(39, '\n')
+        if len(note_words) > 50:
+            note_words.insert(49, '\n')
+
+        # add a note header
+        note_header = str('<-----%i----->\n' %(idx))
+        note_words.insert(0, note_header)
+        note_words = ' '.join(note_words)
+        note_list.append(note_words)
+
+    todos_df = pd.DataFrame({'#': idx_list, 'Project': projdf_list, 'To-Dos': todo_list, 'Due Date': ddate_list, 'Notes': note_list})
+    print(tabulate(todos_df, headers = 'keys', tablefmt = 'psql', showindex = False))
+    
+    print('\n\n~*~*~*~*~*~*~*~*~*~*~\n\n')
 
     todo_file.close()
 

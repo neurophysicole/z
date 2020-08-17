@@ -7,6 +7,10 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
 
     # import time package
     import time
+
+    # import data presentation packages
+    from tabulate import tabulate
+    import pandas as pd
     
     # open main file
     proj_timing_file    = open('%s/log.txt' %(proj_path), 'r')
@@ -34,6 +38,10 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
     task_check_loop = True
     while task_check_loop:
         # list tasks in the archive folder
+
+        completed_tasks = []
+        completed_task_time_h = []
+        completed_task_time_m = []
         print('\nCompleted Tasks:')
         for task in archive_task_list:
 
@@ -54,13 +62,24 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
             task_time_m     = (task_time_s - (int(task_time_h) * 3600)) / 60 #calc mins
 
             # list it
-            print('-x- %s\t\tH %i\tM %i' %(task, task_time_h, task_time_m))
+            completed_tasks.append(task)
+            completed_task_time_h.append(int(task_time_h))
+            completed_task_time_m.append(int(task_time_m))
+
+            # print('-x- %s\t\tH %i\tM %i' %(task, task_time_h, task_time_m))
+
+        completed_task_df = pd.DataFrame({'Task': completed_tasks, 'Hours': completed_task_time_h, 'Minutes': completed_task_time_m})
+        print(tabulate(completed_task_df, headers = 'keys', tablefmt = 'psql', showindex = False))
 
         time.sleep(.1)
 
         # list the active tasks
         task_list.sort()
         print('\nTasks:')
+        prog_task_num = []
+        prog_task = []
+        prog_task_h = []
+        prog_task_m = []
         for task in task_list:
 
             # open proj log file
@@ -80,9 +99,17 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
             task_time_m     = (task_time_s - (int(task_time_h) * 3600)) / 60 #calc mins 
 
             # list it
-            print('[%i] %s\t\tH %i\tM %i' %((task_list.index(task) + 1), task, task_time_h, task_time_m))
+            # print('[%i] %s\t\tH %i\tM %i' %((task_list.index(task) + 1), task, task_time_h, task_time_m))
 
-        time.sleep(.1)
+            prog_task_num.append(int(task_list.index(task) + 1))
+            prog_task.append(task)
+            prog_task_h.append(int(task_time_h))
+            prog_task_m.append(int(task_time_m))
+
+        # time.sleep(.1)
+
+        prog_task_df = pd.DataFrame({'#': prog_task_num, 'Task': prog_task, 'Hours': prog_task_h, 'Minutes': prog_task_m})
+        print(tabulate(prog_task_df, headers = 'keys', tablefmt = 'psql', showindex = False))
 
         task_input_loop = True
         while task_input_loop:
@@ -235,9 +262,11 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
     if task_name != 'new_jobber':
         todo_dir    = '%s/%s' %(task_path, task_name)
         todo_list   = next(os.walk(todo_dir))[2]
-        for i in range(0, len(todo_list)):
-            todo_list[i] = os.path.splitext(todo_list[i])[0]
-            todo_list[i] = todo_list[i][:-6]
+        todo_list.remove('log.txt')
+        todo_list.remove('dets.txt')
+        for i in range(0, int(len(todo_list))):
+            todo_list[i] = os.path.splitext(todo_list[i])[0][:-6]
+        todo_list.sort
             
     if task_name == 'new_jobber':
         due         = ''

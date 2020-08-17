@@ -1,4 +1,4 @@
-def logit(proj_path, proj_name, task_path, task_name, todo, task_start, task_end, task_details, task_notes, time_s, z_event, main_dir, logfile, project_status, status_file):
+def logit(proj_path, proj_name, task_path, task_name, todo, task_start, task_end, task_details, task_notes, time_s, z_event, main_dir, logfile, project_status, status_file, proj_phases):
     # import date/time packages
     import datetime
     from datetime import datetime, date
@@ -71,14 +71,15 @@ def logit(proj_path, proj_name, task_path, task_name, todo, task_start, task_end
     master_log_file.write(log)
     proj_log_file.close()
 
-    # update todos
-    todo_fname  = '%s/' %(task_note_dir)
-    # update project status
-    project_status_list = [ 'Design', 'Dev', 'Data', 'Analysis', 'Writing', 'List', 'Thoughts' ]
     for i in range(0, len(project_status)):
         if project_status[i]:
-            status = project_status_list[i]
+            status = proj_phases[i]
             project_status_fname    = '%s/%s/%s' %(proj_path, proj_name, status_file)
+            project_status_file     = open(project_status_fname, 'r')
+            proj_status_phases      = project_status_file.readlines()
+            proj_status_phases      = proj_status_phases[1]
+            project_status_file.close()
+            proj_status_update = str('%s\n%s' %(status, proj_status_phases))
             project_status_file     = open(project_status_fname, 'w')
-            project_status_file.write(status)
+            project_status_file.write(proj_status_update)
             project_status_file.close()

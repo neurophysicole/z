@@ -27,6 +27,9 @@ def print_proj_notes(proj_path, proj_name, notes_terminal, dets_terminal):
         archive_note_list.remove('log.txt')
         archive_note_list.remove('dets.txt')
         archive_note_list   = sorted(archive_note_list)
+        if '.DS_Store' in archive_note_list:
+            os.system('rm -rf %s/.DS_Store' %archive_note_dir)
+            archive_note_list.remove('.DS_Store')
 
         # task header
         task_header = str( '\n\n-------------------\n%s Task Notes - Archive\n-------------------\n\n' %archive_task )

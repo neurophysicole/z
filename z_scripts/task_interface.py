@@ -74,27 +74,27 @@ def task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer, pro
     SetOptions(background_color = 'black', element_background_color = 'black', text_color = 'white', text_element_background_color = 'black', element_text_color = 'white')
 
     # status
-    design_status   = False
-    dev_status      = False
-    data_status     = False
-    analysis_status = False
-    writing_status  = False
-    pub_status      = False
+    status_fname = '%s/%s/status.txt' %(proj_path, proj_name)
+    status_file = open(status_fname, 'r')
+    proj_status_lines = status_file.readlines()
+    proj_status = proj_status_lines[0][:-1]
+    proj_phases = str(proj_status_lines[1])
+    proj_phases = proj_phases.split()
+    status_file.close()
 
-    if proj_status == 'Design':
-        design_status = True
-    elif proj_status == 'Dev':
-        dev_status = True
-    elif proj_status == 'Data':
-        data_status = True
-    elif proj_status == 'Analysis':
-        analysis_status = True
-    elif proj_status == 'Writing':
-        writing_status = True
-    elif proj_status == 'Pub':
-        pub_status = True
-    else: #wtf
-        print('\nThere is something wrong with determining the project status.\n')
+    phase_list = []
+    for i in range(0, len(proj_phases)):
+        if proj_phases[i] == proj_status:
+            phase_list.append(True)
+        elif proj_phases[i] != proj_status:
+            phase_list.append(False)
+        else: #wtf
+            print('wtf?')
+    if len(proj_phases) < 6:
+        for i in range(len(proj_phases), 6): #does this need to be +1??
+            proj_phases.append('NA')
+            phase_list.append(False)
+    print(proj_status)
 
     # ------
     # window
@@ -102,7 +102,7 @@ def task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer, pro
     z_layout = [
         [sg.Frame(layout = [[sg.Text(str('%s' %proj_name))], [sg.Text(str('%s' %proj_time_total))],[sg.CloseButton('Project Complete')]], title = 'Project', relief = sg.RELIEF_SUNKEN), sg.Frame(layout = [[sg.Text(str('%s' %task_name))], [sg.Text(str('%s' %task_time_total))], [sg.CloseButton('Task Complete')]], title = 'Task', relief = sg.RELIEF_SUNKEN)],
         [sg.Text('To-Do\'s')], [sg.InputText(key = 'subtask_txt', default_text = 'NA', size = (30, 1))], [sg.Listbox(values = todo_list, key = 'subtask_lst', size = (30, 3))],
-        [sg.Frame(layout = [[sg.Radio('Design', "status", key = 'design_status_key', default = design_status, size = (10, 1)), sg.Radio('Dev', "status", key = 'dev_status_key', default = dev_status, size = (10,1)), sg.Radio('Data', "status", key = 'data_status_key', default = data_status, size = (10, 1)), sg.Radio('Analysis', "status", key = 'analysis_status_key', default = analysis_status, size = (10, 1)), sg.Radio('Writing', "status", key = 'writing_status_key', default = writing_status, size = (10, 1)), sg.Radio('Pub', "status", key = 'pub_status_key', default = pub_status, size = (10, 1))]], title = 'Status', relief = sg.RELIEF_SUNKEN)], 
+        [sg.Frame(layout = [[sg.Radio(str('%s' %proj_phases[0]), "status", key = 'status_0_key', default = phase_list[0], size = (10, 1)), sg.Radio(str(proj_phases[1]), "status", key = 'status_1_key', default = phase_list[1], size = (10,1)), sg.Radio(str(proj_phases[2]), "status", key = 'status_2_key', default = phase_list[2], size = (10, 1)), sg.Radio(str(proj_phases[3]), "status", key = 'status_3_key', default = phase_list[3], size = (10, 1)), sg.Radio(str(proj_phases[4]), "status", key = 'status_4_key', default = phase_list[4], size = (10, 1)), sg.Radio(str(proj_phases[5]), "status", key = 'status_5_key', default = phase_list[5], size = (10, 1))]], title = 'Status', relief = sg.RELIEF_SUNKEN)], 
         [sg.Text('Details')], 
         [sg.Multiline(size = (100, 8), key = 'details', autoscroll = True)], 
         [sg.Text('Notes')], 
@@ -122,7 +122,16 @@ def task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer, pro
 
     # to-dos
     if z_values['subtask_txt'] == 'NA':
-        todo = str(z_values['subtask_lst'][0])  #this gets logged as a list, take index 0
+        try:
+            todo = str(z_values['subtask_lst'][0])  #this gets logged as a list, take index 0
+        except IndexError:
+            todo = 'NA'
+            if not os.path.isfile('%s/%s/%s/%s_notes.txt' %(proj_path, proj_name, task_name, todo)):
+                open('%s/%s/%s/%s_notes.txt' %(proj_path, proj_name, task_name, todo), 'w+') #create new todo file
+
+        else:
+            todo = str(z_values['subtask_lst'][0])  #this gets logged as a list, take index 0
+
     elif z_values['subtask_txt'] != 'NA':
         todo = z_values['subtask_txt']
         open('%s/%s/%s/%s_notes.txt' %(proj_path, proj_name, task_name, todo), 'w+') #create new todo file
@@ -130,13 +139,14 @@ def task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer, pro
         print('Error determining the subtask')
 
     # status
-    design_status   = z_values['design_status_key']
-    dev_status      = z_values['dev_status_key']
-    data_status     = z_values['data_status_key']
-    analysis_status = z_values['analysis_status_key']
-    writing_status  = z_values['writing_status_key']
+    status_0 = z_values['status_0_key']
+    status_1 = z_values['status_1_key']
+    status_2 = z_values['status_2_key']
+    status_3 = z_values['status_3_key']
+    status_4 = z_values['status_4_key']
+    status_5 = z_values['status_5_key']
 
-    project_status  = [ design_status, dev_status, data_status, analysis_status, writing_status ]
+    project_status  = [ status_0, status_1, status_2, status_3, status_4, status_5 ]
 
     # timing calculations
     # -------------------
@@ -170,4 +180,4 @@ def task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer, pro
         os.system(stop_thymer)
         os.system(close_thymer)
 
-    return z_event, todo, task_start, task_end, task_details, task_notes, time_s, proj_time, project_status
+    return z_event, todo, task_start, task_end, task_details, task_notes, time_s, proj_time, project_status, proj_phases

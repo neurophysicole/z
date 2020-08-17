@@ -35,20 +35,22 @@ for line in range(1, len(settings_list)):
 # close settings file
 settings_file.close()
 
-# get projects
-proj_path   = '%s/%s' %(main_dir, cur_branch_name)
-
-try:
-    proj_list   = next(os.walk(proj_path))[1]
-except StopIteration:
-    proj_list   = []
-else:
-    proj_list   = next(os.walk(proj_path))[1]
-
-proj_list.sort()
 
 loopit = True
 while loopit:
+
+    # get projects
+    proj_path   = '%s/%s' %(main_dir, cur_branch_name)
+
+    try:
+        proj_list   = next(os.walk(proj_path))[1]
+    except StopIteration:
+        proj_list   = []
+    else:
+        proj_list   = next(os.walk(proj_path))[1]
+
+    proj_list.sort()
+
     # status
     status_header = '\nProject Status'
     print('\n%s\n~*~*~*~*~*~*~*~*~*~*~\n~*~*~*~*~*~*~*~*~*~*~\n\n' %status_header.upper())
@@ -57,8 +59,8 @@ while loopit:
         project_status_fname = '%s/%s/%s' %(proj_path, project, status_file)
 
         proj_status_file = open(project_status_fname, 'r')
-        proj_status = proj_status_file.read()
-
+        proj_status = proj_status_file.readlines()
+        proj_status = proj_status[0]
         # append lists
         status_list.append(proj_status)
 
@@ -68,11 +70,87 @@ while loopit:
     print(tabulate(status_df, headers = 'keys', tablefmt = 'psql', showindex = False))
     print('\n\n~*~*~*~*~*~*~*~*~*~*~')
 
+    # get the list of lists
+    try:
+        list_list = next(os.walk(proj_path))[2]
+    except StopIteration:
+        list_list = []
+    else:
+        list_list = next(os.walk(proj_path))[2]
+    
+    if '.DS_Store' in list_list:
+        print('Removing .DS_Store.')
+        os.system('rm -rf %s/.DS_Store')
+        list_list.remove('.DS_Store')
+    
+    if 'log.txt' in list_list:
+        list_list.remove('log.txt')
+
+    # cut otu the extension
+    list_idx = []
+    for i in range( 0, len(list_list) ):
+        list_list[i] = os.path.splitext(list_list[i])[0]
+        idx = list_list.index(list_list[i]) + 1
+        list_idx.append(idx)
+
+    list_list.sort()
+
+    # list of lists
+    list_header = '\nList of lists'
+    print('\n%s\n~*~*~*~*~*~*~*~*~*~*~\n~*~*~*~*~*~*~*~*~*~*~\n\n' %list_header.upper())
+    list_df = pd.DataFrame({'#': list_idx, 'List': list_list})
+    print(tabulate(list_df, headers = 'keys', tablefmt = 'psql', showindex = False))
+    print('\n\n~*~*~*~*~*~*~*~*~*~*~')
+
+    # choose list
+    choose_loop = True
+    while choose_loop:
+        try:
+            choose_list = int(input('Which list do you want to work on? (#):  '))
+        except ValueError:
+            continue
+        else:
+            if choose_list <= len(list_list):
+                list_choice = list_list[choose_list - 1]
+                choose_confirm = input('%s? (y/n):  ' %list_choice)
+                if (choose_confirm == 'y') or (choose_confirm == ''):
+                    choose_loop = False
+                elif choose_confirm == 'n':
+                    print('Okay, redo.')
+                else: #wtf
+                    print('wtf')
+            else: #create new list
+                newlist_confirm = True
+                while newlist_confirm:
+                    newlist = input('Create a new list? (y/n):  ')
+                    if (newlist == '') or (newlist == 'y'):
+                        newlist_name = input('What do you want to call the new list?\n')
+                        
+                        newname_confirm = True
+                        while newname_confirm:
+                            newname_yn = input('%s? (y/n):  ' %newlist_name)
+                            if (newname_yn == '') or (newname_yn == 'y'):
+                                open('%s/%s.txt' %(proj_path, newlist_name), 'w+')
+                                newlist_confirm = False
+                                newname_confirm = False
+                                choose_loop = False
+                            elif newname_yn == 'n':
+                                newname_confirm = False
+                            else: #wtf
+                                print('wtf')
+                    elif newlist == 'n':
+                        print('Alright, redo..')
+                        newlist_confirm = True
+                    else: #wtf
+                        print('wtf?')
+
     # print todos
     print('\n\nTODOS\n~*~*~*~*~*~*~*~*~*~*~\n~*~*~*~*~*~*~*~*~*~*~\n\n')
-    todo_fname  = '%s/todos.txt' %proj_path
+    todo_fname  = '%s/%s.txt' %(proj_path, list_choice)
     todo_file   = open(todo_fname, 'r')
     todos       = todo_file.readlines()
+
+    todos.sort()
 
     # make dataframe
     idx_list    = []
@@ -80,8 +158,7 @@ while loopit:
     todo_list   = []
     ddate_list  = []
     note_list   = []
-
-    todos.sort()
+    
     for line in todos:
         idx = todos.index(line) + 1
         idx_list.append(idx)
@@ -91,16 +168,10 @@ while loopit:
 
         # sometimes they are super long.. making multiple lines..
         todo_words = line[1].split()
-        if len(todo_words) > 10:
-            todo_words.insert(9, '\n')
-        if len(todo_words) > 20:
-            todo_words.insert(19, '\n')
-        if len(todo_words) > 30:
-            todo_words.insert(29, '\n')
-        if len(todo_words) > 40:
-            todo_words.insert(39, '\n')
-        if len(todo_words) > 50:
-            todo_words.insert(49, '\n')
+
+        for i in range(0, len(todo_words)):
+            if i % 5 == 0:
+                todo_words.insert(i, '\n')
         todo_words = ' '.join(todo_words)
         todo_list.append(todo_words)
 
@@ -108,16 +179,10 @@ while loopit:
 
         # making multiple lines again
         note_words = line[3].split()
-        if len(note_words) > 10:
-            note_words.insert(9, '\n')
-        if len(note_words) > 20:
-            note_words.insert(19, '\n')
-        if len(note_words) > 30:
-            note_words.insert(29, '\n')
-        if len(note_words) > 40:
-            note_words.insert(39, '\n')
-        if len(note_words) > 50:
-            note_words.insert(49, '\n')
+
+        for i in range(0, len(note_words)):
+            if i % 8 == 0:
+                note_words.insert(i, '\n')
 
         # add a note header
         note_header = str('<-----%i----->\n' %(idx))
@@ -139,84 +204,101 @@ while loopit:
         if update_check == 'z':
             proj_loop = True
             while proj_loop:
-                proj_yn = input('Is this associated with a project? (y/n):  ')
-                if (proj_yn == 'y') or (proj_yn == ''):
-                    proj_yn_loop = True
-                    while proj_yn_loop:
-                        for proj in proj_list:
-                            print('[%i] %s' %((proj_list.index(proj) + 1), proj))
-                        which_proj = int(input('Input the number associated with the project:  ')) - 1
-                        if which_proj > (len(proj_list)):
-                            print('We\'re not on the same page.')
-                            continue
-                        confirm = True
-                        while confirm:
-                            make_proj = str('%s' %proj_list[which_proj])
-                            this_proj = input('%s (y/n)?  ' %make_proj)
-                            if (this_proj == 'y') or (this_proj == ''):
-
-                                # set due date
-                                due_date_loop = True
-                                while due_date_loop:
-                                    due_date = input('Is there a date by when this todo should be completed? (y/n):  ')
-                                    if (due_date == '') or (due_date == 'y'):
-                                        due_date_subloop = True
-                                        while due_date_subloop:
-                                            due         = input('Input the date (e.g., August 24, 2020, 1:00:00 PM):  ')
-                                            due_confirm = input(str('%s? (y/n):  ' %due))
-                                            if (due_confirm == '') or (due_confirm == 'y'):
-                                                # abort loops
-                                                due_date_subloop    = False
-                                        allday_subloop = True
-                                        while allday_subloop:
-                                            allday      = input('All day event? (y/n):  ')
-                                            if allday == '':
-                                                allday_confirm = input(str('y (y/n)?  '))
-                                            else:
-                                                allday_confirm = input(str('%s? (y/n):  ' %allday))
-                                            if ((allday == 'y') or (allday == '')) and ((allday_confirm == 'y') or (allday_confirm == '')):
-                                                allday = str('true')
-                                                allday_subloop = False
-                                            elif (allday == 'n') and ((allday_confirm == 'y') or (allday_confirm == '')):
-                                                allday = str('false')
-                                                allday_subloop = False
+                proj_yn = input('Is this associated with a project? (y/n)\n(If you wish to delete this list, type \'delete_%s\')\n\n:  ' %list_choice)
+                if proj_yn == str('delete_%s' %list_choice):
+                    os.system('rm -rfv %s/%s.txt' %(proj_path, list_choice))
+                    proj_loop = False
+                    continue
+                elif (proj_yn == 'y') or (proj_yn == ''):
+                    projyn_loop = True
+                    while projyn_loop:
+                        proj_yn_confirm = input('Selected: Yes. Confirm? (y/n):  ')
+                        if (proj_yn_confirm == '') or (proj_yn_confirm == 'y'):
+                            proj_yn_loop = True
+                            while proj_yn_loop:
+                                for proj in proj_list:
+                                    print('[%i] %s' %((proj_list.index(proj) + 1), proj))
+                                try:
+                                    which_proj = int(input('Input the number associated with the project:  ')) - 1
+                                except ValueError:
+                                    continue
+                                else: 
+                                    if which_proj <= (len(proj_list)):
+                                        confirm = True
+                                        while confirm:
+                                            make_proj = str('%s' %proj_list[which_proj])
+                                            this_proj = input('%s (y/n)?  ' %make_proj)
+                                            if (this_proj == 'y') or (this_proj == ''):
+                                                confirm = False
+                                                proj_yn_loop = False
+                                                proj_loop = False
+                                                projyn_loop = False
+                                            elif this_proj == 'n':
+                                                confirm = False
                                             else: #wtf
-                                                print('There is an issue with determining the allday nature of the event.')
-                                        eventname_loop = True
-                                        while eventname_loop:
-                                            event_name   = input('Name the event:  ')
-                                            eventname_confirm = input(str('%s? (y/n):  ' %event_name))
-                                            if (eventname_confirm == 'y') or (eventname_confirm == ''):
-                                                eventname_loop = False
-                                            elif eventname_confirm == 'n':
-                                                eventname_loop = True
-                                            else: #wtf
-                                                print('There is something wrong with determining the event name.') 
-                                        # add to-do to calendar
-                                        os.system(str('osascript -e \'tell application \"iCal\" to tell calendar \"To-Dos\" to make event with properties {start date: date \"%s\", allday event: %s, summary: \"%s\"}\'' %(due, allday, event_name)))
-                                        due_date_loop       = False
-                                        proj_yn_loop    = False
-                                        confirm         = False
-                                        proj_loop       = False
-                                    elif due_date == 'n':
-                                        due             = ''
-                                        due_date_loop   = False
-                                        proj_yn_loop    = False
-                                        confirm         = False
-                                        proj_loop       = False
-                                        allday          = ''
-                                        event_name      = ''
+                                                print('wtf?')
                                     else: #wtf
-                                        print('\nThat don\'t make no sense. Try again.\n')
+                                        print('wtf')
+                        elif proj_yn_confirm == 'n':
+                            projyn_loop = False
 
+                        else: #wtf
+                            print('There is something wrong with trying to determine what project you want to add.')
 
-                                confirm = False
-                                proj_yn_loop = False
-                                proj_loop == False
-                            elif this_proj == 'n':
-                                confirm = False
+                        # set due date
+                        due_date_loop = True
+                        while due_date_loop:
+                            due_date = input('Is there a date by when this todo should be completed? (y/n):  ')
+                            if (due_date == '') or (due_date == 'y'):
+                                due_date_subloop = True
+                                while due_date_subloop:
+                                    due         = input('Input the date (e.g., August 24, 2020, 1:00:00 PM):  ')
+                                    due_confirm = input(str('%s? (y/n):  ' %due))
+                                    if (due_confirm == '') or (due_confirm == 'y'):
+                                        # abort loops
+                                        due_date_subloop    = False
+                                allday_subloop = True
+                                while allday_subloop:
+                                    allday      = input('All day event? (y/n):  ')
+                                    if allday == '':
+                                        allday_confirm = input(str('y (y/n)?  '))
+                                    else:
+                                        allday_confirm = input(str('%s? (y/n):  ' %allday))
+                                    if ((allday == 'y') or (allday == '')) and ((allday_confirm == 'y') or (allday_confirm == '')):
+                                        allday = str('true')
+                                        allday_subloop = False
+                                    elif (allday == 'n') and ((allday_confirm == 'y') or (allday_confirm == '')):
+                                        allday = str('false')
+                                        allday_subloop = False
+                                    else: #wtf
+                                        print('There is an issue with determining the allday nature of the event.')
+                                eventname_loop = True
+                                while eventname_loop:
+                                    event_name   = input('Name the event:\n')
+                                    eventname_confirm = input(str('%s? (y/n):  ' %event_name))
+                                    if (eventname_confirm == 'y') or (eventname_confirm == ''):
+                                        eventname_loop = False
+                                    elif eventname_confirm == 'n':
+                                        print('Try again..')
+                                    else: #wtf
+                                        print('There is something wrong with determining the event name.') 
+                                # add to-do to calendar
+                                os.system(str('osascript -e \'tell application \"iCal\" to tell calendar \"To-Dos\" to make event with properties {start date: date \"%s\", allday event: %s, summary: \"%s\"}\'' %(due, allday, event_name)))
+                                due_date_loop   = False
+                                proj_yn_loop    = False
+                                confirm         = False
+                                proj_loop       = False
+                            elif due_date == 'n':
+                                due             = ''
+                                due_date_loop   = False
+                                proj_yn_loop    = False
+                                confirm         = False
+                                proj_loop       = False
+                                allday          = ''
+                                event_name      = ''
                             else: #wtf
-                                print('There is something wrong with trying to determine what project you want to add.')
+                                print('\nThat don\'t make no sense. Try again.\n')
+
                 elif proj_yn == 'n':
                     make_proj = str('NA')
 
@@ -296,7 +378,7 @@ while loopit:
 
             update_confirm = True
             while update_confirm:
-                u_conf = input('Log it (y/n)?  ')
+                u_conf = input('Todo:\nProj: %s\nTodo: %s\nDue Date: %s\nNotes: %s\n\nLog it? (y/n):  ' %(make_proj, in_todo, due, todo_notes))
                 if (u_conf == 'y') or (u_conf == ''):
                     # logit
                     todo_file = open(todo_fname, 'a+')
@@ -307,42 +389,45 @@ while loopit:
                     uc_loop = False
                 elif u_conf == 'n':
                     update_confirm == False
+                    continue
                 else: #wtf
                     print('There was an issue confirming whether or not you wanted to log it.')
             
         elif update_check == 'x':
             check_loop = True
             while check_loop:
-                check = int(input('Which todo would you like to check off (#)?  ')) - 1
-                if check > (len(todos)):
-                    print('There was something wrong with that input. Try again.')
+                try:
+                    check = int(input('Which todo would you like to check off (#)?  ')) - 1
+                except ValueError:
                     continue
-                check_confirm_loop = True
-                while check_confirm_loop:
-                    check_confirm = input('%s (y/n)?  ' %todos[check]) #not sure if that will work after the doc is closed...
-                    if (check_confirm == 'y') or (check_confirm == ''):
-                        # delete line
-                        new_todos = []
-                        todo_file = open(todo_fname, 'w')
-                        todo_file.write('')
-                        todo_file.close()
-                        todo_file = open(todo_fname, 'a+')
-                        for line in range(0, len(todos)):
-                            if todos[check] != todos[line]:
-                                if line > 0:
-                                    if todos[(check - 1)] != todos[(line - 1)]:
-                                        todo_file.write('%s' %todos[line])
-                                else:
-                                    todo_file.write('%s' %todos[line])                   
-                        todo_file.close()
+                else:
+                    if check <= (len(todos)):
+                        check_confirm_loop = True
+                        while check_confirm_loop:
+                            check_confirm = input('%s (y/n)?  ' %todos[check]) #not sure if that will work after the doc is closed...
+                            if (check_confirm == 'y') or (check_confirm == ''):
+                                # delete line
+                                new_todos = []
+                                todo_file = open(todo_fname, 'w')
+                                todo_file.write('')
+                                todo_file.close()
+                                todo_file = open(todo_fname, 'a+')
+                                for line in range(0, len(todos)):
+                                    if todos[check] != todos[line]:
+                                        if line > 0:
+                                            if todos[(check - 1)] != todos[(line - 1)]:
+                                                todo_file.write('%s' %todos[line])
+                                        else:
+                                            todo_file.write('%s' %todos[line])                   
+                                todo_file.close()
 
-                        check_confirm_loop = False
-                        check_loop = False
-                        uc_loop = False
-                    elif check_confirm == 'n':
-                        check_confirm_loop = False
-                    else: #wtf
-                        print('There was something wrong with checking your confirmation.')
+                                check_confirm_loop = False
+                                check_loop = False
+                                uc_loop = False
+                            elif check_confirm == 'n':
+                                check_confirm_loop = False
+                            else: #wtf
+                                print('There was something wrong with checking your confirmation.')
                             
         else: #wtf
             print('Not sure what you want..')

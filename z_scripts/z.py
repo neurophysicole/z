@@ -168,7 +168,7 @@ while exe_loop:
 
             # run task interface module
             # do work!
-            z_event, todo, task_start, task_end, task_details, task_notes, time_s, proj_time, project_status = task_interface.task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer, proj_status, todo_list)
+            z_event, todo, task_start, task_end, task_details, task_notes, time_s, proj_time, project_status, proj_phases = task_interface.task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer, proj_status, todo_list)
 
             # ==========
             # Follow-up
@@ -221,7 +221,7 @@ while exe_loop:
             # Log Responses
             # ==============
             # run logit module
-            logit.logit(proj_path, proj_name, task_path, task_name, todo, task_start, task_end, task_details, task_notes, time_s, z_event, main_dir, logfile, project_status, status_file)
+            logit.logit(proj_path, proj_name, task_path, task_name, todo, task_start, task_end, task_details, task_notes, time_s, z_event, main_dir, logfile, project_status, status_file, proj_phases)
 
             # commit changes
             repo_commit(home_dir, main_dir, proj_name, task_name, task_details)

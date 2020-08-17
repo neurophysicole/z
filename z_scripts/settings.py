@@ -57,14 +57,14 @@ def settings():
         confirm_renew_loop = True
         while confirm_renew_loop:
             confirm_renew = input('\nRenewing the current branch.\n\nCONFIRM that this should be carried out (y/n): ')
-            if confirm_renew == '':
+            if (confirm_renew == '') or (confirm_renew == 'y'):
                 # need to update the current branch
                 old_branch_name    = cur_branch_name
                 cur_branch_name    = next_branch_name
 
                 # need to update the next branch
                 next_branch_name   = input('\nCome up with a name for the next branch (e.g., \'20_Fall\'):\n')
-                next_branch_start  = input('\nInput the date that the next branch should start (e.g., \'19-12-26\'):\n')
+                next_branch_start  = input('\nInput the date that the next branch should start (e.g., \'08.24.2020\'):\n')
 
                 print('\nOkay, the current branch is set to %s.\nIf for some reason, this is inaccurate, you will need to update the settings (during job selection -- coming up), or just manually update the settings in the \'settings.txt\' file.\n' %cur_branch_name)
 
@@ -87,10 +87,19 @@ def settings():
                 # list projects in old branch directory
                 old_branch_list = next(os.walk('%s/%s' %(main_dir, old_branch_name)))[1]
 
+                # list lists in old branch directory
+                old_branch_list_lists = next(os.walk('%s/%s' %(main_dir, old_branch_name)))[2]
+                for i in old_branch_list_lists:
+                    if i == 'log.txt':
+                        old_branch_list_lists.remove(i)
+
                 # move all project dirs form old branch to new branch
                 for seg_proj in old_branch_list:
                     os.system('mv -v -f %s/%s/%s %s/%s' %(main_dir, old_branch_name, seg_proj, main_dir, cur_branch_name))
 
+                # move all lists from old branch to new branch
+                for i in old_branch_list_lists:
+                    os.system('mv -v -f %s/%s/%s %s/%s' %(main_dir, old_branch_name, i, main_dir, cur_branch_name))
                 
                 # =====================
                 # Update Settings File
@@ -122,6 +131,9 @@ def settings():
                 print('\n!Aborting renewal. Current branch: %s! If this isn\'t right, you might have to restart and update it correctly; or just go into the \'settings.txt\' file and update the branch information manually.' %cur_branch_name)
 
                 confirm_renew_loop = False
+
+            else: #wtf
+                print('\nTry again.')
 
     # ====================
     # Set Terminal Windows

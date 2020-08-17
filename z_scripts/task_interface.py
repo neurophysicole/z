@@ -94,7 +94,6 @@ def task_interface(proj_name, task_name, proj_path, cur_branch_name, thymer, pro
         for i in range(len(proj_phases), 6): #does this need to be +1??
             proj_phases.append('NA')
             phase_list.append(False)
-    print(proj_status)
 
     # ------
     # window

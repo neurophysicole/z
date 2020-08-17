@@ -70,79 +70,83 @@ while loopit:
     print(tabulate(status_df, headers = 'keys', tablefmt = 'psql', showindex = False))
     print('\n\n~*~*~*~*~*~*~*~*~*~*~')
 
-    # get the list of lists
-    try:
-        list_list = next(os.walk(proj_path))[2]
-    except StopIteration:
-        list_list = []
-    else:
-        list_list = next(os.walk(proj_path))[2]
-    
-    if '.DS_Store' in list_list:
-        print('Removing .DS_Store.')
-        os.system('rm -rf %s/.DS_Store')
-        list_list.remove('.DS_Store')
-    
-    if 'log.txt' in list_list:
-        list_list.remove('log.txt')
-
-    # cut otu the extension
-    list_idx = []
-    for i in range( 0, len(list_list) ):
-        list_list[i] = os.path.splitext(list_list[i])[0]
-        idx = list_list.index(list_list[i]) + 1
-        list_idx.append(idx)
-
-    list_list.sort()
-
-    # list of lists
-    list_header = '\nList of lists'
-    print('\n%s\n~*~*~*~*~*~*~*~*~*~*~\n~*~*~*~*~*~*~*~*~*~*~\n\n' %list_header.upper())
-    list_df = pd.DataFrame({'#': list_idx, 'List': list_list})
-    print(tabulate(list_df, headers = 'keys', tablefmt = 'psql', showindex = False))
-    print('\n\n~*~*~*~*~*~*~*~*~*~*~')
-
-    # choose list
-    choose_loop = True
-    while choose_loop:
+    list_looper = True
+    while list_looper:
+        # get the list of lists
         try:
-            choose_list = int(input('Which list do you want to work on? (#):  '))
-        except ValueError:
-            continue
+            list_list = next(os.walk(proj_path))[2]
+        except StopIteration:
+            list_list = []
         else:
-            if choose_list <= len(list_list):
-                list_choice = list_list[choose_list - 1]
-                choose_confirm = input('%s? (y/n):  ' %list_choice)
-                if (choose_confirm == 'y') or (choose_confirm == ''):
-                    choose_loop = False
-                elif choose_confirm == 'n':
-                    print('Okay, redo.')
-                else: #wtf
-                    print('wtf')
-            else: #create new list
-                newlist_confirm = True
-                while newlist_confirm:
-                    newlist = input('Create a new list? (y/n):  ')
-                    if (newlist == '') or (newlist == 'y'):
-                        newlist_name = input('What do you want to call the new list?\n')
-                        
-                        newname_confirm = True
-                        while newname_confirm:
-                            newname_yn = input('%s? (y/n):  ' %newlist_name)
-                            if (newname_yn == '') or (newname_yn == 'y'):
-                                open('%s/%s.txt' %(proj_path, newlist_name), 'w+')
-                                newlist_confirm = False
-                                newname_confirm = False
-                                choose_loop = False
-                            elif newname_yn == 'n':
-                                newname_confirm = False
-                            else: #wtf
-                                print('wtf')
-                    elif newlist == 'n':
-                        print('Alright, redo..')
-                        newlist_confirm = True
+            list_list = next(os.walk(proj_path))[2]
+        
+        if '.DS_Store' in list_list:
+            print('Removing .DS_Store.')
+            os.system('rm -rf %s/.DS_Store')
+            list_list.remove('.DS_Store')
+        
+        if 'log.txt' in list_list:
+            list_list.remove('log.txt')
+
+        # cut otu the extension
+        list_idx = []
+        for i in range( 0, len(list_list) ):
+            list_list[i] = os.path.splitext(list_list[i])[0]
+            idx = list_list.index(list_list[i]) + 1
+            list_idx.append(idx)
+
+        list_list.sort()
+
+        # list of lists
+        list_header = '\nList of lists'
+        print('\n%s\n~*~*~*~*~*~*~*~*~*~*~\n~*~*~*~*~*~*~*~*~*~*~\n\n' %list_header.upper())
+        list_df = pd.DataFrame({'#': list_idx, 'List': list_list})
+        print(tabulate(list_df, headers = 'keys', tablefmt = 'psql', showindex = False))
+        print('\n\n~*~*~*~*~*~*~*~*~*~*~')
+
+        # choose list
+        choose_loop = True
+        while choose_loop:
+            try:
+                choose_list = int(input('Which list do you want to work on? (#):  '))
+            except ValueError:
+                continue
+            else:
+                if choose_list <= len(list_list):
+                    list_choice = list_list[choose_list - 1]
+                    choose_confirm = input('%s? (y/n):  ' %list_choice)
+                    if (choose_confirm == 'y') or (choose_confirm == ''):
+                        choose_loop = False
+                        list_looper = False
+                    elif choose_confirm == 'n':
+                        print('Okay, redo.')
                     else: #wtf
-                        print('wtf?')
+                        print('wtf')
+                else: #create new list
+                    newlist_confirm = True
+                    while newlist_confirm:
+                        newlist = input('Create a new list? (y/n):  ')
+                        if (newlist == '') or (newlist == 'y'):
+                            newlist_name = input('What do you want to call the new list?\n')
+                            
+                            newname_confirm = True
+                            while newname_confirm:
+                                newname_yn = input('%s? (y/n):  ' %newlist_name)
+                                if (newname_yn == '') or (newname_yn == 'y'):
+                                    open('%s/%s.txt' %(proj_path, newlist_name), 'w+')
+                                    newlist_confirm = False
+                                    newname_confirm = False  
+                                    choose_loop     = False  
+                                    continue                            
+                                elif newname_yn == 'n':
+                                    newname_confirm = False
+                                else: #wtf
+                                    print('wtf')
+                        elif newlist == 'n':
+                            print('Alright, redo..')
+                            newlist_confirm = True
+                        else: #wtf
+                            print('wtf?')
 
     # print todos
     print('\n\nTODOS\n~*~*~*~*~*~*~*~*~*~*~\n~*~*~*~*~*~*~*~*~*~*~\n\n')
@@ -200,7 +204,7 @@ while loopit:
     # update or check off
     uc_loop = True
     while uc_loop:
-        update_check = input('Update the list (\'z\'), or check something off (\'x\')?  ')
+        update_check = input('Update the list (\'z\'), or check something off (\'x\')?\nHit \'c\' to go back:  ')
         if update_check == 'z':
             proj_loop = True
             while proj_loop:
@@ -208,7 +212,8 @@ while loopit:
                 if proj_yn == str('delete_%s' %list_choice):
                     os.system('rm -rfv %s/%s.txt' %(proj_path, list_choice))
                     proj_loop = False
-                    continue
+                    uc_loop = False
+                    break
                 elif (proj_yn == 'y') or (proj_yn == ''):
                     projyn_loop = True
                     while projyn_loop:
@@ -356,6 +361,8 @@ while loopit:
                 else: #wtf
                     print('Something is wrong! Try again.')
 
+            if proj_yn == str('delete_%s' %list_choice):
+                break
             in_todo_loop = True
             while in_todo_loop:
                 in_todo = input('What is the todo?  ')
@@ -428,7 +435,10 @@ while loopit:
                                 check_confirm_loop = False
                             else: #wtf
                                 print('There was something wrong with checking your confirmation.')
-                            
+
+        elif update_check == 'c':
+            uc_loop = False
+
         else: #wtf
             print('Not sure what you want..')
 

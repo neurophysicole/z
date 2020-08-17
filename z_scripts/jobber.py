@@ -93,11 +93,10 @@ def jobber(proj_list, proj_path, main_dir):
 
                             # udpate status
                             status_fname = '%s/%s/status.txt' %(proj_path, proj_name)
-                            status_file = open(status_fname, 'a+')
+                            status_file = open(status_fname, 'w+')
                             status_phases = input('What are the phases of this project? (e.g., \'Design Dev Data Analysis Writing Pub\')\n:  ')
-                            status_input = input('Task Status (pick from one of the following phases)\nPhases: %s\n\n:  ' %status_phases)
-                            status_file.write(status_input)
-                            status_file.write(status_phases)
+                            status_input = input('Task Status (pick from one of the following phases)\nPhases: %s  :  ' %status_phases)
+                            status_file.write(str('%s\n%s' %(status_input, status_phases))
                             status_file.close()
                             
 

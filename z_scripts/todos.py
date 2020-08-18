@@ -108,7 +108,7 @@ while loopit:
         choose_loop = True
         while choose_loop:
             try:
-                choose_list = int(input('Which list do you want to work on? (#):  '))
+                choose_list = int(input('\n\nWhich list do you want to work on? (#):  '))
             except ValueError:
                 continue
             else:
@@ -125,9 +125,9 @@ while loopit:
                 else: #create new list
                     newlist_confirm = True
                     while newlist_confirm:
-                        newlist = input('Create a new list? (y/n):  ')
+                        newlist = input('\n\nCreate a new list? (y/n):  ')
                         if (newlist == '') or (newlist == 'y'):
-                            newlist_name = input('What do you want to call the new list?\n')
+                            newlist_name = input('\n\nWhat do you want to call the new list?\n')
                             
                             newname_confirm = True
                             while newname_confirm:
@@ -204,11 +204,11 @@ while loopit:
     # update or check off
     uc_loop = True
     while uc_loop:
-        update_check = input('Update the list (\'z\'), or check something off (\'x\')?\nHit \'c\' to go back:  ')
+        update_check = input('\n\nUpdate the list (\'z\'), or check something off (\'x\')?\nHit \'c\' to go back:  ')
         if update_check == 'z':
             proj_loop = True
             while proj_loop:
-                proj_yn = input('Is this associated with a project? (y/n)\n(If you wish to delete this list, type \'delete_%s\')\n\n:  ' %list_choice)
+                proj_yn = input('\n\nIs this associated with a project? (y/n)\n(If you wish to delete this list, type \'delete_%s\')  :  ' %list_choice)
                 if proj_yn == str('delete_%s' %list_choice):
                     os.system('rm -rfv %s/%s.txt' %(proj_path, list_choice))
                     proj_loop = False
@@ -224,7 +224,7 @@ while loopit:
                                 for proj in proj_list:
                                     print('[%i] %s' %((proj_list.index(proj) + 1), proj))
                                 try:
-                                    which_proj = int(input('Input the number associated with the project:  ')) - 1
+                                    which_proj = int(input('\n\nInput the number associated with the project:  ')) - 1
                                 except ValueError:
                                     continue
                                 else: 
@@ -248,23 +248,23 @@ while loopit:
                             projyn_loop = False
 
                         else: #wtf
-                            print('There is something wrong with trying to determine what project you want to add.')
+                            print('\n\nThere is something wrong with trying to determine what project you want to add.')
 
                         # set due date
                         due_date_loop = True
                         while due_date_loop:
-                            due_date = input('Is there a date by when this todo should be completed? (y/n):  ')
+                            due_date = input('\n\nIs there a date by when this todo should be completed? (y/n):  ')
                             if (due_date == '') or (due_date == 'y'):
                                 due_date_subloop = True
                                 while due_date_subloop:
-                                    due         = input('Input the date (e.g., August 24, 2020, 1:00:00 PM):  ')
+                                    due         = input('\n\nInput the date (e.g., August 24, 2020, 1:00:00 PM):  ')
                                     due_confirm = input(str('%s? (y/n):  ' %due))
                                     if (due_confirm == '') or (due_confirm == 'y'):
                                         # abort loops
                                         due_date_subloop    = False
                                 allday_subloop = True
                                 while allday_subloop:
-                                    allday      = input('All day event? (y/n):  ')
+                                    allday      = input('\n\nAll day event? (y/n):  ')
                                     if allday == '':
                                         allday_confirm = input(str('y (y/n)?  '))
                                     else:
@@ -276,10 +276,10 @@ while loopit:
                                         allday = str('false')
                                         allday_subloop = False
                                     else: #wtf
-                                        print('There is an issue with determining the allday nature of the event.')
+                                        print('\n\nThere is an issue with determining the allday nature of the event.')
                                 eventname_loop = True
                                 while eventname_loop:
-                                    event_name   = input('Name the event:\n')
+                                    event_name   = input('\n\nName the event:\n')
                                     eventname_confirm = input(str('%s? (y/n):  ' %event_name))
                                     if (eventname_confirm == 'y') or (eventname_confirm == ''):
                                         eventname_loop = False
@@ -311,18 +311,18 @@ while loopit:
                     # set due date
                     due_date_loop = True
                     while due_date_loop:
-                        due_date = input('Is there a date by when this todo should be completed? (y/n):  ')
+                        due_date = input('\n\nIs there a date by when this todo should be completed? (y/n):  ')
                         if (due_date == '') or (due_date == 'y'):
                             due_date_subloop = True
                             while due_date_subloop:
-                                due         = input('Input the date (e.g., August 24, 2020, 1:00:00 PM):  ')
+                                due         = input('\n\nInput the date (e.g., August 24, 2020, 1:00:00 PM):  ')
                                 due_confirm = input(str('%s? (y/n):  ' %due))
                                 if (due_confirm == '') or (due_confirm == 'y'):
                                     # abort loops
                                     due_date_subloop    = False
                             allday_subloop = True
                             while allday_subloop:
-                                allday      = input('All day event? (y/n):  ')
+                                allday      = input('\n\nAll day event? (y/n):  ')
                                 if allday == '':
                                     allday_confirm = input(str('y (y/n)?  '))
                                 else:
@@ -337,7 +337,7 @@ while loopit:
                                     print('There is an issue with determining the allday nature of the event.')
                             eventname_loop = True
                             while eventname_loop:
-                                event_name   = input('Name the event:  ')
+                                event_name   = input('\n\nName the event:  ')
                                 eventname_confirm = input(str('%s? (y/n):  '%event_name))
                                 if (eventname_confirm == 'y') or (eventname_confirm == ''):
                                     eventname_loop = False
@@ -365,7 +365,7 @@ while loopit:
                 break
             in_todo_loop = True
             while in_todo_loop:
-                in_todo = input('What is the todo?  ')
+                in_todo = input('\n\nWhat is the todo?  ')
                 in_todo_yn_loop = True
                 while in_todo_yn_loop:
                     in_todo_yn = input('%s (y/n)?  ' %in_todo)
@@ -375,7 +375,7 @@ while loopit:
                     elif in_todo_yn == 'n':
                         in_todo_yn_loop = False
                     else: #wtf
-                        print('There was an issue with confirming the todo.')
+                        print('\n\nThere was an issue with confirming the todo.')
             
             todo_notes  = input('Any notes?\n')
             if todos != []:
@@ -385,7 +385,7 @@ while loopit:
 
             update_confirm = True
             while update_confirm:
-                u_conf = input('Todo:\nProj: %s\nTodo: %s\nDue Date: %s\nNotes: %s\n\nLog it? (y/n):  ' %(make_proj, in_todo, due, todo_notes))
+                u_conf = input('\n\nTodo:\nProj: %s\nTodo: %s\nDue Date: %s\nNotes: %s\n\nLog it? (y/n):  ' %(make_proj, in_todo, due, todo_notes))
                 if (u_conf == 'y') or (u_conf == ''):
                     # logit
                     todo_file = open(todo_fname, 'a+')
@@ -404,7 +404,7 @@ while loopit:
             check_loop = True
             while check_loop:
                 try:
-                    check = int(input('Which todo would you like to check off (#)?  ')) - 1
+                    check = int(input('\n\nWhich todo would you like to check off (#)?  ')) - 1
                 except ValueError:
                     continue
                 else:
@@ -445,11 +445,11 @@ while loopit:
         # anything else?
         more_loop = True
         while more_loop:
-            more = input('Would you like to do anything else (y/n)?'  )
+            more = input('\n\nWould you like to do anything else (y/n)?'  )
             if (more == 'y') or (more == ''):
                 y_confirm_loop = True
                 while y_confirm_loop:
-                    y_confirm = input('Sure it\'s a yes (y/n)?  ')
+                    y_confirm = input('\n\nSure it\'s a yes (y/n)?  ')
                     if (y_confirm == 'y') or (y_confirm == ''):
                         y_confirm_loop = False
                         more_loop = False
@@ -460,7 +460,7 @@ while loopit:
             elif more == 'n':
                 n_confirm_loop = True
                 while n_confirm_loop:
-                    n_confirm = input('Sure it\'s a no (y/n)?  ')
+                    n_confirm = input('\n\nSure it\'s a no (y/n)?  ')
                     if (n_confirm == 'y') or (n_confirm == ''):
                         n_confirm_loop = False
                         more_loop = False

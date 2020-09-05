@@ -5,11 +5,48 @@
 # z
 This project has been my first real work in Python - well, my first real programming work entirely, really. So just a fair warning that things might get weird.
 
+**HEADS UP**: The documentation is pretty out-of-date, so I added the quick guide below to get you through. There are some packages and an additional app to install (although I suppose you might be able to get away without installing the app), and some additional info below that might be helpful to checkout as well, but I think the Quick Guide covers most of what you need to know to get rolling.
+
+## Quick Guide Until the Documentation can be more Thoroughly Updated.
+- Create a GitHub repo, save the stuff from this repo in the new repo you just made.
+  - After closing out of the interface a new commit is made, and when completing a session, all commits are pushed. (More on this later.)
+- Make sure the settings are up to date (settings.txt file)
+  - In the settings file, name the current branch, and the next branch (branches are folder names where your stuff will be stored - so the file system can update/archive every semester)
+  - Also, come up with a date that you would like to shift to a new branch (on that date, the new branch will be created and named whatever you name it, then all of the active projects will be migrated to the new branch. The log sheet will remain in the old branch folder for reference)
+- Run the main `z.py` file in the Terminal (I have setup an alias in my `.bash_profile` to streamline this..)
+- Do not leave the Terminal window while the program is loading up (if you leave the Terminal, there will be an error). I guess the system needs to be in the Terminal to figure out the names of the terminal tabs.
+  - When you run the main script, it opens more terminal tabs for the list of lists and to print the notes and log info.
+- create a new project -- for reference, the task structure goes Project > Task > ToDos. Projects and tasks are folders containing log sheets, and ToDos are .txt files contained within the Task folder. There is also a dets file (essentially a logfile for logging procedural-type details that aren't necessarily notes).
+- create a new task 
+  - I have recently added the question about having the task done by a particular date - but I might have messed up the input format on my example (or maybe it is correct, I can't remember now), either way, that is supposed to add an event to your iCalendar -- I don't think I have finished setting up this functionality yet, so I could see this leading to a few errors -- for instance, I think it will search for a calendar named `To-Dos`, not sure if I setup contingencies for errors that occur there yet..
+- After you create the task, an interface will pop up. The interface will have the time-on-project and time-on-task logged at the top, followed by a list of To Dos, the project status, then a text bos for details (basically a session log), then a box for task notes.
+- There are buttons at the top to mark the task or project completed. If one of these buttons are pressed, the task or project folder will be moved into an archive folder.
+  - Archived tasks are still shown in the task selection area, and their notes are still printed (although you may have to search for them). If you make a new task or project with the same name as an archived task or project, that project folder will be moved from the archive and into the appropriate folder so that it will again be seen as active.
+- If you want to add a new To Do to the list, type in the name of the To Do where the NA is (in the small text box). If you want to work on an already started TO Do, click on one of the To Dos in the list. If you want to work on a To Do in the list, the small textbox must say `NA`. If the small text box has anything except `NA` in the box (that is the default), it will log the current session whatever is in the small text box.
+- When you are done, click the button at the bottom.
+- After leaving the interface, a commit will be made. Once you log out of the session completely, the commits will be pushed to the repo.
+
+- **NOTES:** I don't think the search works anymore (I can't recall for sure, but I don't think I have updated it since I updated the file structure)
+- I think I want to get the details and notes to print side-by-side in a pandas dataframe, but I am not totally sure on that yet..
+- Make sure that none of the names that you use for projects, tasks, or to-dos have spaces in them! (I can't remember for sure now, but dashes might be a no-go as well.). Planning to fix this, but just haven't gotten around to it yet..
+- As far as I can tell, running multiple sessions simultaneously works perfectly fine.
+- I originally made this in Python 2.7, but have since upgraded to 3.
+
+- **Todoz**
+- One of the tabs that gets opened will be designated for a separate "list of lists" that I refer to as todoz
+- I haven't gotten this to work totally on its own yet - the Todos run off of a separate script, so it is a little different..
+  - So here, you just have to run the todos script (I have setup another alias in my `.bash_profile` for this..).
+- This script will be up a list of lists.. (well, it'll probably be empty the first time you do it..)
+  - Create a new list (e.g., `todos`, `goals`, `study_ideas`, `follow_up_ideas`, etc..)
+- Within that list, feel free to add and delete items as you go. (Note, deleting something means it is lost forever.)
+  - Also worth noting that there may be some missing confirmation loops throughout.. haven't had time/energy to fully check.
+- _NOTE_: You don't have to run the `z.py` script to run todoz.. You can just run the todoz script in the terminal on its own whenever you like and it will work.
+
 ### Installation
 This program was designed to run on a Mac. Although I am sure it can run on a window's computer (maybe with some minor tweaks), I have not tried, and I do not plan to. Installing the program is simple, just download the package. The real work is in the setup.
 
 #### Packages
-You will need to have Python 3, and you will have to make sure that the packages that are used in this program are installed on your computer. The packages you will need are as follows:
+You will need to have Python 2.7 (that is what I have programmed this in, although it may work with Py3 or other.. this is untested), and you will have to make sure that the packages that are used in this program are installed on your computer. The packages you will need are as follows:
 - time
 - datetime
 - dateutil
@@ -68,6 +105,3 @@ The cloud is checked at the beginning and end of each session, to make sure that
 
 #### Thyme
 This program has the capability to work on multiple sessions at the same time, on the same computer (although this would probably be a little disingenuous with regard to your time on task). As such, this would involve restarting _Thyme_. Because this could get confusing. _Thyme_ activation will be locked by the first session that was opened, and will be made available again when that session is complete. This is done by creating a file in the main dir named `thymer.txt`. This file is empty, but holds the _Thyme_ app locked so subsequently opened sessions will not restart the timer. This file is deleted by the session that created it, thus opening up the timer to be started by subsequent sessions. In the event that the session which started _Thyme_ crashes, the timer will keep going in the top bar, and subsequent sessions will likely not be able to open up the app. To fix this, simply go into the main directory and delete the file named `thymer.txt`. If this file does not exist, you have a different problem.
-
-#### Something Weird
-If you have too many Terminal windows open, it won't work.. Not totally sure why at the moment..

@@ -189,7 +189,7 @@ while loopit:
                 note_words.insert(i, '\n')
 
         # add a note header
-        note_header = str('<-----%i----->\n' %(idx))
+        note_header = str('<-----%i----->' %(idx))
         note_words.insert(0, note_header)
         note_words = ' '.join(note_words)
         note_list.append(note_words)

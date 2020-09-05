@@ -185,7 +185,7 @@ while loopit:
         note_words = line[3].split()
 
         for i in range(0, len(note_words)):
-            if i % 8 == 0:
+            if i % 6 == 0:
                 note_words.insert(i, '\n')
 
         # add a note header

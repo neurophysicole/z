@@ -185,8 +185,24 @@ while loopit:
         note_words = line[3].split()
 
         for i in range(0, len(note_words)):
-            if i % 6 == 0:
+            if i % 8 == 0:
                 note_words.insert(i, '\n')
+        
+        reverse_loop = True
+        while reverse_loop:
+            for i in range(1, len(note_words)): #this won't span the whole list, but doesn't matter
+                i = i - (i * 2) #make it negative for reverse
+                if note_words[i] == '\n': #look for the newline
+                    if i < -8: #if the first newline is too far away, add a new one
+                        i = int(i / 2) # split the last line in half
+                        note_words.insert(i, '\n') #insert newline
+                        reverse_loop = False #quit the loop
+                        break
+                    
+                    else:
+                        reverse_loop = False
+                        break
+            reverse_loop = False
 
         # add a note header
         note_header = str('<-----%i----->' %(idx))

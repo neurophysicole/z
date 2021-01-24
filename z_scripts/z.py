@@ -27,8 +27,6 @@ import settings
 import jobber
 from print_notes import print_proj_notes
 from print_notes import print_task_notes
-from print_notes import print_proj_details
-from print_notes import print_task_dets
 import task_selection
 import task_interface
 import logit
@@ -46,7 +44,7 @@ status_file = 'status.txt'
 loadup.loadup()
 
 # load settings
-main_dir, home_dir, cur_branch_name, todo_terminal, notes_terminal, dets_terminal = settings.settings()
+main_dir, home_dir, cur_branch_name, todo_terminal, notes_terminal = settings.settings()
 
 # -------
 # Loopit
@@ -82,6 +80,8 @@ while exe_loop:
     # list project status and update todos
     todo_header = str('To check the status of your projects, and update your todo list, type todoz.') #todoz is an alias
     os.system('echo \'%s\' > %s' %(todo_header, todo_terminal)) #best way I could figure out how to do this..
+    # os.system(str('todoz > %s' %(todo_terminal)))
+
 
     # list projects
     job_loop = True
@@ -121,9 +121,8 @@ while exe_loop:
         task_loop = True
         while task_loop:
             # print all project notes
-            task_path, task_list, archive_task_list = print_proj_notes(proj_path, proj_name, notes_terminal, dets_terminal)
+            task_path, task_list, archive_task_list = print_proj_notes(proj_path, proj_name, notes_terminal)
             time.sleep(.1)
-            print_proj_details(proj_path, proj_name, notes_terminal, dets_terminal)
 
             # run task selection module
             task_name, due, allday, event_name, todo_list = task_selection.task_selection(archive_task_list, task_path, task_list, proj_path, proj_name)
@@ -139,8 +138,7 @@ while exe_loop:
             # List Notes
             # ===========
             # run notes module
-            print_task_notes(task_path, task_name, notes_terminal, dets_terminal)
-            print_task_dets(task_path, task_name, notes_terminal, dets_terminal)
+            print_task_notes(task_path, task_name, notes_terminal)
 
             # ===============
             # Task Interface

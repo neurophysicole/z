@@ -174,9 +174,35 @@ while loopit:
         todo_words = line[1].split()
 
         for i in range(0, len(todo_words)):
-            if i % 5 == 0:
-                todo_words.insert(i, '\n')
-        todo_words = ' '.join(todo_words)
+            if len(todo_words[i]) > 10:
+                old_word = todo_words[i]
+                chunks = int(len(old_word) / 10)
+                new_word = ''
+                for j in range(1, chunks):
+                    bound_2 = j * 10
+                    bound_1 = bound_1 - 9
+                    segment = old_word[bound_1:bound_2]
+                    new_word = str('%s%s\n' %(new_word, segment))
+                
+                todo_words[i] = new_word
+
+        if len(todo_words) > 5:
+            old_list = todo_words
+            chunks = int(len(old_list) / 5)
+            new_list = []
+            for k in range(1, chunks):
+                bound_2 = k * 5
+                bound_1 = bound_2 - 4
+                segment = old_list[bound_1:bound_2]
+                segment.append('\n')
+                segment = ' '.join(segment)
+                new_list.append(segment)
+            
+            todo_words = ' '.join(new_list)
+
+        else:
+            todo_words = ' '.join(todo_words)
+
         todo_list.append(todo_words)
 
         ddate_list.append(line[2])

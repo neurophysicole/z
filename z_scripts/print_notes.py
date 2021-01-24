@@ -197,14 +197,14 @@ def print_proj_notes(proj_path, proj_name, notes_terminal):
             note_list = note_list[0:len(dets_list)] #this was a desparation move...
 
             for entry in range(0, len(date_list)):
-                note_list[entry] = str('\n<----- %s ----->\n%s' %(date_list[entry], note_list[entry]))
-                dets_list[entry] = str('\n<----- %s ----->\n%s' %(date_list[entry], dets_list[entry]))
+                note_list[entry] = str('\n\n<----- %s ----->\n%s' %(date_list[entry], note_list[entry]))
+                dets_list[entry] = str('\n\n<----- %s ----->\n%s' %(date_list[entry], dets_list[entry]))
 
             notes_df = pd.DataFrame({'Log': dets_list, 'Notes': note_list})
             notes_df = str(tabulate(notes_df, headers = 'keys', tablefmt = 'psql', showindex = False))
 
             # print note
-            note_header = str( '\n\n%s\n-------------------\n\n' %(os.path.splitext(archive_todo)[0][:-10]) )
+            note_header = str( '\n\n%s\n-------------------\n\n' %(archive_todo) )
 
             os.system(str('echo \'%s\' > %s' %(note_header, notes_terminal)))
             os.system(str('echo \'%s\' > %s' %(notes_df, notes_terminal)))
@@ -221,17 +221,17 @@ def print_proj_notes(proj_path, proj_name, notes_terminal):
     os.system(str('echo \'%s\' > %s' %(proj_header, notes_terminal)))
 
     for task in task_list: #list of tasks in the project
-        note_dir    = '%s/%s' %(task_path, task)
-        note_list   = next(os.walk(note_dir))[2]
-        note_list.remove('log.txt')
-        note_list.remove('dets.txt')
-        note_list   = sorted(note_list)
+        notes_dir    = '%s/%s' %(task_path, task)
+        notes_list   = next(os.walk(notes_dir))[2]
+        notes_list.remove('log.txt')
+        notes_list.remove('dets.txt')
+        notes_list   = sorted(notes_list)
 
-        if '.DS_Store' in note_list:
-            os.system('rm -rf %s/.DS_Store' %note_dir)
-            note_list.remove('.DS_Store')
+        if '.DS_Store' in notes_list:
+            os.system('rm -rf %s/.DS_Store' %notes_dir)
+            notes_list.remove('.DS_Store')
 
-        dets_file            = open('%s/dets.txt' %note_dir, 'r')
+        dets_file            = open('%s/dets.txt' %notes_dir, 'r')
         dets_file_contents   = dets_file.readlines()
 
         # task header
@@ -242,8 +242,8 @@ def print_proj_notes(proj_path, proj_name, notes_terminal):
         dets_list = []
         date_list = []
 
-        for task_todo in note_list:
-            task_note           = open('%s/%s' %(note_dir, task_todo), 'r')
+        for task_todo in notes_list:
+            task_note           = open('%s/%s' %(notes_dir, task_todo), 'r')
             task_note_contents  = task_note.readlines()
             task_todo            = os.path.splitext(task_todo)[0][:-6]
             if len(task_todo) == 0:
@@ -392,14 +392,14 @@ def print_proj_notes(proj_path, proj_name, notes_terminal):
             note_list = note_list[0:len(dets_list)] #this was a desparation move...
 
             for entry in range(0, len(date_list)):
-                note_list[entry] = str('\n<----- %s ----->\n%s' %(date_list[entry], note_list[entry]))
-                dets_list[entry] = str('\n<----- %s ----->\n%s' %(date_list[entry], dets_list[entry]))
+                note_list[entry] = str('\n\n<----- %s ----->\n%s' %(date_list[entry], note_list[entry]))
+                dets_list[entry] = str('\n\n<----- %s ----->\n%s' %(date_list[entry], dets_list[entry]))
 
             notes_df = pd.DataFrame({'Log': dets_list, 'Notes': note_list})
             notes_df = str(tabulate(notes_df, headers = 'keys', tablefmt = 'psql', showindex = False))
 
             # print note
-            note_header = str( '\n\n%s\n-------------------\n\n' %(os.path.splitext(task_todo)[0][:-10]) )
+            note_header = str( '\n\n%s\n-------------------\n\n' %(task_todo) )
 
             os.system(str('echo \'%s\' > %s' %(note_header, notes_terminal)))
             os.system(str('echo \'%s\' > %s' %(notes_df, notes_terminal)))
@@ -428,25 +428,25 @@ def print_task_notes(task_path, task_name, notes_terminal):
     task_header = str('\n\n===================\n===================\n\n%s TASK NOTES\n\n===================\n===================\n\n' %task_name.upper())
     os.system(str('echo \'%s\' > %s' %(task_header, notes_terminal)))
 
-    note_dir    = '%s/%s' %(task_path, task_name)
-    note_list   = next(os.walk(note_dir))[2]
-    note_list.remove('log.txt')
-    note_list.remove('dets.txt')
-    note_list   = sorted(note_list)
+    notes_dir    = '%s/%s' %(task_path, task_name)
+    notes_list   = next(os.walk(notes_dir))[2]
+    notes_list.remove('log.txt')
+    notes_list.remove('dets.txt')
+    notes_list   = sorted(notes_list)
 
-    if '.DS_Store' in note_list:
-        os.system('rm -rf %s/.DS_Store' %note_dir)
-        note_list.remove('.DS_Store')
+    if '.DS_Store' in notes_list:
+        os.system('rm -rf %s/.DS_Store' %notes_dir)
+        notes_list.remove('.DS_Store')
 
-    dets_file            = open('%s/dets.txt' %note_dir, 'r')
+    dets_file            = open('%s/dets.txt' %notes_dir, 'r')
     dets_file_contents   = dets_file.readlines()
 
     note_list = []
     dets_list = []
     date_list = []
 
-    for task_todo in note_list:
-        task_note           = open('%s/%s' %(note_dir, task_todo), 'r')
+    for task_todo in notes_list:
+        task_note           = open('%s/%s' %(notes_dir, task_todo), 'r')
         task_note_contents  = task_note.readlines()
 
         task_todo            = os.path.splitext(task_todo)[0][:-6]
@@ -597,14 +597,14 @@ def print_task_notes(task_path, task_name, notes_terminal):
         note_list = note_list[0:len(dets_list)] #this was a desparation move...
 
         for entry in range(0, len(date_list)):
-            note_list[entry] = str('\n<----- %s ----->\n%s' %(date_list[entry], note_list[entry]))
-            dets_list[entry] = str('\n<----- %s ----->\n%s' %(date_list[entry], dets_list[entry]))
+            note_list[entry] = str('\n\n<----- %s ----->\n%s' %(date_list[entry], note_list[entry]))
+            dets_list[entry] = str('\n\n<----- %s ----->\n%s' %(date_list[entry], dets_list[entry]))
 
         notes_df = pd.DataFrame({'Log': dets_list, 'Notes': note_list})
         notes_df = str(tabulate(notes_df, headers = 'keys', tablefmt = 'psql', showindex = False))
 
         # print note
-        note_header = str( '\n\n%s\n-------------------\n\n' %(os.path.splitext(task_todo)[0][:-10]) )
+        note_header = str( '\n\n%s\n-------------------\n\n' %(task_todo) )
 
         os.system(str('echo \'%s\' > %s' %(note_header, notes_terminal)))
         os.system(str('echo \'%s\' > %s' %(notes_df, notes_terminal)))

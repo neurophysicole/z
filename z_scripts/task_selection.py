@@ -20,15 +20,15 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
     proj_time_s = 0
     for line in proj_time:
         logtime      = line.split() #separate out the lines
-        logtime_proj = logtime[3] #get the project name
-        if logtime_proj == proj_name:
-            proj_time_s = proj_time_s + int(logtime[-1]) #add the seconds
+        # logtime_proj = logtime[-4] #get the project name
+        # if proj_name in logtime:
+        proj_time_s = proj_time_s + int(logtime[-1]) #add the seconds
 
     # apply the project time
     proj_time_h     = proj_time_s / 3600 #calc hours
     proj_time_m     = (proj_time_s - (int(proj_time_h) * 3600)) / 60 #calc mins
 
-    print('====================\n%s: %i Hours & %i Minutes\n====================\n' %(proj_name.upper(), proj_time_h, proj_time_m))
+    print('=============================\n %s: %i Hours & %i Minutes \n=============================\nDONT KNOW WHY THIS WONT WORK :((((\n=============================\n' %(proj_name.upper(), proj_time_h, proj_time_m))
 
 
     # ================
@@ -42,12 +42,16 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
         completed_tasks = []
         completed_task_time_h = []
         completed_task_time_m = []
+
         print('\nCompleted Tasks:')
         for task in archive_task_list:
 
             # open proj log file
             task_timing_file    = open('%s/%s/log.txt' %(proj_path, proj_name), 'r')
             task_time           = task_timing_file.read().splitlines()
+
+            completed_subtask_list = []
+            completed_subtask_time_s_list = []
 
             # get task time
             task_time_s = 0
@@ -57,25 +61,42 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
                 if logtime_task == task:
                     task_time_s = task_time_s + int(logtime[-1]) #add the seconds
 
+                    # get subtask info
+                    completed_subtask = logtime[-2]
+                    if completed_subtask not in completed_subtask_list:
+                        completed_subtask_list.append(completed_subtask)
+                        completed_subtask_time_s_list.append(int(logtime[-1]))
+                    else:
+                        completed_subtask_time_idx = completed_subtask_list.index(completed_subtask)
+                        completed_subtask_time_s_list[completed_subtask_time_idx] = completed_subtask_time_s_list[completed_subtask_time_idx] + int(logtime[-1])
+
             # apply the task time
             task_time_h     = task_time_s / 3600 #calc hours
             task_time_m     = (task_time_s - (int(task_time_h) * 3600)) / 60 #calc mins
+
+            # get subtask time
+            completed_subtask_time_h = []
+            completed_subtask_time_m = []
+            for i in range(0, len(completed_subtask_list)):
+                completed_subtask_time_h.append(int(completed_subtask_time_s_list[i] / 3600)) #calc hours
+                completed_subtask_time_m.append(int((completed_subtask_time_s_list[i] - (int(completed_subtask_time_h[i]) * 3600)) / 60)) #calc mins
 
             # list it
             completed_tasks.append(task)
             completed_task_time_h.append(int(task_time_h))
             completed_task_time_m.append(int(task_time_m))
 
-            # print('-x- %s\t\tH %i\tM %i' %(task, task_time_h, task_time_m))
 
-        completed_task_df = pd.DataFrame({'Task': completed_tasks, 'Hours': completed_task_time_h, 'Minutes': completed_task_time_m})
-        print(tabulate(completed_task_df, headers = 'keys', tablefmt = 'psql', showindex = False))
+            print('x-x--> %s - H %i M %i' %(task, task_time_h, task_time_m))
+
+            completed_subtask_df = pd.DataFrame({'Subtask': completed_subtask, 'Hours': completed_subtask_time_h, 'Minutes': completed_subtask_time_m})
+            print(tabulate(completed_subtask_df, headers = 'keys', tablefmt = 'psql', showindex = False))
 
         time.sleep(.1)
 
         # list the active tasks
         task_list.sort()
-        print('\nTasks:')
+        print('\n======\nTasks:\n======')
         prog_task_num = []
         prog_task = []
         prog_task_h = []
@@ -86,6 +107,9 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
             task_timing_file    = open('%s/%s/log.txt' %(proj_path, proj_name), 'r')
             task_time           = task_timing_file.read().splitlines()
 
+            subtask_list = []
+            subtask_time_s_list = []
+
             # get task time
             task_time_s = 0
             for line in task_time:
@@ -94,22 +118,38 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
                 if logtime_task == task:
                     task_time_s = task_time_s + int(logtime[-1]) #add the seconds
 
+                    # get subtask info
+                    subtask = logtime[-2]
+                    if subtask not in subtask_list:
+                        subtask_list.append(subtask)
+                        subtask_time_s_list.append(int(logtime[-1]))
+                    else:
+                        subtask_time_idx = subtask_list.index(subtask)
+                        subtask_time_s_list[subtask_time_idx] = subtask_time_s_list[subtask_time_idx] + int(logtime[-1])
+
             # apply the task time
             task_time_h     = task_time_s / 3600 #calc hours
             task_time_m     = (task_time_s - (int(task_time_h) * 3600)) / 60 #calc mins 
 
+            # get subtask time
+            subtask_time_h = []
+            subtask_time_m = []
+            for i in range(0, len(subtask_list)):
+                subtask_time_h.append(int(subtask_time_s_list[i] / 3600)) #calc hours
+                subtask_time_m.append(int((subtask_time_s_list[i] - (int(subtask_time_h[i]) * 3600)) / 60)) #calc mins
+
             # list it
-            # print('[%i] %s\t\tH %i\tM %i' %((task_list.index(task) + 1), task, task_time_h, task_time_m))
+            print('\n[%i] %s - H %i M %i' %((task_list.index(task) + 1), task, task_time_h, task_time_m))
 
             prog_task_num.append(int(task_list.index(task) + 1))
             prog_task.append(task)
             prog_task_h.append(int(task_time_h))
             prog_task_m.append(int(task_time_m))
 
-        # time.sleep(.1)
+            # time.sleep(.1)
 
-        prog_task_df = pd.DataFrame({'#': prog_task_num, 'Task': prog_task, 'Hours': prog_task_h, 'Minutes': prog_task_m})
-        print(tabulate(prog_task_df, headers = 'keys', tablefmt = 'psql', showindex = False))
+            subtask_df = pd.DataFrame({'Subtask': subtask_list, 'Hours': subtask_time_h, 'Minutes': subtask_time_m})
+            print(tabulate(subtask_df, headers = 'keys', tablefmt = 'psql', showindex = False))
 
         task_input_loop = True
         while task_input_loop:

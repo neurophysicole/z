@@ -88,10 +88,14 @@ def print_proj_notes(proj_path, proj_name, notes_terminal):
                             if len(note[note_word]) > 40:
                                 old_word = note[note_word]
                                 chunks = int(len(old_word) / 40)
+                                if len(old_word) % 40 != 0:
+                                    chunks += 1
                                 new_word = ''
                                 for i in range(1, chunks):
                                     bound_2 = i * 40
                                     bound_1 = bound_2 - 39
+                                    if bound_2 > len(old_word):
+                                        bound_2 = len(old_word)
                                     segment = old_word[bound_1:bound_2]
 
                                     if i % 2 == 0:
@@ -104,10 +108,14 @@ def print_proj_notes(proj_path, proj_name, notes_terminal):
                         if len(note) > 10:
                             old_list = note
                             chunks = int(len(old_list) / 10)
+                            if len(old_list) % 10 != 0:
+                                chunks += 1
                             new_list = []
                             for k in range(1,chunks):
                                 bound_2 = k * 10
                                 bound_1 = bound_2 - 9
+                                if bound_2 > len(old_list):
+                                    bound_2 = len(old_list)
                                 segment = old_list[bound_1:bound_2]
                                 segment.append('\n')
                                 segment = ' '.join(segment)
@@ -135,10 +143,14 @@ def print_proj_notes(proj_path, proj_name, notes_terminal):
                             if len(dets[dets_word]) > 40:
                                 old_word = dets[dets_word]
                                 chunks = int(len(old_word) / 40)
+                                if len(old_word) % 40 != 0:
+                                    chunks += 1
                                 new_word = ''
                                 for i in range(1, chunks):
                                     bound_2 = i * 40
                                     bound_1 = bound_2 - 39
+                                    if bound_2 > len(old_word):
+                                        bound_2 = len(old_word)
                                     segment = old_word[bound_1:bound_2]
 
                                     if i % 2 == 0:
@@ -151,10 +163,14 @@ def print_proj_notes(proj_path, proj_name, notes_terminal):
                         if len(dets) > 10:
                             old_list = dets
                             chunks = int(len(old_list) / 10)
+                            if len(old_list) % 10 != 0:
+                                chunks += 1
                             new_list = []
                             for k in range(1, chunks):
                                 bound_2 = k * 10
                                 bound_1 = bound_2 - 9
+                                if bound_2 > len(old_list):
+                                    bound_2 = old_list
                                 segment = old_list[bound_1:bound_2]
                                 segment.append('\n')
                                 segment = ' '.join(segment)
@@ -283,10 +299,14 @@ def print_proj_notes(proj_path, proj_name, notes_terminal):
                             if len(note[note_word]) > 40:
                                 old_word = note[note_word]
                                 chunks = int(len(old_word) / 40)
+                                if len(old_word) % 40 != 0:
+                                    chunks += 1
                                 new_word = ''
                                 for i in range(1, chunks):
                                     bound_2 = i * 40
                                     bound_1 = bound_2 - 39
+                                    if bound_2 > len(old_word):
+                                        bound_2 = old_word
                                     segment = old_word[bound_1:bound_2]
 
                                     if i % 2 == 0:
@@ -299,10 +319,14 @@ def print_proj_notes(proj_path, proj_name, notes_terminal):
                         if len(note) > 10:
                             old_list = note
                             chunks = int(len(old_list) / 10)
+                            if len(old_list) % 10 != 0:
+                                chunks += 1
                             new_list = []
                             for k in range(1,chunks):
                                 bound_2 = k * 10
                                 bound_1 = bound_2 - 9
+                                if bound_2 > len(old_list):
+                                    bound_2 = len(old_list)
                                 segment = old_list[bound_1:bound_2]
                                 segment.append('\n')
                                 segment = ' '.join(segment)
@@ -330,10 +354,14 @@ def print_proj_notes(proj_path, proj_name, notes_terminal):
                             if len(dets[dets_word]) > 40:
                                 old_word = dets[dets_word]
                                 chunks = int(len(old_word) / 40)
+                                if len(old_word) % 40 != 0:
+                                    chunks += 1
                                 new_word = ''
                                 for i in range(1, chunks):
                                     bound_2 = i * 40
                                     bound_1 = bound_2 - 39
+                                    if bound_2 > len(old_word):
+                                        bound_2 = len(old_word)
                                     segment = old_word[bound_1:bound_2]
 
                                     if i % 2 == 0:
@@ -346,10 +374,14 @@ def print_proj_notes(proj_path, proj_name, notes_terminal):
                         if len(dets) > 10:
                             old_list = dets
                             chunks = int(len(old_list) / 10)
+                            if len(old_list) % 10 != 0:
+                                chunks += 1
                             new_list = []
                             for k in range(1, chunks):
                                 bound_2 = k * 10
                                 bound_1 = bound_2 - 9
+                                if bound_2 > len(old_list):
+                                    bound_2 = len(old_list)
                                 segment = old_list[bound_1:bound_2]
                                 segment.append('\n')
                                 segment = ' '.join(segment)
@@ -487,10 +519,14 @@ def print_task_notes(task_path, task_name, notes_terminal):
                         if len(note[note_word]) > 40:
                             old_word = note[note_word]
                             chunks = int(len(old_word) / 40)
+                            if len(old_word) % 40 != 0:
+                                chunks += 1
                             new_word = ''
                             for i in range(1, chunks):
                                 bound_2 = i * 40
                                 bound_1 = bound_2 - 39
+                                if bound_2 > len(old_word):
+                                    bound_2 = len(old_word)
                                 segment = old_word[bound_1:bound_2]
 
                                 if i % 2 == 0:
@@ -503,10 +539,14 @@ def print_task_notes(task_path, task_name, notes_terminal):
                     if len(note) > 10:
                         old_list = note
                         chunks = int(len(old_list) / 10)
+                        if len(old_list) % 10 != 0:
+                            chunks == 1
                         new_list = []
                         for k in range(1,chunks):
                             bound_2 = k * 10
                             bound_1 = bound_2 - 9
+                            if bound_2 > len(old_list):
+                                bound_2 = len(old_list)
                             segment = old_list[bound_1:bound_2]
                             segment.append('\n')
                             segment = ' '.join(segment)
@@ -534,10 +574,14 @@ def print_task_notes(task_path, task_name, notes_terminal):
                         if len(dets[dets_word]) > 40:
                             old_word = dets[dets_word]
                             chunks = int(len(old_word) / 40)
+                            if len(old_word) % 40 != 0:
+                                chunks += 1
                             new_word = ''
                             for i in range(1, chunks):
                                 bound_2 = i * 40
                                 bound_1 = bound_2 - 39
+                                if bound_2 > len(old_word):
+                                    bound_2 = len(old_word)
                                 segment = old_word[bound_1:bound_2]
 
                                 if i % 2 == 0:
@@ -550,10 +594,14 @@ def print_task_notes(task_path, task_name, notes_terminal):
                     if len(dets) > 10:
                         old_list = dets
                         chunks = int(len(old_list) / 10)
+                        if len(old_list) % 10 != 0:
+                            chunks += 1
                         new_list = []
                         for k in range(1, chunks):
                             bound_2 = k * 10
                             bound_1 = bound_2 - 9
+                            if bound_2 > len(old_list):
+                                bound_2 = len(old_list)
                             segment = old_list[bound_1:bound_2]
                             segment.append('\n')
                             segment = ' '.join(segment)

@@ -49,6 +49,9 @@ while loopit:
     else:
         proj_list   = next(os.walk(proj_path))[1]
 
+    if 'zz_todos' in proj_list:
+        proj_list.remove('zz_todos')
+        
     proj_list.sort()
 
     # status
@@ -70,15 +73,16 @@ while loopit:
     print(tabulate(status_df, headers = 'keys', tablefmt = 'psql', showindex = False))
     print('\n\n~*~*~*~*~*~*~*~*~*~*~')
 
+    todos_path = '%s/zz_todos' %proj_path
     list_looper = True
     while list_looper:
         # get the list of lists
         try:
-            list_list = next(os.walk(proj_path))[2]
+            list_list = next(os.walk(todos_path))[2]
         except StopIteration:
             list_list = []
         else:
-            list_list = next(os.walk(proj_path))[2]
+            list_list = next(os.walk(todos_path))[2]
         
         if '.DS_Store' in list_list:
             print('Removing .DS_Store.')
@@ -133,7 +137,7 @@ while loopit:
                             while newname_confirm:
                                 newname_yn = input('%s? (y/n):  ' %newlist_name)
                                 if (newname_yn == '') or (newname_yn == 'y'):
-                                    open('%s/%s.txt' %(proj_path, newlist_name), 'w+')
+                                    open('%s/%s.txt' %(todos_path, newlist_name), 'w+')
                                     newlist_confirm = False
                                     newname_confirm = False  
                                     choose_loop     = False  
@@ -150,7 +154,7 @@ while loopit:
 
     # print todos
     print('\n\nTODOS\n~*~*~*~*~*~*~*~*~*~*~\n~*~*~*~*~*~*~*~*~*~*~\n\n')
-    todo_fname  = '%s/%s.txt' %(proj_path, list_choice)
+    todo_fname  = '%s/%s.txt' %(todos_path, list_choice)
     todo_file   = open(todo_fname, 'r')
     todos       = todo_file.readlines()
 
@@ -260,7 +264,7 @@ while loopit:
             while proj_loop:
                 proj_yn = input('\n\nIs this associated with a project? (y/n)\n(If you wish to delete this list, type \'delete_%s\')  :  ' %list_choice)
                 if proj_yn == str('delete_%s' %list_choice):
-                    os.system('rm -rfv %s/%s.txt' %(proj_path, list_choice))
+                    os.system('rm -rfv %s/%s.txt' %(todos_path, list_choice))
                     proj_loop = False
                     uc_loop = False
                     break

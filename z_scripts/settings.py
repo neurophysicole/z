@@ -170,6 +170,6 @@ def settings():
     # os.system('echo \'Notes\' > %s' %notes_terminal)
     # os.system('echo \'Todos\' > %s' %todo_terminal)
 
-    os.system('osascript -e \"tell application \\"System Events\\" to keystroke \\"python3 %s/z_scripts/todos.py\\""; osascript -e \"tell application \\"System Events\\" to keystroke return\"' %main_dir)
+    os.system('osascript -e \"tell application \\"System Events\\" to keystroke \\"python3 %s/z_scripts/todos.py\\"\"; osascript -e \"tell application \\"System Events\\" to keystroke return\"' %main_dir)
 
     return main_dir, home_dir, cur_branch_name, todo_terminal, notes_terminal

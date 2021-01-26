@@ -75,6 +75,9 @@ while exe_loop:
     else:
         proj_list   = next(os.walk(proj_path))[1]
 
+    if 'todos' in proj_list:
+        proj_list.remove('zz_todos')
+
     proj_list.sort()
 
     # list project status and update todos
@@ -232,5 +235,15 @@ repo_push(home_dir, main_dir)
 if thymer:
     print('\nUnlocking Thymer.\n')
     os.system('rm -f %s' %thymer_fname)
+
+# ------------
+# shut it down
+# os.system('osascript -e \"tell application \\"System Events\\" to keystroke \\"w\\" using {command down}\"') #close interface window
+# time.sleep(3)
+# os.system('osascript -e \"tell application \\"System Events\\" to keystroke \\"d\\" using {control down}\"') #close notes window
+# time.sleep(3)
+# os.system('osascript -e \"tell application \\"System Events\\" to keystroke \\"d\\" using {control down}\"') #shut town todoz script
+# time.sleep(3)
+# os.system('osascript -e \"tell application \\"System Events\\" to keystroke \\"d\\" using {control down}\"') #close todos window
 
 exit()

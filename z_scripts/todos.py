@@ -183,16 +183,28 @@ while loopit:
                 chunks = int(len(old_word) / 10)
                 if len(old_word) % 10 != 0:
                     chunks += 1
-                new_word = ''
                 for j in range(1, chunks):
-                    bound_2 = j * 10
-                    bound_1 = bound_2 - 9
-                    if bound_2 > len(old_word):
-                        bound_2 = len(old_word)
+                    bound_1 = j * 10 - 10
+                    bound_2 = bound_1 + 10
+                    # if bound_2 > len(old_word):
+                    #     bound_2 = len(old_word)
                     segment = old_word[bound_1:bound_2]
-                    new_word = str('%s%s\n' %(new_word, segment))
+                    if j == 1:
+                        new_word = segment
+                    else:
+                        new_word = '%s %s' %(new_word, segment)
                 
                 todo_words[i] = new_word
+
+        old_todo_words = todo_words
+        todo_words = []
+        for i in range(0, len(old_todo_words)):
+            if ' ' in old_todo_words[i]:
+                split_word = old_todo_words[i].split()
+                for j in split_word:
+                    todo_words.append(j)
+            else:
+                todo_words.append(old_todo_words[i])
 
         if len(todo_words) > 5:
             old_list = todo_words
@@ -201,10 +213,10 @@ while loopit:
                 chunks += 1
             new_list = []
             for k in range(1, chunks):
-                bound_2 = k * 5
-                bound_1 = bound_2 - 4
-                if bound_2 > len(old_list):
-                    bound_2 = len(old_list)
+                bound_1 = k * 5 - 5
+                bound_2 = bound_1 + 5
+                # if bound_2 > len(old_list):
+                #     bound_2 = len(old_list)
                 segment = old_list[bound_1:bound_2]
                 segment.append('\n')
                 segment = ' '.join(segment)

@@ -89,7 +89,7 @@ def task_selection(archive_task_list, task_path, task_list, proj_path, proj_name
 
             print('x-x--> %s - H %i M %i' %(task, task_time_h, task_time_m))
 
-            completed_subtask_df = pd.DataFrame({'Subtask': completed_subtask, 'Hours': completed_subtask_time_h, 'Minutes': completed_subtask_time_m})
+            completed_subtask_df = pd.DataFrame({'Subtask': completed_subtask_list, 'Hours': completed_subtask_time_h, 'Minutes': completed_subtask_time_m})
             print(tabulate(completed_subtask_df, headers = 'keys', tablefmt = 'psql', showindex = False))
 
         time.sleep(.1)
